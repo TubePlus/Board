@@ -1,11 +1,21 @@
 server:
-  port: 8001
+  port: 0
+  shutdown: graceful
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    shutdown:
+      enabled: true
 
 spring:
   profiles:
     active: local
   application:
-    name: USER-SERVICE
+    name: BOARD-SERVICE
 
   jpa:
     hibernate:
@@ -39,7 +49,7 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://eurekaimage:8761/eureka/
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
 
