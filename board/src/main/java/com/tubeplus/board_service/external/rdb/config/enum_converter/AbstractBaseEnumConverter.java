@@ -1,4 +1,4 @@
-package com.tubeplus.board_service.external.rdb.driven_adapter.enum_converter;
+package com.tubeplus.board_service.external.rdb.config.enum_converter;
 
 import com.tubeplus.board_service.global.base.BaseEnum;
 import jakarta.persistence.AttributeConverter;
@@ -6,7 +6,7 @@ import jakarta.persistence.AttributeConverter;
 import java.util.Arrays;
 import java.util.Objects;
 
-//구현체에서 @Converter(autoApply=true) 지정할것
+
 public abstract class AbstractBaseEnumConverter<E extends Enum<E> & BaseEnum<T, K>, T, K> implements AttributeConverter<E, T> {
 
 	private final Class<E> clazz;

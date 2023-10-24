@@ -1,4 +1,4 @@
-package com.tubeplus.board_service.external.web.driving_adapter;
+package com.tubeplus.board_service.external.web.config;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.core.annotation.AliasFor;

@@ -2,7 +2,10 @@ package com.tubeplus.board_service.domain.board.model;
 
 import com.tubeplus.board_service.global.base.BaseEnum;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+
+@Slf4j
 @AllArgsConstructor
 public enum BoardType implements BaseEnum<String, String> {
 
@@ -14,6 +17,8 @@ public enum BoardType implements BaseEnum<String, String> {
 
     @Override
     public String getCode() {
+        log.info("hihi");
+
         return this.code;
     }
 

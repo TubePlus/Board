@@ -1,9 +1,7 @@
 package com.tubeplus.board_service.external.rdb.driven_adapter.dao;
 
-import com.ctc.wstx.util.StringUtil;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tubeplus.board_service.domain.board.port.out.BoardPersistent;
 import com.tubeplus.board_service.external.rdb.entity.BoardEntity;
@@ -23,7 +21,7 @@ public class BoardQDslRepositoryImpl implements BoardQDslRepositoryCustom {
 
 
     @Override
-    public List<BoardEntity> findBoards(BoardPersistent.FindDto dto) {
+    public List<BoardEntity> findBoards(BoardPersistent.FindListDto dto) {
 
         QBoardEntity board = QBoardEntity.boardEntity;
 

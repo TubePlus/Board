@@ -35,4 +35,8 @@ public interface BoardUseCase {
         private final Boolean erase;
         private final String nameToSearch;
     }
+
+
+    Board findBoard(Long boardId);
+
 }

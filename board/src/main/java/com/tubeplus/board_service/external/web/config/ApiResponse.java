@@ -1,4 +1,4 @@
-package com.tubeplus.board_service.external.web.driving_adapter;
+package com.tubeplus.board_service.external.web.config;
 
 
 public record ApiResponse<T> (
@@ -10,7 +10,5 @@ public record ApiResponse<T> (
     public static <T> ApiResponse<T> ofSuccess(T data) {
         return new ApiResponse<>(data, "성공", "S001");
     }
-    public static <T> ApiResponse<T> ofSuccess() {
-        return new ApiResponse<>(null, "성공", "S001");
-    }
+
 }
