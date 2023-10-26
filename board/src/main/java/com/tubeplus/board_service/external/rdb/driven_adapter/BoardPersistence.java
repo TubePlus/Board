@@ -5,13 +5,14 @@ import com.tubeplus.board_service.external.rdb.driven_adapter.dao.BoardQDslRepos
 import com.tubeplus.board_service.external.rdb.entity.BoardEntity;
 import com.tubeplus.board_service.domain.board.model.Board;
 import com.tubeplus.board_service.domain.board.port.out.BoardPersistent;
+import com.tubeplus.board_service.external.web.error.BusinessException;
+import com.tubeplus.board_service.external.web.error.ErrorCode;
 import com.tubeplus.board_service.global.Exceptionable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -25,17 +26,35 @@ public class BoardPersistence implements BoardPersistent {
     private final BoardQDslRepositoryCustom queryDslRepo;
 
 
-    private final InternalLogic internalLogic
-            = new InternalLogic();
-    public final Function<SaveDto, Board> logicSave
-            = this.internalLogic::saveBoard;
-    public final Function<FindListDto, List<Board>> logicFindList
-            = this.internalLogic::findBoardList;
-    private Function<Long, Board> logicFind
-            = this.internalLogic::findBoard;
+    @Override
+    public Exceptionable<Board, SaveDto> saveBoard(SaveDto dto) {
+        return new Exceptionable<>(this.save, dto);
+    }
 
-//todo 접근제어자 private class InternalLogic.public Board functions로 바꿔서 시도
-//todo internal logic 클래스 분리해 default 생성자만 갖고 함수는 public으로 하던지 해서 깔끔하게 정리
+    @Override
+    public Exceptionable<Board, Long> findBoard(Long boardId) {
+        return new Exceptionable<>(this.findBoard, boardId);
+    }
+
+    @Override
+    public Exceptionable<List<Board>, ListFindDto> findBoardList(ListFindDto dto) {
+        return new Exceptionable<>(this.findBoardList, dto);
+    }
+
+    @Override
+    public Exceptionable<Boolean, UpdateDto> updateBoard(UpdateDto dto) {
+        return new Exceptionable<>(this.updateBoard, dto);
+    }
+
+
+    private final InternalLogic logic = new InternalLogic();
+
+    public final Function<SaveDto, Board> save = this.logic::saveBoard;
+    public final Function<Long, Board> findBoard = this.logic::findBoard;
+    public final Function<ListFindDto, List<Board>> findBoardList = this.logic::findBoardList;
+    public final Function<UpdateDto, Boolean> updateBoard = this.logic::updateBoard;
+
+    //todo 접근제어자 private class InternalLogic.public Board functions로 바꿔서 시도
     public class InternalLogic {
 
         public Board saveBoard(SaveDto dto) {
@@ -50,7 +69,18 @@ public class BoardPersistence implements BoardPersistent {
             return savedEntity.buildBoard();
         }
 
-        public List<Board> findBoardList(FindListDto dto) {
+        public Board findBoard(Long boardId) {
+
+            log.info(boardId.toString());
+
+            BoardEntity foundEntity = jpaDataRepo.findById(boardId)
+                    .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_RESOURCE));
+            log.info(foundEntity.toString());
+
+            return foundEntity.buildBoard();
+        }
+
+        public List<Board> findBoardList(ListFindDto dto) {
             log.info(dto.toString());
 
             List<BoardEntity> foundBoardEntities = queryDslRepo.findBoards(dto);
@@ -67,33 +97,11 @@ public class BoardPersistence implements BoardPersistent {
             return foundBoards;
         }
 
-        public Board findBoard(Long boardId) {
-            log.info(boardId.toString());
-
-            BoardEntity foundEntity = jpaDataRepo.findById(boardId)
-                    .orElseThrow();
-            log.info(foundEntity.toString());
-
-            return foundEntity.buildBoard();
+        public Boolean updateBoard(UpdateDto dto) {
+            return queryDslRepo.updateBoard(dto);
         }
+
     }
 
-
-
-    //todo 메서드 내부 변수로 갖게 해서 쓸데없는 동적할당 피하기
-    @Override
-    public Exceptionable<Board, SaveDto> saveBoard(SaveDto dto) {
-        return new Exceptionable<>(this.logicSave, dto);
-    }
-
-    @Override
-    public Exceptionable<List<Board>, FindListDto> findBoardList(FindListDto dto) {
-        return new Exceptionable<>(this.logicFindList, dto);
-    }
-
-    @Override
-    public Exceptionable<Board, Long> findBoard(Long boardId) {
-        return new Exceptionable<>(this.logicFind, boardId);
-    }
 
 }

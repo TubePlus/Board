@@ -14,6 +14,7 @@ public enum ErrorCode {
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "C006", "잘못된 요청입니다."),
     INVALID_TYPE_VALUE(HttpStatus.NOT_FOUND, "C007", " Invalid Type Value"),
     FIND_ENTITY_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "C008", "db 조회 실패"),
+    UPDATE_ENTITY_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "C008", "테이블 업데이트 실패"),
 
     /*로그인*/
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "L001", "로그인이 필요합니다."),

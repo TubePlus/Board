@@ -19,10 +19,8 @@ import java.util.List;
 public class BoardService implements BoardUseCase {
 
     //member variables
+
     private final BoardPersistent boardPersistence;
-
-
-    private final BusinessException saveFailed = new BusinessException(ErrorCode.SAVE_ENTITY_FAILED);
 
     @Override
     public Board makeBoard(FormToMakeBoard formToMake) {
@@ -31,23 +29,24 @@ public class BoardService implements BoardUseCase {
                 = BoardPersistent.SaveDto.of(formToMake);
 
         Board madeBoard = boardPersistence.saveBoard(saveDto)
-                .ifExceptioned.thenThrow(saveFailed);
+                .ifExceptioned.thenThrowOf(ErrorCode.SAVE_ENTITY_FAILED);
 
         return madeBoard;
     }
 
 
-    private final BusinessException findFailed = new BusinessException(ErrorCode.FIND_ENTITY_FAILED);
-
     @Override
-    public List<Board> findCommuBoards(BoardsFindInfo findInfo) {
+    public List<Board> listCommuBoards(BoardListInfo findInfo) {
 
-        BoardPersistent.FindListDto dto = BoardPersistent.FindListDto.of(findInfo);
-        //todo communityId = null이면 : 관리자용으로 전부 찾기 기능 만들거면 권한체크, 아니라면 exception
-        List<Board> foundBoards = boardPersistence.findBoardList(dto)
-                .ifExceptioned.thenThrow(findFailed);
+        BoardPersistent.ListFindDto listFindDto
+                = BoardPersistent.ListFindDto.of(findInfo);
 
-        if (foundBoards.isEmpty()) throw new BusinessException(ErrorCode.NOT_FOUND_RESOURCE);
+        List<Board> foundBoards
+                = boardPersistence.findBoardList(listFindDto)
+                .ifExceptioned.thenThrowOf(ErrorCode.FIND_ENTITY_FAILED);
+
+        if (foundBoards.isEmpty())
+            throw new BusinessException(ErrorCode.NOT_FOUND_RESOURCE);
 
         return foundBoards;
     }
@@ -55,9 +54,28 @@ public class BoardService implements BoardUseCase {
     @Override
     public Board findBoard(Long boardId) {
 
-        Board foundBoard = boardPersistence.findBoard(boardId)
-                .ifExceptioned.thenThrow(findFailed);
+        Board foundBoard
+                = boardPersistence.findBoard(boardId)
+                .ifExceptioned.thenThrowOf(ErrorCode.FIND_ENTITY_FAILED);
 
         return foundBoard;
     }
+
+
+    @Override
+    public void updateBoardProperty(Long boardId, BoardProperty property) {
+
+        BoardPersistent.UpdateDto updateDto
+                = BoardPersistent.UpdateDto.builtFrom(boardId, property);
+
+        Boolean isUpdated
+                = boardPersistence.updateBoard(updateDto)
+                .ifExceptioned
+                .thenThrowOf(ErrorCode.UPDATE_ENTITY_FAILED);
+
+        if (!isUpdated)
+            throw new BusinessException(ErrorCode.UPDATE_ENTITY_FAILED);
+    }
+
+
 }

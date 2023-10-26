@@ -32,7 +32,7 @@ public class PostPostingReqBody {
     private LocalDateTime limitDateTime;
 
 
-    public BoardUseCase.FormToMakeBoard toFormToMakeBoard() {
+    public BoardUseCase.FormToMakeBoard buildFormToMakeBoard() {
         log.info(this.toString());
 
         BoardUseCase.FormToMakeBoard form

@@ -3,16 +3,25 @@ package com.tubeplus.board_service.external.rdb.driven_adapter.dao;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.querydsl.jpa.impl.JPAUpdateClause;
 import com.tubeplus.board_service.domain.board.port.out.BoardPersistent;
 import com.tubeplus.board_service.external.rdb.entity.BoardEntity;
 import com.tubeplus.board_service.external.rdb.entity.QBoardEntity;
+import com.tubeplus.board_service.external.web.error.BusinessException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.lang.reflect.Field;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class BoardQDslRepositoryImpl implements BoardQDslRepositoryCustom {
@@ -21,19 +30,22 @@ public class BoardQDslRepositoryImpl implements BoardQDslRepositoryCustom {
 
 
     @Override
-    public List<BoardEntity> findBoards(BoardPersistent.FindListDto dto) {
+    public List<BoardEntity> findBoards(BoardPersistent.ListFindDto dto) {
 
-        QBoardEntity board = QBoardEntity.boardEntity;
+        QBoardEntity board
+                = QBoardEntity.boardEntity;
 
 
-        BooleanExpression commuIdEq
+        BooleanExpression commuId
                 = board.communityId.eq(dto.getCommunityId());
 
-        BooleanBuilder accessStatus = new BooleanBuilder();
+        BooleanBuilder accessStatus
+                = new BooleanBuilder();
         if (dto.getVisible() != null)
             accessStatus.and(board.visible.eq(dto.getVisible()));
         if (dto.getErase() != null)
             accessStatus.and(board.erase.eq(dto.getErase()));
+
 
         BooleanExpression nameLike
                 = StringUtils.hasText(dto.getNameToSearch())
@@ -43,8 +55,89 @@ public class BoardQDslRepositoryImpl implements BoardQDslRepositoryCustom {
 
         return queryFactory
                 .selectFrom(board)
-                .where(commuIdEq.and(accessStatus).and(nameLike))
+                .where(commuId.and(accessStatus).and(nameLike))
                 .fetch();
     }
 
+
+    @Override
+    @Transactional
+    public Boolean updateBoard(BoardPersistent.UpdateDto dto) {
+
+        QBoardEntity board
+                = QBoardEntity.boardEntity;
+
+        JPAUpdateClause updateQuery
+                = queryFactory.update(board)
+                .where(board.id.eq(dto.getId()));
+
+        writeUpdatesToQuery(updateQuery, dto, board);
+
+
+        return updateQuery.execute() != 0;
+    }
+
+    private void writeUpdatesToQuery(JPAUpdateClause updateQuery,
+                                     BoardPersistent.UpdateDto dto,
+                                     QBoardEntity board) {
+
+        if (dto.getBoardName() != null) {
+            updateQuery.set(board.boardName, dto.getBoardName());
+        }
+        if (dto.getBoardType() != null) {
+            updateQuery.set(board.boardType, dto.getBoardType());
+        }
+        if (dto.getBoardDescription() != null) {
+            updateQuery.set(board.boardDescription, dto.getBoardDescription());
+        }
+        if (dto.getVisible() != null) {
+            updateQuery.set(board.visible, dto.getVisible());
+        }
+        if (dto.getLimitDateTime() != null) {
+            updateQuery.set(board.limitDateTime, dto.getLimitDateTime());
+        }
+        if (dto.getErase() != null) {
+            updateQuery.set(board.erase, dto.getErase());
+        }
+
+    }
+
 }
+//write query by reflection
+
+/*        Class<EntityPathBase> qEntityClazz = (Class<EntityPathBase>) board.getClass();
+
+        long updateColCount = 0;
+        Class<Path> qPathInterface = Path.class;
+
+
+        for (Field qField : qEntityClazz.getFields()) {
+
+            Class<?> qFieldType = qField.getType();
+            if (qPathInterface.isAssignableFrom(qFieldType)) {
+
+                Path<?> pathField;
+                try {
+                    pathField = (Path<?>) qField.get(board);
+                } catch (IllegalAccessException e) {//todo throw시 e.getCause도 첨부해서 throw
+                    throw new RuntimeException(String.format("writeUpdatesToQuery by dto(%s) pathField assigned  threw IllegalAccessException\n", dto.toString()));
+                }
+
+                String dtoFieldName = pathField.getMetadata().getName();
+                try {
+                    Field dtoUpdateField = dto.getClass().getField(dtoFieldName);
+
+                    updateQuery.set(pathField, dtoUpdateField.getType().cast(dtoUpdateField.get(board)));
+
+                } catch (Exception e) {
+                    throw new RuntimeException(String.format("writeUpdatesToQuery by dto(%s)  threw \n", dto.toString()));
+                }
+
+                updateColCount += 1;
+
+            }
+        }
+
+        if (dto.getBoardName() != null)
+            updateQuery.set(board.boardName, dto.getBoardName()); */
+
