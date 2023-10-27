@@ -1,12 +1,11 @@
 package com.tubeplus.board_service.external.rdb.entity;
 
 
-import com.tubeplus.board_service.domain.board.model.Board;
-import com.tubeplus.board_service.domain.board.model.BoardType;
-import com.tubeplus.board_service.domain.board.port.out.BoardPersistent;
+import com.tubeplus.board_service.board.model.Board;
+import com.tubeplus.board_service.board.model.BoardType;
+import com.tubeplus.board_service.board.port.out.BoardPersistent;
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 

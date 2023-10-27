@@ -1,8 +1,8 @@
-package com.tubeplus.board_service.domain.board.service;
+package com.tubeplus.board_service.board.service;
 
-import com.tubeplus.board_service.domain.board.model.Board;
-import com.tubeplus.board_service.domain.board.port.in.BoardUseCase;
-import com.tubeplus.board_service.domain.board.port.out.BoardPersistent;
+import com.tubeplus.board_service.board.model.Board;
+import com.tubeplus.board_service.board.port.in.BoardUseCase;
+import com.tubeplus.board_service.board.port.out.BoardPersistent;
 
 import com.tubeplus.board_service.external.web.error.BusinessException;
 import com.tubeplus.board_service.external.web.error.ErrorCode;
@@ -84,8 +84,12 @@ public class BoardService implements BoardUseCase {
     @Override
     public void softlyDeleteBoard(Long boardId) {
 
-        boardPersistence.softlyDeleteBoard(boardId)
+        Boolean softDeleted
+                = boardPersistence.softlyDeleteBoard(boardId)
                 .ifExceptioned.throwOf(ErrorCode.DELETE_ENTITY_FAILED);
+
+        if (!softDeleted)
+            throw new BusinessException(ErrorCode.DELETE_ENTITY_FAILED);
     }
 
 }

@@ -1,8 +1,8 @@
 package com.tubeplus.board_service.external.web.driving_adapter.board;
 
 import com.tubeplus.board_service.external.web.driving_adapter.board.vo.BoardPropertyVo;
-import com.tubeplus.board_service.domain.board.model.Board;
-import com.tubeplus.board_service.domain.board.port.in.BoardUseCase;
+import com.tubeplus.board_service.board.model.Board;
+import com.tubeplus.board_service.board.port.in.BoardUseCase;
 import com.tubeplus.board_service.external.web.config.ApiResponse;
 import com.tubeplus.board_service.external.web.config.ApiTag;
 import com.tubeplus.board_service.external.web.driving_adapter.board.vo.PostPostingReqBody;
@@ -112,6 +112,7 @@ public class BoardController {
         return ApiResponse.ofSuccess(null);
     }
 
+    //
     private boolean haveNoUpdate(BoardPropertyVo updateReq) {
 
         //한개의 field라도 들어온게 있다면 update가 있는걸로 간주, false 리턴
@@ -141,7 +142,7 @@ public class BoardController {
     public ApiResponse deleteBoard
             (
                     @Valid @PathVariable("boardId")
-                    @NotNull @Min(0) Long boardId
+                    @NotNull @Min(1) Long boardId
             ) {
 
         boardService.softlyDeleteBoard(boardId);

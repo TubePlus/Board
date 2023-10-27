@@ -4,7 +4,7 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.impl.JPAUpdateClause;
-import com.tubeplus.board_service.domain.board.port.out.BoardPersistent;
+import com.tubeplus.board_service.board.port.out.BoardPersistent;
 import com.tubeplus.board_service.external.rdb.entity.BoardEntity;
 import com.tubeplus.board_service.external.rdb.entity.QBoardEntity;
 import lombok.RequiredArgsConstructor;
@@ -99,15 +99,18 @@ public class BoardQDslRepositoryImpl implements BoardQDslRepositoryCustom {
 
     @Transactional
     @Override
-    public void softDeleteBoard(Long boardId) {
+    public boolean softDeleteBoard(Long boardId) {
 
         QBoardEntity board
                 = QBoardEntity.boardEntity;
 
-        queryFactory.update(board)
-                .where(board.id.eq(boardId))
-                .set(board.erase, true)
-                .execute();
+        long executeResult =
+                queryFactory.update(board)
+                        .where(board.id.eq(boardId))
+                        .set(board.erase, true)
+                        .execute();
+
+        return executeResult != 0;
     }
 
 }

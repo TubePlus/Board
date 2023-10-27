@@ -3,8 +3,8 @@ package com.tubeplus.board_service.external.rdb.driven_adapter;
 import com.tubeplus.board_service.external.rdb.driven_adapter.dao.BoardJpaDataRepository;
 import com.tubeplus.board_service.external.rdb.driven_adapter.dao.BoardQDslRepositoryCustom;
 import com.tubeplus.board_service.external.rdb.entity.BoardEntity;
-import com.tubeplus.board_service.domain.board.model.Board;
-import com.tubeplus.board_service.domain.board.port.out.BoardPersistent;
+import com.tubeplus.board_service.board.model.Board;
+import com.tubeplus.board_service.board.port.out.BoardPersistent;
 import com.tubeplus.board_service.external.web.error.BusinessException;
 import com.tubeplus.board_service.external.web.error.ErrorCode;
 import com.tubeplus.board_service.global.Exceptionable;
@@ -120,9 +120,7 @@ public class BoardPersistence implements BoardPersistent {
 
         public Boolean softlyDeleteBoard(Long boardId) {
 
-            queryDslRepo.softDeleteBoard(boardId);
-
-            return true;
+            return queryDslRepo.softDeleteBoard(boardId);
         }
     }
 }
