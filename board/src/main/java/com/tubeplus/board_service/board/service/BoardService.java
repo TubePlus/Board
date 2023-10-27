@@ -1,8 +1,8 @@
-package com.tubeplus.board_service.domain.board.service;
+package com.tubeplus.board_service.board.service;
 
-import com.tubeplus.board_service.domain.board.model.Board;
-import com.tubeplus.board_service.domain.board.port.in.BoardUseCase;
-import com.tubeplus.board_service.domain.board.port.out.BoardPersistent;
+import com.tubeplus.board_service.board.model.Board;
+import com.tubeplus.board_service.board.port.in.BoardUseCase;
+import com.tubeplus.board_service.board.port.out.BoardPersistent;
 
 import com.tubeplus.board_service.external.web.error.BusinessException;
 import com.tubeplus.board_service.external.web.error.ErrorCode;
@@ -29,11 +29,10 @@ public class BoardService implements BoardUseCase {
                 = BoardPersistent.SaveDto.of(formToMake);
 
         Board madeBoard = boardPersistence.saveBoard(saveDto)
-                .ifExceptioned.thenThrowOf(ErrorCode.SAVE_ENTITY_FAILED);
+                .ifExceptioned.throwOf(ErrorCode.SAVE_ENTITY_FAILED);
 
         return madeBoard;
     }
-
 
     @Override
     public List<Board> listCommuBoards(BoardListInfo findInfo) {
@@ -43,7 +42,7 @@ public class BoardService implements BoardUseCase {
 
         List<Board> foundBoards
                 = boardPersistence.findBoardList(listFindDto)
-                .ifExceptioned.thenThrowOf(ErrorCode.FIND_ENTITY_FAILED);
+                .ifExceptioned.throwOf(ErrorCode.FIND_ENTITY_FAILED);
 
         if (foundBoards.isEmpty())
             throw new BusinessException(ErrorCode.NOT_FOUND_RESOURCE);
@@ -56,11 +55,10 @@ public class BoardService implements BoardUseCase {
 
         Board foundBoard
                 = boardPersistence.findBoard(boardId)
-                .ifExceptioned.thenThrowOf(ErrorCode.FIND_ENTITY_FAILED);
+                .ifExceptioned.throwOf(ErrorCode.FIND_ENTITY_FAILED);
 
         return foundBoard;
     }
-
 
     @Override
     public void updateBoardProperty(Long boardId, BoardProperty property) {
@@ -70,12 +68,28 @@ public class BoardService implements BoardUseCase {
 
         Boolean isUpdated
                 = boardPersistence.updateBoard(updateDto)
-                .ifExceptioned
-                .thenThrowOf(ErrorCode.UPDATE_ENTITY_FAILED);
+                .ifExceptioned.throwOf(ErrorCode.UPDATE_ENTITY_FAILED);
 
         if (!isUpdated)
             throw new BusinessException(ErrorCode.UPDATE_ENTITY_FAILED);
     }
 
+    @Override
+    public void completelyDeleteBoard(Long boardId) {
+
+        boardPersistence.completelyDeleteBoard(boardId)
+                .ifExceptioned.throwOf(ErrorCode.DELETE_ENTITY_FAILED);
+    }
+
+    @Override
+    public void softlyDeleteBoard(Long boardId) {
+
+        Boolean softDeleted
+                = boardPersistence.softlyDeleteBoard(boardId)
+                .ifExceptioned.throwOf(ErrorCode.DELETE_ENTITY_FAILED);
+
+        if (!softDeleted)
+            throw new BusinessException(ErrorCode.DELETE_ENTITY_FAILED);
+    }
 
 }

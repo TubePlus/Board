@@ -1,4 +1,4 @@
-package com.tubeplus.board_service.domain.board.model;
+package com.tubeplus.board_service.board.model;
 
 import com.tubeplus.board_service.global.base.BaseEnum;
 import lombok.AllArgsConstructor;

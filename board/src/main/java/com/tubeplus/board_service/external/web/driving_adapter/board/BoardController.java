@@ -1,20 +1,19 @@
 package com.tubeplus.board_service.external.web.driving_adapter.board;
 
 import com.tubeplus.board_service.external.web.driving_adapter.board.vo.BoardPropertyVo;
-import com.tubeplus.board_service.domain.board.model.Board;
-import com.tubeplus.board_service.domain.board.port.in.BoardUseCase;
+import com.tubeplus.board_service.board.model.Board;
+import com.tubeplus.board_service.board.port.in.BoardUseCase;
 import com.tubeplus.board_service.external.web.config.ApiResponse;
 import com.tubeplus.board_service.external.web.config.ApiTag;
 import com.tubeplus.board_service.external.web.driving_adapter.board.vo.PostPostingReqBody;
 import com.tubeplus.board_service.external.web.driving_adapter.board.vo.BoardSearchType;
 
-import com.tubeplus.board_service.external.web.error.BusinessException;
-import com.tubeplus.board_service.external.web.error.ErrorCode;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Field;
@@ -76,8 +75,10 @@ public class BoardController {
 
     @Operation(summary = "게시판 속성 조회", description = "특정 게시판 속성을 id로 조회")
     @GetMapping("/{boardId}")
-    public ApiResponse<BoardPropertyVo> getBoardProperty(@PathVariable("boardId") Long boardId
-    ) {
+    public ApiResponse<BoardPropertyVo> getBoardProperty
+            (
+                    @PathVariable("boardId") Long boardId
+            ) {
         log.info(boardId.toString());
 
         Board foundBoard
@@ -90,17 +91,15 @@ public class BoardController {
     }
 
 
-
-    @Modifying
     @Operation(summary = "게시판 속성 변경", description = "특정 게시판 속성을 변경")
     @PutMapping("/{boardId}")
-    public ApiResponse<Object> updateBoardProperty
+    public ApiResponse updateBoardProperty
             (
                     @PathVariable("boardId") Long boardId,
                     @RequestBody BoardPropertyVo updateReqBody
             ) {
         log.info(boardId.toString());
-//        if (haveNoUpdate(updateReqBody)) {
+//        if (haveNoUpdate(updateReqBody)) {//todo 디버깅
 //            throw new BusinessException(ErrorCode.BAD_REQUEST);
 //        }
 
@@ -113,26 +112,44 @@ public class BoardController {
         return ApiResponse.ofSuccess(null);
     }
 
+    //
     private boolean haveNoUpdate(BoardPropertyVo updateReq) {
 
+        //한개의 field라도 들어온게 있다면 update가 있는걸로 간주, false 리턴
         for (Field updateField : updateReq.getClass().getFields()) {
-
+            Object fieldInstance = null;
             try {
-                if (updateField.get(updateReq) != null) {
-                    log.error("asdlkfjasdlk");
-                    return false;
-                }
+                fieldInstance = updateField.get(updateReq);
             } catch (NullPointerException e) {
-
                 log.error("bi");
             } catch (Exception e) {
                 log.error("hi");
             }
+
+            if (fieldInstance != null) {
+                log.error("asdlkfjasdlk");
+                return false;
+            }
+
         }
 
         return true;
     }
 
 
+    @Operation(summary = "게시판 삭제", description = "특정 id의 게시판을 soft delete 처리")
+    @DeleteMapping("/{boardId}")
+    public ApiResponse deleteBoard
+            (
+                    @Valid @PathVariable("boardId")
+                    @NotNull @Min(1) Long boardId
+            ) {
+
+        boardService.softlyDeleteBoard(boardId);
+
+        return ApiResponse.ofSuccess(null);
+    }
+
 }
+
 

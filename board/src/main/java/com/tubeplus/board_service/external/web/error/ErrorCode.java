@@ -10,11 +10,13 @@ public enum ErrorCode {
     DUPLICATE_RESOURCE(HttpStatus.CONFLICT, "C002", "이미 존재하는 데이터입니다."),
     METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "C003", "Method Not Allowed"),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "C004", "Internal Server Error"),
-    SAVE_ENTITY_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "C005", "db 저장 실패"),
+    SAVE_ENTITY_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "C005", "db 테이블 엔티티 저장 실패"),
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "C006", "잘못된 요청입니다."),
     INVALID_TYPE_VALUE(HttpStatus.NOT_FOUND, "C007", " Invalid Type Value"),
-    FIND_ENTITY_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "C008", "db 조회 실패"),
-    UPDATE_ENTITY_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "C008", "테이블 업데이트 실패"),
+    FIND_ENTITY_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "C008", "db 테이블 엔티티 조회 실패"),
+    UPDATE_ENTITY_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "C009", "db 테이블 엔티티 업데이트 실패"),
+    DELETE_ENTITY_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "C010", "db 테이블 엔티티 삭제 실패"),
+    SOFT_DELETE_ENTITY_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "C011", "db 테이블 엔티티 soft delete 처리 실패"),
 
     /*로그인*/
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "L001", "로그인이 필요합니다."),

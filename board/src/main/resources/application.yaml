@@ -15,7 +15,7 @@ spring:
   profiles:
     active: local
   application:
-    name: BOARD-SERVICE
+    name: board-service
 
   jpa:
     hibernate:

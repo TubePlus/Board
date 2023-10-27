@@ -1,8 +1,8 @@
-package com.tubeplus.board_service.domain.board.port.out;
+package com.tubeplus.board_service.board.port.out;
 
-import com.tubeplus.board_service.domain.board.model.Board;
-import com.tubeplus.board_service.domain.board.model.BoardType;
-import com.tubeplus.board_service.domain.board.port.in.BoardUseCase;
+import com.tubeplus.board_service.board.model.Board;
+import com.tubeplus.board_service.board.model.BoardType;
+import com.tubeplus.board_service.board.port.in.BoardUseCase;
 import com.tubeplus.board_service.global.Exceptionable;
 import lombok.Builder;
 import lombok.Data;
@@ -15,12 +15,14 @@ import java.util.List;
 //todo of -> builtFrom 빌더 사용
 public interface BoardPersistent {
 
+
     Exceptionable<Board, SaveDto> saveBoard(SaveDto dto);
 
     @Data
     @Slf4j
     @Builder
     class SaveDto {
+
         private final Long communityId;
         private final String boardName;
         private final BoardType boardType;
@@ -43,6 +45,7 @@ public interface BoardPersistent {
 
             return saveDto;
         }
+
     }
 
 
@@ -52,6 +55,7 @@ public interface BoardPersistent {
     @Slf4j
     @Builder
     class ListFindDto {
+
         private final Long communityId;
         private final Boolean visible;
         private final Boolean erase;
@@ -70,6 +74,7 @@ public interface BoardPersistent {
 
             return findListDto;
         }
+
     }
 
 
@@ -82,6 +87,7 @@ public interface BoardPersistent {
     @Slf4j
     @Builder
     class UpdateDto {
+
         private final Long id;
         private final String boardName;
         private final BoardType boardType;
@@ -106,5 +112,13 @@ public interface BoardPersistent {
 
             return dto;
         }
+
     }
+
+
+    Exceptionable<Boolean, Long> completelyDeleteBoard(Long boardId);
+
+
+    Exceptionable<Boolean, Long> softlyDeleteBoard(Long boardId);
+
 }

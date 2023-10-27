@@ -1,8 +1,8 @@
 package com.tubeplus.board_service.external.web.driving_adapter.board.vo;
 
-import com.tubeplus.board_service.domain.board.model.Board;
-import com.tubeplus.board_service.domain.board.model.BoardType;
-import com.tubeplus.board_service.domain.board.port.in.BoardUseCase;
+import com.tubeplus.board_service.board.model.Board;
+import com.tubeplus.board_service.board.model.BoardType;
+import com.tubeplus.board_service.board.port.in.BoardUseCase;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
