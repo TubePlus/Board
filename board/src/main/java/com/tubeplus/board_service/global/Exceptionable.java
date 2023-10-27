@@ -34,10 +34,9 @@ public class Exceptionable<RETURN_TYPE, PARAM_TYPE> {
 //        return new Exceptionable(task, param);
 //    }
 
-
     public class Executor {
 
-        public RETURN_TYPE thenThrowOf(ErrorCode errorCode) {
+        public RETURN_TYPE throwOf(ErrorCode errorCode) {
 
             try {
                 RETURN_TYPE result = exceptionableTask.apply(parameter);

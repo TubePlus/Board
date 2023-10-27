@@ -25,7 +25,6 @@ public class BoardPersistence implements BoardPersistent {
     private final BoardJpaDataRepository jpaDataRepo;
     private final BoardQDslRepositoryCustom queryDslRepo;
 
-
     @Override
     public Exceptionable<Board, SaveDto> saveBoard(SaveDto dto) {
         return new Exceptionable<>(this.save, dto);
@@ -42,10 +41,19 @@ public class BoardPersistence implements BoardPersistent {
     }
 
     @Override
+    public Exceptionable<Boolean, Long> completelyDeleteBoard(Long boardId) {
+        return new Exceptionable<>(this.deleteBoard, boardId);
+    }
+
+    @Override
     public Exceptionable<Boolean, UpdateDto> updateBoard(UpdateDto dto) {
         return new Exceptionable<>(this.updateBoard, dto);
     }
 
+    @Override
+    public Exceptionable<Boolean, Long> softlyDeleteBoard(Long boardId) {
+        return new Exceptionable<>(this.logic::softlyDeleteBoard, boardId);
+    }
 
     private final InternalLogic logic = new InternalLogic();
 
@@ -53,6 +61,8 @@ public class BoardPersistence implements BoardPersistent {
     public final Function<Long, Board> findBoard = this.logic::findBoard;
     public final Function<ListFindDto, List<Board>> findBoardList = this.logic::findBoardList;
     public final Function<UpdateDto, Boolean> updateBoard = this.logic::updateBoard;
+    private final Function<Long, Boolean> deleteBoard = this.logic::deleteBoard;
+
 
     //todo 접근제어자 private class InternalLogic.public Board functions로 바꿔서 시도
     public class InternalLogic {
@@ -101,7 +111,18 @@ public class BoardPersistence implements BoardPersistent {
             return queryDslRepo.updateBoard(dto);
         }
 
+        public Boolean deleteBoard(Long boardId) {
+
+            jpaDataRepo.deleteById(boardId);
+
+            return true;
+        }
+
+        public Boolean softlyDeleteBoard(Long boardId) {
+
+            queryDslRepo.softDeleteBoard(boardId);
+
+            return true;
+        }
     }
-
-
 }

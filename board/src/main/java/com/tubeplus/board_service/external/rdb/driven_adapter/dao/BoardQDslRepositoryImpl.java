@@ -7,18 +7,13 @@ import com.querydsl.jpa.impl.JPAUpdateClause;
 import com.tubeplus.board_service.domain.board.port.out.BoardPersistent;
 import com.tubeplus.board_service.external.rdb.entity.BoardEntity;
 import com.tubeplus.board_service.external.rdb.entity.QBoardEntity;
-import com.tubeplus.board_service.external.web.error.BusinessException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.lang.reflect.Field;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 
 @Slf4j
@@ -58,7 +53,6 @@ public class BoardQDslRepositoryImpl implements BoardQDslRepositoryCustom {
                 .where(commuId.and(accessStatus).and(nameLike))
                 .fetch();
     }
-
 
     @Override
     @Transactional
@@ -102,7 +96,22 @@ public class BoardQDslRepositoryImpl implements BoardQDslRepositoryCustom {
 
     }
 
+
+    @Transactional
+    @Override
+    public void softDeleteBoard(Long boardId) {
+
+        QBoardEntity board
+                = QBoardEntity.boardEntity;
+
+        queryFactory.update(board)
+                .where(board.id.eq(boardId))
+                .set(board.erase, true)
+                .execute();
+    }
+
 }
+
 //write query by reflection
 
 /*        Class<EntityPathBase> qEntityClazz = (Class<EntityPathBase>) board.getClass();
