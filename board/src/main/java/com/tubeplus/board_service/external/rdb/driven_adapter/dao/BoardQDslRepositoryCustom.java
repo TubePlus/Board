@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface BoardQDslRepositoryCustom {
 
-    public List<BoardEntity> findBoards(BoardPersistent.FindDto findDto);
+    public List<BoardEntity> findBoards(BoardPersistent.ListFindDto findDto);
 
+    Boolean updateBoard(BoardPersistent.UpdateDto dto);
 }

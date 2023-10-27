@@ -6,6 +6,7 @@ import com.tubeplus.board_service.domain.board.model.BoardType;
 import com.tubeplus.board_service.domain.board.port.out.BoardPersistent;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 
@@ -24,13 +25,13 @@ public class BoardEntity extends BaseEntity {
     @Column(nullable = false, name = "community_id")
     private Long communityId;
 
-    @Column(nullable = false, name = "board_name")
+    @Column(nullable = false, name = "board_name", length = 50)
     private String boardName;
 
-    @Column(nullable = false, name = "board_type")
+    @Column(nullable = false, name = "board_type", length = 3)
     private BoardType boardType;
 
-    @Column(nullable = false, name = "board_description")
+    @Column(nullable = false, name = "board_description", length = 100)
     private String boardDescription;
 
     @Column(nullable = false, name = "visible")
@@ -43,14 +44,14 @@ public class BoardEntity extends BaseEntity {
     private boolean erase;
 
 
-    public static BoardEntity builtOf(BoardPersistent.SaveDto data) {
+    public static BoardEntity builtOf(BoardPersistent.SaveDto saveDto) {
         return BoardEntity.builder()
-                .communityId(data.getCommunityId())
-                .boardName(data.getBoardName())
-                .boardType(data.getBoardType())
-                .boardDescription(data.getBoardDescription())
-                .visible(data.isVisible())
-                .limitDateTime(data.getLimitDateTime())
+                .communityId(saveDto.getCommunityId())
+                .boardName(saveDto.getBoardName())
+                .boardType(saveDto.getBoardType())
+                .boardDescription(saveDto.getBoardDescription())
+                .visible(saveDto.isVisible())
+                .limitDateTime(saveDto.getLimitDateTime())
                 .erase(false)
                 .build();
     }

@@ -5,12 +5,15 @@ import com.tubeplus.board_service.external.rdb.driven_adapter.dao.BoardQDslRepos
 import com.tubeplus.board_service.external.rdb.entity.BoardEntity;
 import com.tubeplus.board_service.domain.board.model.Board;
 import com.tubeplus.board_service.domain.board.port.out.BoardPersistent;
+import com.tubeplus.board_service.external.web.error.BusinessException;
+import com.tubeplus.board_service.external.web.error.ErrorCode;
 import com.tubeplus.board_service.global.Exceptionable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 
@@ -23,41 +26,82 @@ public class BoardPersistence implements BoardPersistent {
     private final BoardQDslRepositoryCustom queryDslRepo;
 
 
-    public final CoreLogic coreLogic = new CoreLogic();
-//todo corelogic의 함수 포인터 static final변수로 선언해 불필요한 동적할당 줄이기
-    public class CoreLogic {
+    @Override
+    public Exceptionable<Board, SaveDto> saveBoard(SaveDto dto) {
+        return new Exceptionable<>(this.save, dto);
+    }
+
+    @Override
+    public Exceptionable<Board, Long> findBoard(Long boardId) {
+        return new Exceptionable<>(this.findBoard, boardId);
+    }
+
+    @Override
+    public Exceptionable<List<Board>, ListFindDto> findBoardList(ListFindDto dto) {
+        return new Exceptionable<>(this.findBoardList, dto);
+    }
+
+    @Override
+    public Exceptionable<Boolean, UpdateDto> updateBoard(UpdateDto dto) {
+        return new Exceptionable<>(this.updateBoard, dto);
+    }
+
+
+    private final InternalLogic logic = new InternalLogic();
+
+    public final Function<SaveDto, Board> save = this.logic::saveBoard;
+    public final Function<Long, Board> findBoard = this.logic::findBoard;
+    public final Function<ListFindDto, List<Board>> findBoardList = this.logic::findBoardList;
+    public final Function<UpdateDto, Boolean> updateBoard = this.logic::updateBoard;
+
+    //todo 접근제어자 private class InternalLogic.public Board functions로 바꿔서 시도
+    public class InternalLogic {
 
         public Board saveBoard(SaveDto dto) {
             log.info(dto.toString());
+
             BoardEntity boardEntity = BoardEntity.builtOf(dto);
+            log.info(boardEntity.toString());
 
             BoardEntity savedEntity = jpaDataRepo.save(boardEntity);
+            log.info(savedEntity.toString());
 
             return savedEntity.buildBoard();
         }
 
-        public List<Board> findBoards(FindDto findDto) {
-            List<BoardEntity> foundBoardEntities = queryDslRepo.findBoards(findDto);
+        public Board findBoard(Long boardId) {
+
+            log.info(boardId.toString());
+
+            BoardEntity foundEntity = jpaDataRepo.findById(boardId)
+                    .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_RESOURCE));
+            log.info(foundEntity.toString());
+
+            return foundEntity.buildBoard();
+        }
+
+        public List<Board> findBoardList(ListFindDto dto) {
+            log.info(dto.toString());
+
+            List<BoardEntity> foundBoardEntities = queryDslRepo.findBoards(dto);
+            log.info(foundBoardEntities.toString());
 
             List<Board> foundBoards
-                    = foundBoardEntities.stream().map
-                            (BoardEntity::buildBoard)
-                    .collect(Collectors.toList());
+                    = foundBoardEntities.stream().map(
+                    BoardEntity::buildBoard
+            ).collect(Collectors.toList());
+            foundBoards.forEach(
+                    board -> log.info(board.toString())
+            );
 
             return foundBoards;
         }
+
+        public Boolean updateBoard(UpdateDto dto) {
+            return queryDslRepo.updateBoard(dto);
+        }
+
     }
 
-
-    @Override
-    public Exceptionable<Board, SaveDto> saveBoard(SaveDto dto) {
-
-        return new Exceptionable<>(this.coreLogic::saveBoard, dto);
-    }
-
-    @Override
-    public Exceptionable<List<Board>, FindDto> findBoards(FindDto findDto) {
-        return new Exceptionable<>(this.coreLogic::findBoards, findDto);
-    }
 
 }
