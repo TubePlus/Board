@@ -1,4 +1,4 @@
-package com.tubeplus.board_service.adapter.web.controller.posting.vo;
+package com.tubeplus.board_service.adapter.web.controller.posting.vo.posting;
 
 
 import com.tubeplus.board_service.posting.port.in.PostingUseCase;
@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Value
-public class MakePostingReqBody {
+public class ReqMakePostingBody {
 
     @NotNull
     @Min(1)

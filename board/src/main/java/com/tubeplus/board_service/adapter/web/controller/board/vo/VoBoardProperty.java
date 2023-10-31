@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Data
 @Slf4j
 @Builder
-public class BoardPropertyVo implements Serializable {
+public class VoBoardProperty implements Serializable {
 
     private final String boardName;
     private final BoardType boardType;
@@ -24,10 +24,10 @@ public class BoardPropertyVo implements Serializable {
     private final Boolean erase;
 
 
-    public static BoardPropertyVo builtFrom(Board board) {
+    public static VoBoardProperty builtFrom(Board board) {
         log.info(board.toString());
 
-        BoardPropertyVo boardProperty = BoardPropertyVo.builder()
+        VoBoardProperty boardProperty = VoBoardProperty.builder()
                 .boardName(board.getBoardName())
                 .boardType(board.getBoardType())
                 .boardDescription(board.getBoardDescription())

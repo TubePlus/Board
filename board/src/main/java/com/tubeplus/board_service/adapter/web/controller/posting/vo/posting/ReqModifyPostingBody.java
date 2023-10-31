@@ -1,15 +1,14 @@
-package com.tubeplus.board_service.adapter.web.controller.posting.vo;
+package com.tubeplus.board_service.adapter.web.controller.posting.vo.posting;
 
 
 import com.tubeplus.board_service.posting.port.in.PostingUseCase;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Value;
 
-import java.util.UUID;
 
 
 @Value
-public class ModifyPostingReqBody {
+public class ReqModifyPostingBody {
 
     @NotBlank
     private final String userUuid;

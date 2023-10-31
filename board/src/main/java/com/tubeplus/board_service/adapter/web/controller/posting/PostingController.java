@@ -2,7 +2,7 @@ package com.tubeplus.board_service.adapter.web.controller.posting;
 
 import com.tubeplus.board_service.adapter.web.common.ApiResponse;
 import com.tubeplus.board_service.adapter.web.common.ApiTag;
-import com.tubeplus.board_service.adapter.web.controller.posting.vo.*;
+import com.tubeplus.board_service.adapter.web.controller.posting.vo.posting.*;
 import com.tubeplus.board_service.adapter.web.error.BusinessException;
 import com.tubeplus.board_service.adapter.web.error.ErrorCode;
 import com.tubeplus.board_service.posting.domain.Posting;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 
 @Validated
-@ApiTag(path = "/api/v1/postings", name = "PostingView API", description = "게시물 CRUD API")
+@ApiTag(path = "/api/v1/postings", name = "Posting API", description = "게시물 CRUD API")
 public class PostingController {
 
 
@@ -35,7 +35,7 @@ public class PostingController {
     @PostMapping("")
     public ApiResponse<Long> makePosting
             (
-                    @Valid @RequestBody MakePostingReqBody reqBody
+                    @Valid @RequestBody ReqMakePostingBody reqBody
             ) {
 
         PostingUseCase
@@ -52,7 +52,7 @@ public class PostingController {
 
     @Operation(summary = "게시판내 게시물 목록 조회", description = "특정 id의 게시판내 게시물들 제목, 고정글 여부등의 간단한 정보 목록 조회")
     @GetMapping("")
-    public ApiResponse<List<PostingTitleVo>> readPostingTitles
+    public ApiResponse<List<VoPostingTitle>> readPostingTitles
             (
                     @RequestParam("board_id") @Min(1) long boardId,
                     @RequestParam("page_type") PostingPageType pageType, //todo 나중에 필요한거 더 추가하기
@@ -73,10 +73,10 @@ public class PostingController {
         }
 
 
-        List<PostingTitleVo> titleVoList
+        List<VoPostingTitle> titleVoList
                 = titles.stream()
                 .map(
-                        PostingTitleVo::builtFrom
+                        VoPostingTitle::builtFrom
                 ).collect(Collectors.toList());
 
         return ApiResponse.ofSuccess(titleVoList);
@@ -99,9 +99,9 @@ public class PostingController {
 
     @Operation(summary = "게시물 수정", description = "게시물 id로 지정된 게시물을 상단 고정된 상태로 저장")
     @PutMapping("/{postingId}")
-    public ApiResponse<PostingVo> modifyPosting
+    public ApiResponse<VoPosting> modifyPosting
             (
-                    @Valid @RequestBody ModifyPostingReqBody reqBody
+                    @Valid @RequestBody ReqModifyPostingBody reqBody
             ) {
 
         PostingUseCase
@@ -115,7 +115,7 @@ public class PostingController {
 
         return ApiResponse.ofSuccess
                 (
-                        PostingVo.builtFrom(modifiedPosting)
+                        VoPosting.builtFrom(modifiedPosting)
                 );
 
     }
@@ -149,15 +149,6 @@ public class PostingController {
 
 
 
-    //todo commentController 따로 분리
-//
-//    @PostMapping("/{postingId}/votes")
-//    public ApiResponse votePosting
-//            (
-//                    @Valid @RequestBody VoteReqBody reqBody
-//            ) {
-//
-//    }
 ////    @Operation(summary = "댓글/대댓글 작성", description = "대댓글일경우 parentId를 입력, 원 댓글일 경우 parentId에 null")
 //    @PostMapping("/{postingId}")
 //    public ApiResponse softDeletePosting

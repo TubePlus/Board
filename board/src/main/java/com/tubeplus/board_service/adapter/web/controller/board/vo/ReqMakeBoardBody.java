@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 
 @Slf4j
 @Value
-public class MakeBoardReqBody {
+public class ReqMakeBoardBody {
 
     @Min(0)
     private long communityId;

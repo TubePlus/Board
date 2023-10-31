@@ -1,4 +1,4 @@
-package com.tubeplus.board_service.adapter.web.controller.posting.vo;
+package com.tubeplus.board_service.adapter.web.controller.posting.vo.posting;
 
 import com.tubeplus.board_service.posting.domain.Posting;
 import lombok.Builder;
@@ -7,7 +7,7 @@ import lombok.Value;
 
 @Value
 @Builder
-public class PostingVo {
+public class VoPosting {
 
     private final Long id;
     private final String authorUuid;
@@ -19,9 +19,9 @@ public class PostingVo {
     private final boolean erase;
 
 
-    public static PostingVo builtFrom(Posting posting) {
+    public static VoPosting builtFrom(Posting posting) {
 
-        return PostingVo.builder()
+        return VoPosting.builder()
                 .id(posting.getId())
                 .authorUuid(posting.getAuthorUuid())
                 .voteCounts(posting.getVoteCount())

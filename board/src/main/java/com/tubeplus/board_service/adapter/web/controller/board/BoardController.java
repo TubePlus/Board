@@ -1,11 +1,11 @@
 package com.tubeplus.board_service.adapter.web.controller.board;
 
-import com.tubeplus.board_service.adapter.web.controller.board.vo.BoardPropertyVo;
+import com.tubeplus.board_service.adapter.web.controller.board.vo.VoBoardProperty;
 import com.tubeplus.board_service.adapter.web.error.BusinessException;
 import com.tubeplus.board_service.adapter.web.error.ErrorCode;
 import com.tubeplus.board_service.board.model.Board;
 import com.tubeplus.board_service.board.port.in.BoardUseCase;
-import com.tubeplus.board_service.adapter.web.controller.board.vo.MakeBoardReqBody;
+import com.tubeplus.board_service.adapter.web.controller.board.vo.ReqMakeBoardBody;
 import com.tubeplus.board_service.adapter.web.common.ApiResponse;
 import com.tubeplus.board_service.adapter.web.common.ApiTag;
 import com.tubeplus.board_service.adapter.web.controller.board.vo.BoardSearchType;
@@ -36,7 +36,7 @@ public class BoardController {
     @PostMapping()
     public ApiResponse<Long> makeBoard
             (
-                    @Valid @RequestBody MakeBoardReqBody reqBody
+                    @Valid @RequestBody ReqMakeBoardBody reqBody
             ) {
         BoardUseCase.MakeBoardForm form = reqBody.buildForm();
         log.info(form.toString());
@@ -78,7 +78,7 @@ public class BoardController {
 
     @Operation(summary = "게시판 속성 조회", description = "특정 게시판 속성을 id로 조회, 게시판 설정페이지 표시에 사용")
     @GetMapping("/{boardId}")
-    public ApiResponse<BoardPropertyVo> readBoardProperty
+    public ApiResponse<VoBoardProperty> readBoardProperty
             (
                     @PathVariable("boardId") Long boardId
             ) {
@@ -87,8 +87,8 @@ public class BoardController {
         Board foundBoard
                 = boardService.findBoard(boardId);
 
-        BoardPropertyVo boardProperty
-                = BoardPropertyVo.builtFrom(foundBoard);
+        VoBoardProperty boardProperty
+                = VoBoardProperty.builtFrom(foundBoard);
 
         return ApiResponse.ofSuccess(boardProperty);
     }
@@ -99,7 +99,7 @@ public class BoardController {
     public ApiResponse updateBoardProperty
             (
                     @PathVariable("boardId") Long boardId,
-                    @RequestBody BoardPropertyVo updateReqBody
+                    @RequestBody VoBoardProperty updateReqBody
             ) {
         log.info(boardId.toString());
 //        if (haveNoUpdate(updateReqBody)) {//todo 디버깅
@@ -115,7 +115,7 @@ public class BoardController {
         return ApiResponse.ofSuccess(null);
     }
 
-    private boolean haveNoUpdate(BoardPropertyVo updateReq) {
+    private boolean haveNoUpdate(VoBoardProperty updateReq) {
         //todo 생각해보니 Field.get하면 접근제어자 문제 발생
         // -> getter사용하는 방향으로 수정하면 작동할지도?
 

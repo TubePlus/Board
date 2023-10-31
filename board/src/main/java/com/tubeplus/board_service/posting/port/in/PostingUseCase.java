@@ -2,6 +2,7 @@ package com.tubeplus.board_service.posting.port.in;
 
 import com.tubeplus.board_service.posting.domain.Posting;
 import com.tubeplus.board_service.posting.domain.PostingView;
+import com.tubeplus.board_service.posting.domain.PostingVote;
 import lombok.Builder;
 import lombok.Data;
 
@@ -26,7 +27,6 @@ public interface PostingUseCase {
     @Data
     @Builder
     class PageDto {
-
     }
 
     List<PostingTitle> feedPostingTitles(Long boardId, FeedDto dto);
@@ -34,7 +34,6 @@ public interface PostingUseCase {
     @Data
     @Builder
     class FeedDto {
-
     }
 
 
@@ -43,12 +42,10 @@ public interface PostingUseCase {
     @Data
     @Builder
     class MakePostingForm {
-
         private final Long boardId;
         private final String authorUuid;
         private final String title;
         private final String contents;
-
     }
 
 
@@ -68,4 +65,14 @@ public interface PostingUseCase {
 
     void softDeletePosting(long id);
 
+
+    //vote
+
+    long votePosting(PostingVote vote);
+
+
+    long modifyPostingVote(PostingVote vote);
+
+
+    long cancelVote();
 }

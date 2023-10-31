@@ -1,6 +1,7 @@
-package com.tubeplus.board_service.adapter.web.controller.posting.vo;
+package com.tubeplus.board_service.adapter.web.controller.posting.vo.posting;
 
 import org.springframework.core.convert.converter.Converter;
+
 
 public enum PostingPageType {
 

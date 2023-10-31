@@ -1,4 +1,4 @@
-package com.tubeplus.board_service.adapter.web.controller.posting.vo;
+package com.tubeplus.board_service.adapter.web.controller.posting.vo.posting;
 
 import com.tubeplus.board_service.posting.port.in.PostingUseCase;
 import lombok.Builder;
@@ -9,15 +9,15 @@ import java.io.Serializable;
 
 @Data
 @Builder
-public class PostingTitleVo implements Serializable {
+public class VoPostingTitle implements Serializable {
     private final long postingId;
     private final boolean pin;
     private final String title;
 
 
-    public static PostingTitleVo builtFrom(PostingUseCase.PostingTitle title) {
+    public static VoPostingTitle builtFrom(PostingUseCase.PostingTitle title) {
 
-        return PostingTitleVo.builder()
+        return VoPostingTitle.builder()
                 .postingId(title.getPostingId())
                 .pin(title.isPin())
                 .title(title.getTitle())
