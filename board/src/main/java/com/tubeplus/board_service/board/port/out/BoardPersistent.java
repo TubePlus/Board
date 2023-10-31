@@ -30,7 +30,7 @@ public interface BoardPersistent {
         private final boolean visible;
         private final LocalDateTime limitDateTime;
 
-        public static SaveDto of(BoardUseCase.FormToMakeBoard form) {
+        public static SaveDto of(BoardUseCase.MakeBoardForm form) {
             log.info(form.toString());
 
             SaveDto saveDto = new SaveDto(

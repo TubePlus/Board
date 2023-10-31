@@ -4,8 +4,8 @@ import com.tubeplus.board_service.board.model.Board;
 import com.tubeplus.board_service.board.port.in.BoardUseCase;
 import com.tubeplus.board_service.board.port.out.BoardPersistent;
 
-import com.tubeplus.board_service.external.web.error.BusinessException;
-import com.tubeplus.board_service.external.web.error.ErrorCode;
+import com.tubeplus.board_service.adapter.web.error.BusinessException;
+import com.tubeplus.board_service.adapter.web.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,7 +23,7 @@ public class BoardService implements BoardUseCase {
     private final BoardPersistent boardPersistence;
 
     @Override
-    public Board makeBoard(FormToMakeBoard formToMake) {
+    public Board makeBoard(MakeBoardForm formToMake) {
 
         BoardPersistent.SaveDto saveDto
                 = BoardPersistent.SaveDto.of(formToMake);
