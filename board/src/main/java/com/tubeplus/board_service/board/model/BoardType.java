@@ -17,8 +17,6 @@ public enum BoardType implements BaseEnum<String, String> {
 
     @Override
     public String getCode() {
-        log.info("hihi");
-
         return this.code;
     }
 
