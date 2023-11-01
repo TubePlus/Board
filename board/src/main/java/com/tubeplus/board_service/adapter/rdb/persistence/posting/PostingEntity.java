@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 
+//todo 수정된 erd 반영하기
 @Entity
 @Table(name = "posting")
 @Builder

@@ -1,7 +1,8 @@
 package com.tubeplus.board_service.posting.port.in;
 
+import com.tubeplus.board_service.posting.domain.CommentViewInfo;
 import com.tubeplus.board_service.posting.domain.Posting;
-import com.tubeplus.board_service.posting.domain.PostingView;
+import com.tubeplus.board_service.posting.domain.PostingViewInfo;
 import com.tubeplus.board_service.posting.domain.PostingVote;
 import lombok.Builder;
 import lombok.Data;
@@ -11,7 +12,10 @@ import java.util.List;
 public interface PostingUseCase {
 
 
-    PostingView viewPosting(long id);
+    PostingViewInfo viewPosting(long id);
+
+
+    void deleteComment(long idToDelete);
 
 
     @Data
@@ -67,7 +71,6 @@ public interface PostingUseCase {
 
 
     //vote
-
     long votePosting(PostingVote vote);
 
 
@@ -75,4 +78,30 @@ public interface PostingUseCase {
 
 
     long cancelVote();
+
+
+    //comment
+    long writeComment(PostCommentForm form);
+
+    @Data
+    @Builder
+    class PostCommentForm {
+        private final Long postingId;
+        private final Long parentId;
+        private final String commenterUuid;
+        private final String contents;
+    }
+
+
+    CommentViewInfo readComment(ReadCommentDto dto);
+
+    @Data
+    @Builder
+    public static class ReadCommentDto {
+        private final long postingId;
+        private final Long parentId;
+    }
+
+
+    CommentViewInfo modifyComment(Long idToModify, String contents);
 }

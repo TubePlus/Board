@@ -6,7 +6,7 @@ import com.tubeplus.board_service.adapter.web.controller.posting.vo.posting.*;
 import com.tubeplus.board_service.adapter.web.error.BusinessException;
 import com.tubeplus.board_service.adapter.web.error.ErrorCode;
 import com.tubeplus.board_service.posting.domain.Posting;
-import com.tubeplus.board_service.posting.domain.PostingView;
+import com.tubeplus.board_service.posting.domain.PostingViewInfo;
 import com.tubeplus.board_service.posting.port.in.PostingUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -85,12 +85,12 @@ public class PostingController {
 
     @Operation(summary = "id로 게시물 읽기", description = "게시물 id로 개별 게시물 조회 및 읽기 처리")
     @GetMapping("/{postingId}")
-    public ApiResponse<PostingView> readPosting
+    public ApiResponse<PostingViewInfo> readPosting
             (
                     @PathVariable("postingId") @Min(1) long id
             ) {
 
-        PostingView postingView
+        PostingViewInfo postingView
                 = postingService.viewPosting(id);
 
         return ApiResponse.ofSuccess(postingView);
@@ -148,11 +148,4 @@ public class PostingController {
     }
 
 
-
-////    @Operation(summary = "댓글/대댓글 작성", description = "대댓글일경우 parentId를 입력, 원 댓글일 경우 parentId에 null")
-//    @PostMapping("/{postingId}")
-//    public ApiResponse softDeletePosting
-//            (
-//                    @PathVariable
-//            )
 }
