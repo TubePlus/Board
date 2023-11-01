@@ -1,6 +1,6 @@
 package com.tubeplus.board_service.adapter.rdb.converter;
 
-import com.tubeplus.board_service.board.model.BoardType;
+import com.tubeplus.board_service.board.domain.BoardType;
 import jakarta.persistence.Converter;
 
 

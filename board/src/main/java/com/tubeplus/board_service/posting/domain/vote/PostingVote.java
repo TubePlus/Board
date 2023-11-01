@@ -1,4 +1,4 @@
-package com.tubeplus.board_service.posting.domain;
+package com.tubeplus.board_service.posting.domain.vote;
 
 import lombok.Builder;
 import lombok.Data;

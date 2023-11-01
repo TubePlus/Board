@@ -2,7 +2,7 @@ package com.tubeplus.board_service.adapter.rdb.persistence.board;
 
 import com.tubeplus.board_service.adapter.rdb.persistence.board.dao.BoardJpaDataRepository;
 import com.tubeplus.board_service.adapter.rdb.persistence.board.dao.BoardQDslRepositoryCustom;
-import com.tubeplus.board_service.board.model.Board;
+import com.tubeplus.board_service.board.domain.Board;
 import com.tubeplus.board_service.board.port.out.BoardPersistent;
 import com.tubeplus.board_service.adapter.web.error.BusinessException;
 import com.tubeplus.board_service.adapter.web.error.ErrorCode;

@@ -3,7 +3,7 @@ package com.tubeplus.board_service.adapter.web.controller.board;
 import com.tubeplus.board_service.adapter.web.controller.board.vo.VoBoardProperty;
 import com.tubeplus.board_service.adapter.web.error.BusinessException;
 import com.tubeplus.board_service.adapter.web.error.ErrorCode;
-import com.tubeplus.board_service.board.model.Board;
+import com.tubeplus.board_service.board.domain.Board;
 import com.tubeplus.board_service.board.port.in.BoardUseCase;
 import com.tubeplus.board_service.adapter.web.controller.board.vo.ReqMakeBoardBody;
 import com.tubeplus.board_service.adapter.web.common.ApiResponse;

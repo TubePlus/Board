@@ -1,6 +1,6 @@
 package com.tubeplus.board_service.board.service;
 
-import com.tubeplus.board_service.board.model.Board;
+import com.tubeplus.board_service.board.domain.Board;
 import com.tubeplus.board_service.board.port.in.BoardUseCase;
 import com.tubeplus.board_service.board.port.out.BoardPersistent;
 

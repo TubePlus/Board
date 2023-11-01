@@ -1,4 +1,4 @@
-package com.tubeplus.board_service.posting.domain;
+package com.tubeplus.board_service.posting.domain.vote;
 
 import com.tubeplus.board_service.global.base.BaseEnum;
 import lombok.AllArgsConstructor;

@@ -1,4 +1,4 @@
-package com.tubeplus.board_service.board.model;
+package com.tubeplus.board_service.board.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

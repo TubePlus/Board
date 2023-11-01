@@ -1,8 +1,8 @@
 package com.tubeplus.board_service.adapter.rdb.persistence.board;
 
 
-import com.tubeplus.board_service.board.model.Board;
-import com.tubeplus.board_service.board.model.BoardType;
+import com.tubeplus.board_service.board.domain.Board;
+import com.tubeplus.board_service.board.domain.BoardType;
 import com.tubeplus.board_service.board.port.out.BoardPersistent;
 import com.tubeplus.board_service.adapter.rdb.config.BaseEntity;
 import jakarta.persistence.*;

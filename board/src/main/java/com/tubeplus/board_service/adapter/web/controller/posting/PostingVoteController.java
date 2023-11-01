@@ -4,7 +4,7 @@ package com.tubeplus.board_service.adapter.web.controller.posting;
 import com.tubeplus.board_service.adapter.web.common.ApiResponse;
 import com.tubeplus.board_service.adapter.web.common.ApiTag;
 import com.tubeplus.board_service.adapter.web.controller.posting.vo.vote.VoPostingVote;
-import com.tubeplus.board_service.posting.domain.PostingVote;
+import com.tubeplus.board_service.posting.domain.vote.PostingVote;
 import com.tubeplus.board_service.posting.port.in.PostingUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;

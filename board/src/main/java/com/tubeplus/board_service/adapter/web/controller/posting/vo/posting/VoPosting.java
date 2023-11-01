@@ -1,6 +1,6 @@
 package com.tubeplus.board_service.adapter.web.controller.posting.vo.posting;
 
-import com.tubeplus.board_service.posting.domain.Posting;
+import com.tubeplus.board_service.posting.domain.posting.Posting;
 import lombok.Builder;
 import lombok.Value;
 

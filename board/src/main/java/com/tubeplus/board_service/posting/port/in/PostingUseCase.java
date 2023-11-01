@@ -1,9 +1,9 @@
 package com.tubeplus.board_service.posting.port.in;
 
-import com.tubeplus.board_service.posting.domain.CommentViewInfo;
-import com.tubeplus.board_service.posting.domain.Posting;
-import com.tubeplus.board_service.posting.domain.PostingViewInfo;
-import com.tubeplus.board_service.posting.domain.PostingVote;
+import com.tubeplus.board_service.posting.domain.comment.CommentViewInfo;
+import com.tubeplus.board_service.posting.domain.posting.Posting;
+import com.tubeplus.board_service.posting.domain.posting.PostingViewInfo;
+import com.tubeplus.board_service.posting.domain.vote.PostingVote;
 import lombok.Builder;
 import lombok.Data;
 

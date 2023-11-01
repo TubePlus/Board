@@ -1,7 +1,7 @@
 package com.tubeplus.board_service.board.port.out;
 
-import com.tubeplus.board_service.board.model.Board;
-import com.tubeplus.board_service.board.model.BoardType;
+import com.tubeplus.board_service.board.domain.Board;
+import com.tubeplus.board_service.board.domain.BoardType;
 import com.tubeplus.board_service.board.port.in.BoardUseCase;
 import com.tubeplus.board_service.global.Exceptionable;
 import lombok.Builder;

@@ -1,7 +1,7 @@
 package com.tubeplus.board_service.board.port.in;
 
-import com.tubeplus.board_service.board.model.Board;
-import com.tubeplus.board_service.board.model.BoardType;
+import com.tubeplus.board_service.board.domain.Board;
+import com.tubeplus.board_service.board.domain.BoardType;
 import lombok.*;
 
 import java.time.LocalDateTime;

@@ -5,7 +5,7 @@ import com.tubeplus.board_service.adapter.web.common.ApiResponse;
 import com.tubeplus.board_service.adapter.web.common.ApiTag;
 import com.tubeplus.board_service.adapter.web.controller.posting.vo.comment.ReqModifyCommentBody;
 import com.tubeplus.board_service.adapter.web.controller.posting.vo.comment.ReqPostCommentBody;
-import com.tubeplus.board_service.posting.domain.CommentViewInfo;
+import com.tubeplus.board_service.posting.domain.comment.CommentViewInfo;
 import com.tubeplus.board_service.posting.port.in.PostingUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
