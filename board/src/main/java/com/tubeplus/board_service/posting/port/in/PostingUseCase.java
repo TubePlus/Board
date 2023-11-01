@@ -1,39 +1,40 @@
 package com.tubeplus.board_service.posting.port.in;
 
-import com.tubeplus.board_service.posting.domain.comment.CommentViewInfo;
 import com.tubeplus.board_service.posting.domain.posting.Posting;
 import com.tubeplus.board_service.posting.domain.posting.PostingViewInfo;
-import com.tubeplus.board_service.posting.domain.vote.PostingVote;
 import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
 
+
 public interface PostingUseCase {
 
 
-    PostingViewInfo viewPosting(long id);
+    PostingViewInfo readPosting(long postingId);
 
 
-    void deleteComment(long idToDelete);
+    List<PostingTitleView> readMyPostingTitles(String userUuid);
 
 
     @Data
     @Builder
-    class PostingTitle {
+    class PostingTitleView {
         private final Long postingId;
         private final String title;
         private final boolean pin;
+        private final boolean withImage;
+        private final long voteCount;
     }
 
-    List<PostingTitle> pagePostingTitles(Long boardId, PageDto dto);
+    List<PostingTitleView> pagePostingTitles(Long boardId, PageDto dto);
 
     @Data
     @Builder
     class PageDto {
     }
 
-    List<PostingTitle> feedPostingTitles(Long boardId, FeedDto dto);
+    List<PostingTitleView> feedPostingTitles(Long boardId, FeedDto dto);
 
     @Data
     @Builder
@@ -67,41 +68,6 @@ public interface PostingUseCase {
     }
 
 
-    void softDeletePosting(long id);
+    void softDeletePosting(long postingId);
 
-
-    //vote
-    long votePosting(PostingVote vote);
-
-
-    long modifyPostingVote(PostingVote vote);
-
-
-    long cancelVote();
-
-
-    //comment
-    long writeComment(PostCommentForm form);
-
-    @Data
-    @Builder
-    class PostCommentForm {
-        private final Long postingId;
-        private final Long parentId;
-        private final String commenterUuid;
-        private final String contents;
-    }
-
-
-    CommentViewInfo readComment(ReadCommentDto dto);
-
-    @Data
-    @Builder
-    public static class ReadCommentDto {
-        private final long postingId;
-        private final Long parentId;
-    }
-
-
-    CommentViewInfo modifyComment(Long idToModify, String contents);
 }

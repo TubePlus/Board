@@ -26,6 +26,7 @@ public class VoPostingVote {
 
 
     public PostingVote buildVote() {
+
         return PostingVote
                 .builder()
                 .postingId(postingId)

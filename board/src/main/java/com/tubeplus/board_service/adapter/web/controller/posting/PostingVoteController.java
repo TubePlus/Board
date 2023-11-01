@@ -5,7 +5,7 @@ import com.tubeplus.board_service.adapter.web.common.ApiResponse;
 import com.tubeplus.board_service.adapter.web.common.ApiTag;
 import com.tubeplus.board_service.adapter.web.controller.posting.vo.vote.VoPostingVote;
 import com.tubeplus.board_service.posting.domain.vote.PostingVote;
-import com.tubeplus.board_service.posting.port.in.PostingUseCase;
+import com.tubeplus.board_service.posting.port.in.PostingServiceUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class PostingVoteController {
 
 
-    private final PostingUseCase postingService;
+    private final PostingServiceUseCase postingService;
 
 
     @Operation(summary = "게시물 투표 api")

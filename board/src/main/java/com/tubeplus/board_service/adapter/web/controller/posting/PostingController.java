@@ -7,17 +7,18 @@ import com.tubeplus.board_service.adapter.web.error.BusinessException;
 import com.tubeplus.board_service.adapter.web.error.ErrorCode;
 import com.tubeplus.board_service.posting.domain.posting.Posting;
 import com.tubeplus.board_service.posting.domain.posting.PostingViewInfo;
-import com.tubeplus.board_service.posting.port.in.PostingUseCase;
+import com.tubeplus.board_service.posting.port.in.PostingServiceUseCase;
+import com.tubeplus.board_service.posting.port.in.PostingUseCase.PostingTitleView;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -28,17 +29,18 @@ import java.util.stream.Collectors;
 public class PostingController {
 
 
-    private final PostingUseCase postingService;
+    private final PostingServiceUseCase postingService;
 
 
     @Operation(summary = "게시물 작성", description = "게시물 작성 api, 작성된 게시물의 id 반환")
-    @PostMapping("")
+    @PostMapping
     public ApiResponse<Long> makePosting
             (
-                    @Valid @RequestBody ReqMakePostingBody reqBody
+                    @Valid @RequestBody
+                            ReqMakePostingBody reqBody
             ) {
 
-        PostingUseCase
+        PostingServiceUseCase
                 .MakePostingForm form
                 = reqBody.buildForm();
 
@@ -51,35 +53,48 @@ public class PostingController {
 
 
     @Operation(summary = "게시판내 게시물 목록 조회", description = "특정 id의 게시판내 게시물들 제목, 고정글 여부등의 간단한 정보 목록 조회")
-    @GetMapping("")
-    public ApiResponse<List<VoPostingTitle>> readPostingTitles
-            (
-                    @RequestParam("board_id") @Min(1) long boardId,
-                    @RequestParam("page_type") PostingPageType pageType, //todo 나중에 필요한거 더 추가하기
-                    @RequestParam(name = "pin", required = false) Boolean pin,
-                    @RequestParam(value = "title_like", required = false) String titleLike
-            ) {
+    @GetMapping
+    public ApiResponse<List<PostingTitleView>> readPostingTitles//todo 요구사항 반영해 수정
+    (
+            @RequestParam("board_id")
+            @Min(1) long boardId,
 
+            @RequestParam("page_type")
+                    PostingPageType pageType, //todo 나중에 필요한거 더 추가하기
 
-        List<PostingUseCase.PostingTitle> titles;
+            @RequestParam(name = "pin", required = false)
+                    Boolean pin,
+
+            @RequestParam(value = "title_like", required = false)
+                    String titleLike
+    ) {
+
+        List<PostingTitleView> titleViews;
         switch (pageType) {
 
-            case FEED -> titles = postingService.feedPostingTitles(boardId, null);//todo null없애기
+            case FEED -> titleViews = postingService.feedPostingTitles(boardId, null);//todo null없애기
 
-            case LIST -> titles = postingService.pagePostingTitles(boardId, null);
+            case LIST -> titleViews = postingService.pagePostingTitles(boardId, null);
 
             default -> throw new BusinessException(ErrorCode.BAD_REQUEST);
-
         }
 
+        return ApiResponse.ofSuccess(titleViews);
+    }
 
-        List<VoPostingTitle> titleVoList
-                = titles.stream()
-                .map(
-                        VoPostingTitle::builtFrom
-                ).collect(Collectors.toList());
 
-        return ApiResponse.ofSuccess(titleVoList);
+    @Operation(summary = "내 게시물 title 목록 읽어오기")
+    @GetMapping("/mine")
+    public ApiResponse<List<PostingTitleView>> readMyPostingTitles
+            (
+                    @RequestParam("userUuid")
+                    @NotBlank String userUuid
+            ) {
+
+        List<PostingTitleView> titleViews
+                = postingService.readMyPostingTitles(userUuid);
+
+        return ApiResponse.ofSuccess(titleViews);
     }
 
 
@@ -87,13 +102,14 @@ public class PostingController {
     @GetMapping("/{postingId}")
     public ApiResponse<PostingViewInfo> readPosting
             (
-                    @PathVariable("postingId") @Min(1) long id
+                    @PathVariable("postingId")
+                    @Min(1) long id
             ) {
 
-        PostingViewInfo postingView
-                = postingService.viewPosting(id);
+        PostingViewInfo viewInfo
+                = postingService.readPosting(id);
 
-        return ApiResponse.ofSuccess(postingView);
+        return ApiResponse.ofSuccess(viewInfo);
     }
 
 
@@ -101,10 +117,11 @@ public class PostingController {
     @PutMapping("/{postingId}")
     public ApiResponse<VoPosting> modifyPosting
             (
-                    @Valid @RequestBody ReqModifyPostingBody reqBody
+                    @Valid @RequestBody
+                            ReqModifyPostingBody reqBody
             ) {
 
-        PostingUseCase
+        PostingServiceUseCase
                 .ModifyPostingForm form
                 = reqBody.buildForm();
 
@@ -125,7 +142,8 @@ public class PostingController {
     @PostMapping("/{postingId}/pinned")
     public ApiResponse pinPosting
             (
-                    @PathVariable("postingId") @Min(1) long id
+                    @PathVariable("postingId")
+                    @Min(1) long id
             ) {
 
         postingService.pinPosting(id);

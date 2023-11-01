@@ -6,7 +6,7 @@ import com.tubeplus.board_service.adapter.web.common.ApiTag;
 import com.tubeplus.board_service.adapter.web.controller.posting.vo.comment.ReqModifyCommentBody;
 import com.tubeplus.board_service.adapter.web.controller.posting.vo.comment.ReqPostCommentBody;
 import com.tubeplus.board_service.posting.domain.comment.CommentViewInfo;
-import com.tubeplus.board_service.posting.port.in.PostingUseCase;
+import com.tubeplus.board_service.posting.port.in.PostingServiceUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @ApiTag(path = "/api/v1/comments", name = "Posting Comment API", description = "게시물 댓글 관련 CRUD API")
 public class CommentController {
 
-    private final PostingUseCase postingService;
+    private final PostingServiceUseCase postingService;
 
 
     @Operation(summary = "댓글/대댓글 작성",
@@ -35,7 +35,7 @@ public class CommentController {
                             ReqPostCommentBody reqBody
             ) {
 
-        PostingUseCase
+        PostingServiceUseCase
                 .PostCommentForm form
                 = reqBody.buildForm();
 
@@ -57,9 +57,9 @@ public class CommentController {
                             Long parentId
             ) {
 
-        PostingUseCase
+        PostingServiceUseCase
                 .ReadCommentDto dto
-                = PostingUseCase.ReadCommentDto
+                = PostingServiceUseCase.ReadCommentDto
                 .builder()
                 .postingId(postingId)
                 .parentId(parentId)
