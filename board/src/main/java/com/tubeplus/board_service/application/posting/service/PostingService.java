@@ -32,7 +32,7 @@ public class PostingService implements PostingUseCase {
         Optional<Posting> found
                 = postingPersistence.findPosting(postingId)
                 .ifExceptioned
-                .throwOf(ErrorCode.FIND_ENTITY_FAILED);
+                .thenThrow(ErrorCode.FIND_ENTITY_FAILED);
 
         Posting foundPosting
                 = found.orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_RESOURCE));
@@ -65,14 +65,14 @@ public class PostingService implements PostingUseCase {
     }
 
     @Override
-    public void pinPosting(long id) {
+    public void changePinState(long postingId) {
 
-        Boolean pinned
-                = postingPersistence.pinPosting(id)
+        Boolean pinChanged
+                = postingPersistence.changePinState(postingId)
                 .ifExceptioned
-                .throwOf(ErrorCode.UPDATE_ENTITY_FAILED);
+                .thenThrow(ErrorCode.UPDATE_ENTITY_FAILED);
 
-        if (!pinned)
+        if (!pinChanged)
             throw new BusinessException(ErrorCode.UPDATE_ENTITY_FAILED);
 
     }
@@ -88,7 +88,7 @@ public class PostingService implements PostingUseCase {
         Boolean isDeleted
                 = postingPersistence.softDeletePosting(postingId)
                 .ifExceptioned
-                .throwOf(ErrorCode.SOFT_DELETE_ENTITY_FAILED);
+                .thenThrow(ErrorCode.SOFT_DELETE_ENTITY_FAILED);
 
         if (!isDeleted)
             throw new BusinessException(ErrorCode.DELETE_ENTITY_FAILED);

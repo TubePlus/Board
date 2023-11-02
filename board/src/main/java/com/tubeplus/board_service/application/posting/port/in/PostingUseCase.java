@@ -56,7 +56,7 @@ public interface PostingUseCase {
     }
 
 
-    void pinPosting(long id);
+    void changePinState(long postingId);
 
 
     Posting modifyPosting(ModifyPostingForm form);//todo 작성자 권한체크 하기

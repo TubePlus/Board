@@ -35,21 +35,18 @@ public class PostingQDslRepositoryImpl implements PostingQDslRepositoryCustom {
 
     @Override
     @Transactional
-    public long updatePostingPinned(Long postingId) {
+    public long changePinState(Long postingId) {
 
         QPostingEntity posting
                 = QPostingEntity.postingEntity;
 
-        JPAUpdateClause set = queryFactory.update(posting)
-                .where(posting.id.eq(postingId))
-                .set(posting.pin, true);
+        long updatedColumns
+                =
+                queryFactory.update(posting)
+                        .where(posting.id.eq(postingId))
+                        .set(posting.pin, posting.pin.not())
+                        .execute();
 
-        log.info(set.toString());
-
-        long updatedColumns =
-                set.execute();
-
-        log.info("biy");
         return updatedColumns;
     }
 }

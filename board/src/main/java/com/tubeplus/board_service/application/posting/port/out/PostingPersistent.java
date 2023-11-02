@@ -15,5 +15,5 @@ public interface PostingPersistent {
             <Boolean, Long> softDeletePosting(long postingId);
 
     Exceptionable
-            <Boolean, Long> pinPosting(long id);
+            <Boolean, Long> changePinState(long id);
 }
