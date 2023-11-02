@@ -1,7 +1,7 @@
 package com.tubeplus.board_service.adapter.web.controller.board.vo;
 
-import com.tubeplus.board_service.board.domain.BoardType;
-import com.tubeplus.board_service.board.port.in.BoardUseCase;
+import com.tubeplus.board_service.application.board.domain.BoardType;
+import com.tubeplus.board_service.application.board.port.in.BoardUseCase;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;

@@ -1,10 +1,9 @@
 package com.tubeplus.board_service.adapter.rdb.persistence.vote;
 
 import com.tubeplus.board_service.global.Exceptionable;
-import com.tubeplus.board_service.posting.domain.vote.Vote;
-import com.tubeplus.board_service.posting.domain.vote.VoteType;
-import com.tubeplus.board_service.posting.port.out.VotePersistent;
-import org.checkerframework.checker.nullness.Opt;
+import com.tubeplus.board_service.application.posting.domain.vote.Vote;
+import com.tubeplus.board_service.application.posting.domain.vote.VoteType;
+import com.tubeplus.board_service.application.posting.port.out.VotePersistent;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;

@@ -5,11 +5,11 @@ import com.tubeplus.board_service.adapter.web.common.ApiTag;
 import com.tubeplus.board_service.adapter.web.controller.posting.vo.posting.*;
 import com.tubeplus.board_service.adapter.web.error.BusinessException;
 import com.tubeplus.board_service.adapter.web.error.ErrorCode;
-import com.tubeplus.board_service.posting.domain.posting.Posting;
-import com.tubeplus.board_service.posting.domain.posting.PostingViewInfo;
-import com.tubeplus.board_service.posting.port.in.PostingUseCase;
-import com.tubeplus.board_service.posting.port.in.PostingUseCase.MakePostingForm;
-import com.tubeplus.board_service.posting.port.in.PostingUseCase.PostingTitleView;
+import com.tubeplus.board_service.application.posting.domain.posting.Posting;
+import com.tubeplus.board_service.application.posting.domain.posting.PostingViewInfo;
+import com.tubeplus.board_service.application.posting.port.in.PostingUseCase;
+import com.tubeplus.board_service.application.posting.port.in.PostingUseCase.MakePostingForm;
+import com.tubeplus.board_service.application.posting.port.in.PostingUseCase.PostingSimpleInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.tubeplus.board_service.posting.port.in.PostingUseCase.*;
+import static com.tubeplus.board_service.application.posting.port.in.PostingUseCase.*;
 
 
 @Slf4j
@@ -56,7 +56,7 @@ public class PostingController {
 
     @Operation(summary = "게시판내 게시물 목록 조회", description = "특정 id의 게시판내 게시물들 제목, 고정글 여부등의 간단한 정보 목록 조회")
     @GetMapping
-    public ApiResponse<List<PostingTitleView>> readPostingTitles//todo 요구사항 반영해 수정
+    public ApiResponse<List<PostingSimpleInfo>> readPostingTitles//todo 요구사항 반영해 수정
     (
             @RequestParam("board_id")
             @Min(1) long boardId,
@@ -71,7 +71,7 @@ public class PostingController {
                     String titleLike
     ) {
 
-        List<PostingTitleView> titleViews;
+        List<PostingSimpleInfo> titleViews;
         switch (pageType) {
 
             case FEED -> titleViews = postingService.feedPostingTitles(boardId, null);//todo null없애기
@@ -87,13 +87,13 @@ public class PostingController {
 
     @Operation(summary = "내 게시물 title 목록 읽어오기")
     @GetMapping("/mine")
-    public ApiResponse<List<PostingTitleView>> readMyPostingTitles
+    public ApiResponse<List<PostingSimpleInfo>> readMyPostingTitles
             (
                     @RequestParam("userUuid")
                     @NotBlank String userUuid
             ) {
 
-        List<PostingTitleView> titleViews
+        List<PostingSimpleInfo> titleViews
                 = postingService.readMyPostingTitles(userUuid);
 
         return ApiResponse.ofSuccess(titleViews);

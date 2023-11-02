@@ -1,7 +1,6 @@
 package com.tubeplus.board_service.adapter.web.controller.posting.vo.posting;
 
-import com.tubeplus.board_service.posting.port.in.PostingUseCase;
-import com.tubeplus.board_service.posting.port.in.PostingUseCase.*;
+import com.tubeplus.board_service.application.posting.port.in.PostingUseCase.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;

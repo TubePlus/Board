@@ -4,8 +4,8 @@
 //import com.tubeplus.board_service.adapter.web.common.ApiResponse;
 //import com.tubeplus.board_service.adapter.web.common.ApiTag;
 //import com.tubeplus.board_service.adapter.web.controller.posting.vo.vote.VoPostingVote;
-//import com.tubeplus.board_service.posting.domain.vote.Vote;
-//import com.tubeplus.board_service.posting.port.in.VoteUsecase;
+//import com.tubeplus.board_service.application.posting.domain.vote.Vote;
+//import com.tubeplus.board_service.application.posting.port.in.VoteUsecase;
 //import io.swagger.v3.oas.annotations.Operation;
 //import jakarta.validation.Valid;
 //import lombok.RequiredArgsConstructor;

@@ -1,22 +1,6 @@
 package com.tubeplus.board_service.adapter.web.controller.posting;
 
 
-import com.tubeplus.board_service.adapter.web.common.ApiResponse;
-import com.tubeplus.board_service.adapter.web.common.ApiTag;
-import com.tubeplus.board_service.adapter.web.controller.posting.vo.comment.ReqModifyCommentBody;
-import com.tubeplus.board_service.adapter.web.controller.posting.vo.comment.ReqPostCommentBody;
-import com.tubeplus.board_service.posting.domain.comment.CommentViewInfo;
-import com.tubeplus.board_service.posting.port.in.CommentUseCase;
-import com.tubeplus.board_service.posting.port.in.CommentUseCase.*;
-import io.swagger.v3.oas.annotations.Operation;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-
 //@Slf4j
 //@RequiredArgsConstructor
 //
