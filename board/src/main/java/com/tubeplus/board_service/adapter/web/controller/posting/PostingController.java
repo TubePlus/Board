@@ -143,14 +143,14 @@ public class PostingController {
 
 
     @Operation(summary = "게시물 고정", description = "게시물 id로 지정된 게시물을 상단 고정된 상태로 저장")
-    @PostMapping("/{postingId}/pinned")
-    public ApiResponse pinPosting
+    @PostMapping("/{postingId}/change-pin-state")
+    public ApiResponse changePinState
             (
                     @PathVariable("postingId")
                     @Min(1) long id
             ) {
 
-        postingService.pinPosting(id);
+        postingService.changePinState(id);
 
         return ApiResponse.ofSuccess(null);
     }

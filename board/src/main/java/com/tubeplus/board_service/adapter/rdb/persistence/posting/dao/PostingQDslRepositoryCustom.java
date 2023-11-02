@@ -6,5 +6,5 @@ public interface PostingQDslRepositoryCustom {
 
     long updateSoftDelete(Long postingId);
 
-    long updatePostingPinned(Long postingId);
+    long changePinState(Long postingId);
 }

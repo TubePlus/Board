@@ -32,7 +32,7 @@ public class Exceptionable<RETURN_TYPE, PARAM_TYPE> {
 
     public class Executor {
 
-        public RETURN_TYPE throwOf(ErrorCode errorCode) {
+        public RETURN_TYPE thenThrow(ErrorCode errorCode) {
 
             try {
                 RETURN_TYPE result = exceptionableTask.apply(parameter);

@@ -55,15 +55,15 @@ public class PostingPersistence implements PostingPersistent {
 
 
     @Override
-    public Exceptionable<Boolean, Long> pinPosting(long id) {
+    public Exceptionable<Boolean, Long> changePinState(long postingId) {
 
-        return new Exceptionable<>(this::pinPostingById, id);
+        return new Exceptionable<>(this::changePinStateById, postingId);
     }
 
-    protected Boolean pinPostingById(Long id) {
+    protected Boolean changePinStateById(Long id) {
 
         long updatedColumns
-                = queryDslRepo.updatePostingPinned(id);
+                = queryDslRepo.changePinState(id);
 
         return updatedColumns == 1;
     }

@@ -60,7 +60,7 @@ public class PostingViewInfo {
         Optional<Vote> optionalUserVote
                 = votePersistence.findVote(dto)
                 .ifExceptioned
-                .throwOf(ErrorCode.FIND_ENTITY_FAILED);
+                .thenThrow(ErrorCode.FIND_ENTITY_FAILED);
 
         Vote userVote
                 = optionalUserVote
