@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.util.Arrays;
+
 @ControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
@@ -25,15 +27,17 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BusinessException.class)
     protected ResponseEntity<ErrorResponse> handleCustomException(final BusinessException e) {
         log.error("handleCustomException: {}", e.getErrorCode());
+        log.error(e.getMessage());
+        log.error(Arrays.toString(e.getStackTrace()));
         final ErrorCode errorCode = e.getErrorCode();
         final ErrorResponse response = ErrorResponse.of(errorCode);
         return new ResponseEntity<>(response, errorCode.getStatus());
     }
 
     /**
-     *  javax.validation.Valid or @Validated 으로 binding error 발생시 발생한다.
-     *  HttpMessageConverter 에서 등록한 HttpMessageConverter binding 못할경우 발생
-     *  주로 @RequestBody, @RequestPart 어노테이션에서 발생
+     * javax.validation.Valid or @Validated 으로 binding error 발생시 발생한다.
+     * HttpMessageConverter 에서 등록한 HttpMessageConverter binding 못할경우 발생
+     * 주로 @RequestBody, @RequestPart 어노테이션에서 발생
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     protected ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
@@ -41,6 +45,7 @@ public class GlobalExceptionHandler {
         final ErrorResponse response = ErrorResponse.of(ErrorCode.BAD_REQUEST, e.getBindingResult());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
+
     /**
      * @ModelAttribut 으로 binding error 발생시 BindException 발생한다.
      * ref https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-modelattrib-method-args
@@ -51,6 +56,7 @@ public class GlobalExceptionHandler {
         final ErrorResponse response = ErrorResponse.of(ErrorCode.INVALID_TYPE_VALUE, e.getBindingResult());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
+
     /**
      * enum type 일치하지 않아 binding 못할 경우 발생
      * 주로 @RequestParam enum으로 binding 못했을 경우 발생
@@ -61,6 +67,7 @@ public class GlobalExceptionHandler {
         final ErrorResponse response = ErrorResponse.of(e);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
+
     /**
      * 지원하지 않은 HTTP method 호출 할 경우 발생
      */
@@ -70,6 +77,7 @@ public class GlobalExceptionHandler {
         final ErrorResponse response = ErrorResponse.of(ErrorCode.METHOD_NOT_ALLOWED);
         return new ResponseEntity<>(response, HttpStatus.METHOD_NOT_ALLOWED);
     }
+
     /**
      * Query 지속시간이 지나도록 response가 없는 경우 발생
      */
@@ -77,7 +85,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleQueryTimeoutException(QueryTimeoutException e) {
         log.error("fail to execute query, {}", e.getMessage());
         final ErrorResponse response = ErrorResponse.of(ErrorCode.INTERNAL_SERVER_ERROR);
-        return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 
