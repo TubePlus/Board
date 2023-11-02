@@ -17,19 +17,14 @@ public class Exceptionable<RETURN_TYPE, PARAM_TYPE> {
     private final PARAM_TYPE parameter;
 
 
-    public Exceptionable
-            (
-                    Function<PARAM_TYPE, RETURN_TYPE> function,
-                    PARAM_TYPE parameter
-            ) {
+    public Exceptionable(Function<PARAM_TYPE, RETURN_TYPE> function, PARAM_TYPE parameter) {
+
         this.exceptionableTask = function;
         this.parameter = parameter;
     }
 
-//    public static Exceptionable<?, ?> of(Function<?, ?> task, Object param) {//컴파일러가 위험한짓 하지말라고 경고함
-//        return new Exceptionable(task, param);
-//    }
 
+    // class for terminate methods
     public class Executor {
 
         public RETURN_TYPE thenThrow(ErrorCode errorCode) {

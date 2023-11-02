@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 
@@ -24,77 +25,69 @@ public class BoardPersistence implements BoardPersistent {
     private final BoardQDslRepositoryCustom queryDslRepo;
 
     @Override
-    public Exceptionable<Board, SaveDto> saveBoard(SaveDto dto) {
-        return new Exceptionable<>(this::saveBoardByDto, dto);
-    }
+    public Exceptionable<Board, SaveDto> saveBoard(SaveDto saveDto) {
 
-    protected Board saveBoardByDto(SaveDto dto) {
-        log.info(dto.toString());
+        Function<SaveDto, Board> saveBoardByDto =
+                dto -> {
+                    BoardEntity boardEntity
+                            = BoardEntity.builtOf(dto);
 
-        BoardEntity boardEntity
-                = BoardEntity.builtOf(dto);
-        log.info(boardEntity.toString());
+                    BoardEntity savedEntity
+                            = jpaDataRepo.save(boardEntity);
 
-        BoardEntity savedEntity
-                = jpaDataRepo.save(boardEntity);
-        log.info(savedEntity.toString());
+                    return savedEntity.buildBoard();
+                };
 
-        return savedEntity.buildBoard();
+        return new Exceptionable<>(saveBoardByDto, saveDto);
     }
 
 
     @Override
     public Exceptionable<Board, Long> findBoard(Long boardId) {
-        return new Exceptionable<>(this::findBoardById, boardId);
+
+        Function<Long, Board> findBoardById =
+                id -> {
+                    BoardEntity foundEntity
+                            = jpaDataRepo.findById(id)
+                            .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_RESOURCE));
+
+                    return foundEntity.buildBoard();
+                };
+
+        return new Exceptionable<>(findBoardById, boardId);
     }
-
-    protected Board findBoardById(Long boardId) {
-
-        log.info(boardId.toString());
-
-        BoardEntity foundEntity
-                = jpaDataRepo.findById(boardId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_RESOURCE));
-        log.info(foundEntity.toString());
-
-        return foundEntity.buildBoard();
-    }
-
 
     @Override
-    public Exceptionable<List<Board>, ListFindDto> findBoardList(ListFindDto dto) {
-        return new Exceptionable<>(this::findBoardListByDto, dto);
-    }
+    public Exceptionable<List<Board>, ListFindDto> findBoardList(ListFindDto listFindDto) {
 
-    public List<Board> findBoardListByDto(ListFindDto dto) {
-        log.info(dto.toString());
+        Function<ListFindDto, List<Board>> findBoardList =
+                dto -> {
+                    List<BoardEntity> foundBoardEntities
+                            = queryDslRepo.findBoards(dto);
 
-        List<BoardEntity> foundBoardEntities
-                = queryDslRepo.findBoards(dto);
-        log.info(foundBoardEntities.toString());
+                    List<Board> foundBoards
+                            = foundBoardEntities.stream()
+                            .map(BoardEntity::buildBoard)
+                            .collect(Collectors.toList());
 
-        List<Board> foundBoards
-                = foundBoardEntities.stream().map(
-                BoardEntity::buildBoard
-        ).collect(Collectors.toList());
-        foundBoards.forEach(
-                board -> log.info(board.toString())
-        );
+                    return foundBoards;
+                };
 
-        return foundBoards;
+        return new Exceptionable<>(findBoardList, listFindDto);
     }
 
 
     @Override
     public Exceptionable<Boolean, Long> completelyDeleteBoard(Long boardId) {
-        return new Exceptionable<>(this::deleteBoardById, boardId);
-    }
 
-    public Boolean deleteBoardById(Long boardId) {
+        Function<Long, Boolean> deleteBoardById =
+                id -> {
+                    jpaDataRepo.deleteById(boardId);
+                    return true;
+                };
 
-        jpaDataRepo.deleteById(boardId);
+        return new Exceptionable<>(deleteBoardById, boardId);
 
-        return true;
     }
 
 

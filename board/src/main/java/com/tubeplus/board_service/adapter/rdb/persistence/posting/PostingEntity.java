@@ -15,7 +15,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostingEntity extends BaseEntity {
+public class PostingEntity extends BaseEntity {//todo posting_seq 정체 찾아보기
     //todo 수정된 erd 반영하기
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

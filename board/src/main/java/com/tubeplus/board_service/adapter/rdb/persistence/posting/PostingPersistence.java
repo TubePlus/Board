@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.function.Function;
 
 
 @Slf4j
@@ -28,54 +29,52 @@ public class PostingPersistence implements PostingPersistent {
     @Override
     public Exceptionable<Optional<Posting>, Long> findPosting(final long postingId) {
 
-        return new Exceptionable<>(this::findPostingById, postingId);
+        Function<Long, Optional<Posting>> findPostingById =
+                id -> {
+                    Optional<PostingEntity> optionalEntity
+                            = jpaDataRepo.findById(id);
+
+                    Optional<Posting> optionalPosting
+                            = optionalEntity.map(PostingEntity::buildDomain);
+
+                    return optionalPosting;
+                };
+
+        return new Exceptionable<>(findPostingById, postingId);
     }
-
-    protected Optional<Posting> findPostingById(final long postingId) {
-
-        Optional<PostingEntity> optionalEntity
-                = jpaDataRepo.findById(postingId);
-
-        Optional<Posting> optionalPosting
-                = optionalEntity.map(PostingEntity::buildDomain);
-
-        return optionalPosting;
-    }
-
 
     @Override
     public Exceptionable<Boolean, Long> softDeletePosting(long postingId) {
 
-        return new Exceptionable<>(this::softDeletePostingById, postingId);
+        Function<Long, Boolean> softDeletePostingById =
+                id -> {
+                    long updatedColumns
+                            = queryDslRepo.updateSoftDelete(id);
+                    log.info("updatedColumns: {}", updatedColumns);
+                    return updatedColumns != 0;
+                };
+
+        return new Exceptionable<>(softDeletePostingById, postingId);
     }
-
-    protected Boolean softDeletePostingById(Long postingId) {
-
-        long updatedColumns
-                = queryDslRepo.updateSoftDelete(postingId);
-
-        return updatedColumns == 1;
-    }
-
 
     @Override
     public Exceptionable<Boolean, Long> changePinState(long postingId) {
+        Function<Long, Boolean> changePinStateById =
+                id -> {
+                    long updatedColumns
+                            = queryDslRepo.updatePinReversed(id);
 
-        return new Exceptionable<>(this::changePinStateById, postingId);
-    }
+                    return updatedColumns == 1;
+                };
 
-    protected Boolean changePinStateById(Long id) {
-
-        long updatedColumns
-                = queryDslRepo.updatePinReversed(id);
-
-        return updatedColumns == 1;
+        return new Exceptionable<>(changePinStateById, postingId);
     }
 
     @Override
     @Transactional
     public Exceptionable<Posting, UpdateWritingDto> updatePostingWriting(final UpdateWritingDto updateWritingDto) {
-        return new Exceptionable<Posting, UpdateWritingDto>(
+
+        Function<UpdateWritingDto, Posting> updatePostingWriting =
                 (dto) -> {
 
                     PostingEntity postingEntity
@@ -83,13 +82,17 @@ public class PostingPersistence implements PostingPersistent {
 
                     if (dto.getTitle() != null)
                         postingEntity.setTitle(dto.getTitle());
-
                     if (dto.getContents() != null)
                         postingEntity.setContents(dto.getContents());
 
-                    return postingEntity.buildDomain();
 
-                }
-                , updateWritingDto);
+                    PostingEntity updatedEntity
+                            = jpaDataRepo.save(postingEntity);
+
+                    return updatedEntity.buildDomain();
+                };
+
+        return new Exceptionable<Posting, UpdateWritingDto>
+                (updatePostingWriting, updateWritingDto);
     }
 }
