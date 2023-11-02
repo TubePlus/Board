@@ -1,7 +1,7 @@
 package com.tubeplus.board_service.board.port.out;
 
-import com.tubeplus.board_service.board.model.Board;
-import com.tubeplus.board_service.board.model.BoardType;
+import com.tubeplus.board_service.board.domain.Board;
+import com.tubeplus.board_service.board.domain.BoardType;
 import com.tubeplus.board_service.board.port.in.BoardUseCase;
 import com.tubeplus.board_service.global.Exceptionable;
 import lombok.Builder;
@@ -22,7 +22,6 @@ public interface BoardPersistent {
     @Slf4j
     @Builder
     class SaveDto {
-
         private final Long communityId;
         private final String boardName;
         private final BoardType boardType;
@@ -30,7 +29,7 @@ public interface BoardPersistent {
         private final boolean visible;
         private final LocalDateTime limitDateTime;
 
-        public static SaveDto of(BoardUseCase.FormToMakeBoard form) {
+        public static SaveDto of(BoardUseCase.MakeBoardForm form) {
             log.info(form.toString());
 
             SaveDto saveDto = new SaveDto(
@@ -45,7 +44,6 @@ public interface BoardPersistent {
 
             return saveDto;
         }
-
     }
 
 
