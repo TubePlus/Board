@@ -1,7 +1,6 @@
 package com.tubeplus.board_service.adapter.web.error;
 
 
-import java.util.function.Supplier;
 
 public class BusinessException extends RuntimeException {
     //    private static final long serialVersionUID = -7099930022202674652L;	// No Usage

@@ -5,9 +5,11 @@ import com.tubeplus.board_service.adapter.rdb.persistence.posting.dao.PostingQDs
 import com.tubeplus.board_service.global.Exceptionable;
 import com.tubeplus.board_service.application.posting.domain.posting.Posting;
 import com.tubeplus.board_service.application.posting.port.out.PostingPersistent;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -19,6 +21,8 @@ public class PostingPersistence implements PostingPersistent {
 
     private final PostingJpaDataRepository jpaDataRepo;
     private final PostingQDslRepositoryCustom queryDslRepo;
+
+    private final EntityManager em;
 
 
     @Override
@@ -63,8 +67,29 @@ public class PostingPersistence implements PostingPersistent {
     protected Boolean changePinStateById(Long id) {
 
         long updatedColumns
-                = queryDslRepo.changePinState(id);
+                = queryDslRepo.updatePinReversed(id);
 
         return updatedColumns == 1;
+    }
+
+    @Override
+    @Transactional
+    public Exceptionable<Posting, UpdateWritingDto> updatePostingWriting(final UpdateWritingDto updateWritingDto) {
+        return new Exceptionable<Posting, UpdateWritingDto>(
+                (dto) -> {
+
+                    PostingEntity postingEntity
+                            = em.find(PostingEntity.class, dto.getPostingId());
+
+                    if (dto.getTitle() != null)
+                        postingEntity.setTitle(dto.getTitle());
+
+                    if (dto.getContents() != null)
+                        postingEntity.setContents(dto.getContents());
+
+                    return postingEntity.buildDomain();
+
+                }
+                , updateWritingDto);
     }
 }

@@ -14,8 +14,6 @@ public interface PostingUseCase {
     PostingViewInfo readPosting(long postingId, String userUuid);
 
 
-
-
     @Data
     @Builder
     class PostingSimpleInfo {
@@ -25,6 +23,8 @@ public interface PostingUseCase {
         private final boolean withImage;
         private final long voteCount;
     }
+
+    Posting getPosting(long postingId);
 
     List<PostingSimpleInfo> readMyPostingTitles(String userUuid);
 
@@ -59,7 +59,7 @@ public interface PostingUseCase {
     void changePinState(long postingId);
 
 
-    Posting modifyPosting(ModifyPostingForm form);//todo 작성자 권한체크 하기
+    Posting modifyPostingWriting(long postingId, ModifyPostingForm form);//todo 작성자 권한체크 하기
 
     @Data
     @Builder

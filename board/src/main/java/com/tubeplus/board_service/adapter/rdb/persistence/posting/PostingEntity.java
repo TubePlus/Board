@@ -6,11 +6,13 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 
 @Entity
 @Table(name = "posting")
 @Builder
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostingEntity extends BaseEntity {
