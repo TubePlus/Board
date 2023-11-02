@@ -67,6 +67,14 @@ public class PostingService implements PostingUseCase {
     @Override
     public void pinPosting(long id) {
 
+        Boolean pinned
+                = postingPersistence.pinPosting(id)
+                .ifExceptioned
+                .throwOf(ErrorCode.UPDATE_ENTITY_FAILED);
+
+        if (!pinned)
+            throw new BusinessException(ErrorCode.UPDATE_ENTITY_FAILED);
+
     }
 
     @Override
@@ -80,7 +88,7 @@ public class PostingService implements PostingUseCase {
         Boolean isDeleted
                 = postingPersistence.softDeletePosting(postingId)
                 .ifExceptioned
-                .throwOf(ErrorCode.DELETE_ENTITY_FAILED);
+                .throwOf(ErrorCode.SOFT_DELETE_ENTITY_FAILED);
 
         if (!isDeleted)
             throw new BusinessException(ErrorCode.DELETE_ENTITY_FAILED);

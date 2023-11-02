@@ -1,6 +1,7 @@
 package com.tubeplus.board_service.adapter.rdb.persistence.posting.dao;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.querydsl.jpa.impl.JPAUpdateClause;
 import com.tubeplus.board_service.adapter.rdb.persistence.posting.QPostingEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,12 +24,32 @@ public class PostingQDslRepositoryImpl implements PostingQDslRepositoryCustom {
         QPostingEntity posting
                 = QPostingEntity.postingEntity;
 
-        long updatedCol
+        long updatedColumns
                 = queryFactory.update(posting)
                 .where(posting.id.eq(postingId))
                 .set(posting.erase, true)
                 .execute();
 
-        return updatedCol;
+        return updatedColumns;
+    }
+
+    @Override
+    @Transactional
+    public long updatePostingPinned(Long postingId) {
+
+        QPostingEntity posting
+                = QPostingEntity.postingEntity;
+
+        JPAUpdateClause set = queryFactory.update(posting)
+                .where(posting.id.eq(postingId))
+                .set(posting.pin, true);
+
+        log.info(set.toString());
+
+        long updatedColumns =
+                set.execute();
+
+        log.info("biy");
+        return updatedColumns;
     }
 }

@@ -42,7 +42,7 @@ public class Exceptionable<RETURN_TYPE, PARAM_TYPE> {
                 throw be;
 
             } catch (Exception e) {
-                e.printStackTrace();
+//                e.printStackTrace();
                 log.info(e.getMessage());
                 throw new BusinessException(errorCode);
             }
