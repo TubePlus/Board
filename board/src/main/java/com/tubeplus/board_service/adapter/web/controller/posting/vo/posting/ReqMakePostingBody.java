@@ -1,7 +1,7 @@
 package com.tubeplus.board_service.adapter.web.controller.posting.vo.posting;
 
-
-import com.tubeplus.board_service.posting.port.in.PostingServiceUseCase;
+import com.tubeplus.board_service.posting.port.in.PostingUseCase;
+import com.tubeplus.board_service.posting.port.in.PostingUseCase.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -27,8 +27,8 @@ public class ReqMakePostingBody {
     @NotEmpty
     private final String contents;
 
-    public PostingServiceUseCase.MakePostingForm buildForm() {
-        return PostingServiceUseCase.MakePostingForm
+    public MakePostingForm buildForm() {
+        return MakePostingForm
                 .builder()
                 .boardId(boardId)
                 .authorUuid(authorUuid)

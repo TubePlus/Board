@@ -11,7 +11,7 @@ import java.util.List;
 public interface PostingUseCase {
 
 
-    PostingViewInfo readPosting(long postingId);
+    PostingViewInfo readPosting(long postingId, String userUuid);
 
 
     List<PostingTitleView> readMyPostingTitles(String userUuid);
@@ -39,6 +39,7 @@ public interface PostingUseCase {
     @Data
     @Builder
     class FeedDto {
+
     }
 
 

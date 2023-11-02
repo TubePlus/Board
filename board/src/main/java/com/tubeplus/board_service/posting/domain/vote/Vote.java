@@ -5,9 +5,9 @@ import lombok.Data;
 
 @Data
 @Builder
-public
-class PostingVote {
+public class Vote {
+    private long id;
     private final long postingId;
     private final String voterUuid;
-    private final PostingVoteType voteType;
+    private final VoteType voteType;
 }

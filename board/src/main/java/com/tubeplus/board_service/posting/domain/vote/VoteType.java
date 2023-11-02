@@ -2,11 +2,11 @@ package com.tubeplus.board_service.posting.domain.vote;
 
 import com.tubeplus.board_service.global.base.BaseEnum;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 
 @AllArgsConstructor
-public enum PostingVoteType implements BaseEnum<Character, String> {
+public enum VoteType implements BaseEnum<Character, String> {
+
 
     LIKE('+'),
     HATE('-');

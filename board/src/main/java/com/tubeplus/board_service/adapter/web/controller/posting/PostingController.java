@@ -7,7 +7,8 @@ import com.tubeplus.board_service.adapter.web.error.BusinessException;
 import com.tubeplus.board_service.adapter.web.error.ErrorCode;
 import com.tubeplus.board_service.posting.domain.posting.Posting;
 import com.tubeplus.board_service.posting.domain.posting.PostingViewInfo;
-import com.tubeplus.board_service.posting.port.in.PostingServiceUseCase;
+import com.tubeplus.board_service.posting.port.in.PostingUseCase;
+import com.tubeplus.board_service.posting.port.in.PostingUseCase.MakePostingForm;
 import com.tubeplus.board_service.posting.port.in.PostingUseCase.PostingTitleView;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -20,6 +21,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.tubeplus.board_service.posting.port.in.PostingUseCase.*;
+
 
 @Slf4j
 @RequiredArgsConstructor
@@ -29,7 +32,7 @@ import java.util.List;
 public class PostingController {
 
 
-    private final PostingServiceUseCase postingService;
+    private final PostingUseCase postingService;
 
 
     @Operation(summary = "게시물 작성", description = "게시물 작성 api, 작성된 게시물의 id 반환")
@@ -40,8 +43,7 @@ public class PostingController {
                             ReqMakePostingBody reqBody
             ) {
 
-        PostingServiceUseCase
-                .MakePostingForm form
+        MakePostingForm form
                 = reqBody.buildForm();
 
         Long postedBoardId
@@ -103,11 +105,14 @@ public class PostingController {
     public ApiResponse<PostingViewInfo> readPosting
             (
                     @PathVariable("postingId")
-                    @Min(1) long id
+                    @Min(1) long id,
+
+                    @RequestParam("user-uuid")
+                    @NotBlank String userUuid
             ) {
 
         PostingViewInfo viewInfo
-                = postingService.readPosting(id);
+                = postingService.readPosting(id, userUuid);
 
         return ApiResponse.ofSuccess(viewInfo);
     }
@@ -121,8 +126,7 @@ public class PostingController {
                             ReqModifyPostingBody reqBody
             ) {
 
-        PostingServiceUseCase
-                .ModifyPostingForm form
+        ModifyPostingForm form
                 = reqBody.buildForm();
 
 

@@ -1,8 +1,8 @@
 package com.tubeplus.board_service.adapter.web.controller.posting.vo.vote;
 
 
-import com.tubeplus.board_service.posting.domain.vote.PostingVote;
-import com.tubeplus.board_service.posting.domain.vote.PostingVoteType;
+import com.tubeplus.board_service.posting.domain.vote.Vote;
+import com.tubeplus.board_service.posting.domain.vote.VoteType;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -22,12 +22,12 @@ public class VoPostingVote {
     private final String voterUuid;
 
     @NotNull
-    private final PostingVoteType voteType;
+    private final VoteType voteType;
 
 
-    public PostingVote buildVote() {
+    public Vote buildVote() {
 
-        return PostingVote
+        return Vote
                 .builder()
                 .postingId(postingId)
                 .voterUuid(voterUuid)

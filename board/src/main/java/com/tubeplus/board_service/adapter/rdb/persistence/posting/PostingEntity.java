@@ -1,19 +1,22 @@
 package com.tubeplus.board_service.adapter.rdb.persistence.posting;
 
 import com.tubeplus.board_service.adapter.rdb.config.BaseEntity;
+import com.tubeplus.board_service.global.mapper.ModelMapperConfig;
+import com.tubeplus.board_service.posting.domain.posting.Posting;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
+import org.modelmapper.ModelMapper;
 
 
-//todo 수정된 erd 반영하기
 @Entity
 @Table(name = "posting")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostingEntity extends BaseEntity {
+    //todo 수정된 erd 반영하기
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
@@ -39,5 +42,21 @@ public class PostingEntity extends BaseEntity {
 
     @Column(name = "erase", nullable = false)
     private boolean erase;
+
+
+    public Posting buildDomain() {//todo 수정
+
+        return Posting.builder()
+                .id(id)
+                .authorUuid(authorUuid)
+                .voteCount(voteCount)
+                .boardId(boardId)
+                .pin(pin)
+                .contents(contents)
+                .title(title)
+                .erase(erase)
+                .withImage(true)//todo 수정하기
+                .build();
+    }
 
 }

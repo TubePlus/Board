@@ -1,7 +1,8 @@
 package com.tubeplus.board_service.adapter.web.controller.posting.vo.posting;
 
 
-import com.tubeplus.board_service.posting.port.in.PostingServiceUseCase;
+import com.tubeplus.board_service.posting.port.in.PostingUseCase;
+import com.tubeplus.board_service.posting.port.in.PostingUseCase.ModifyPostingForm;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Value;
 
@@ -20,9 +21,9 @@ public class ReqModifyPostingBody {
     private final String contents;
 
 
-    public PostingServiceUseCase.ModifyPostingForm buildForm() {
+    public ModifyPostingForm buildForm() {
 
-        return PostingServiceUseCase.ModifyPostingForm
+        return ModifyPostingForm
                 .builder()
                 .userUuid(userUuid)
                 .title(title)

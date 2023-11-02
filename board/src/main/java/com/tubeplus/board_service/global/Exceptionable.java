@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.function.Function;
 
 
-//todo  추상메서드 하나만 존재하는거면 람다식으로 쓸 수 있는듯, Function 인터페이스를 굳이 멤버변수 X 걍 exceptionalExecute 추상메서드 하나만 만드는 쪽으로 리팩
 @Slf4j
 public class Exceptionable<RETURN_TYPE, PARAM_TYPE> {
 
@@ -23,7 +22,6 @@ public class Exceptionable<RETURN_TYPE, PARAM_TYPE> {
                     Function<PARAM_TYPE, RETURN_TYPE> function,
                     PARAM_TYPE parameter
             ) {
-
         this.exceptionableTask = function;
         this.parameter = parameter;
     }
@@ -34,7 +32,7 @@ public class Exceptionable<RETURN_TYPE, PARAM_TYPE> {
 
     public class Executor {
 
-        public RETURN_TYPE throwOf(ErrorCode errorCode) {
+        public RETURN_TYPE thenThrow(ErrorCode errorCode) {
 
             try {
                 RETURN_TYPE result = exceptionableTask.apply(parameter);

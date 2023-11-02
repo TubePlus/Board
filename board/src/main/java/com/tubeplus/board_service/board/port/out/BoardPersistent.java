@@ -22,7 +22,6 @@ public interface BoardPersistent {
     @Slf4j
     @Builder
     class SaveDto {
-
         private final Long communityId;
         private final String boardName;
         private final BoardType boardType;
@@ -45,7 +44,6 @@ public interface BoardPersistent {
 
             return saveDto;
         }
-
     }
 
 

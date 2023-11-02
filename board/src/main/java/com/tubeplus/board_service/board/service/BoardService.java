@@ -29,7 +29,7 @@ public class BoardService implements BoardUseCase {
                 = BoardPersistent.SaveDto.of(formToMake);
 
         Board madeBoard = boardPersistence.saveBoard(saveDto)
-                .ifExceptioned.throwOf(ErrorCode.SAVE_ENTITY_FAILED);
+                .ifExceptioned.thenThrow(ErrorCode.SAVE_ENTITY_FAILED);
 
         return madeBoard;
     }
@@ -42,7 +42,7 @@ public class BoardService implements BoardUseCase {
 
         List<Board> foundBoards
                 = boardPersistence.findBoardList(listFindDto)
-                .ifExceptioned.throwOf(ErrorCode.FIND_ENTITY_FAILED);
+                .ifExceptioned.thenThrow(ErrorCode.FIND_ENTITY_FAILED);
 
         if (foundBoards.isEmpty())
             throw new BusinessException(ErrorCode.NOT_FOUND_RESOURCE);
@@ -55,7 +55,7 @@ public class BoardService implements BoardUseCase {
 
         Board foundBoard
                 = boardPersistence.findBoard(boardId)
-                .ifExceptioned.throwOf(ErrorCode.FIND_ENTITY_FAILED);
+                .ifExceptioned.thenThrow(ErrorCode.FIND_ENTITY_FAILED);
 
         return foundBoard;
     }
@@ -68,7 +68,7 @@ public class BoardService implements BoardUseCase {
 
         Boolean isUpdated
                 = boardPersistence.updateBoard(updateDto)
-                .ifExceptioned.throwOf(ErrorCode.UPDATE_ENTITY_FAILED);
+                .ifExceptioned.thenThrow(ErrorCode.UPDATE_ENTITY_FAILED);
 
         if (!isUpdated)
             throw new BusinessException(ErrorCode.UPDATE_ENTITY_FAILED);
@@ -78,7 +78,7 @@ public class BoardService implements BoardUseCase {
     public void completelyDeleteBoard(Long boardId) {
 
         boardPersistence.completelyDeleteBoard(boardId)
-                .ifExceptioned.throwOf(ErrorCode.DELETE_ENTITY_FAILED);
+                .ifExceptioned.thenThrow(ErrorCode.DELETE_ENTITY_FAILED);
     }
 
     @Override
@@ -86,7 +86,7 @@ public class BoardService implements BoardUseCase {
 
         Boolean softDeleted
                 = boardPersistence.softlyDeleteBoard(boardId)
-                .ifExceptioned.throwOf(ErrorCode.DELETE_ENTITY_FAILED);
+                .ifExceptioned.thenThrow(ErrorCode.DELETE_ENTITY_FAILED);
 
         if (!softDeleted)
             throw new BusinessException(ErrorCode.DELETE_ENTITY_FAILED);

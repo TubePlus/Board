@@ -27,4 +27,6 @@ public class Posting {
 
     private final boolean erase;
 
+    private final boolean withImage;
+
 }

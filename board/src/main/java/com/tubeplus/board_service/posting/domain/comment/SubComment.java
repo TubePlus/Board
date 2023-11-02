@@ -7,5 +7,5 @@ import lombok.Data;
 
 @Data
 @Builder
-public class PostingSubComment {
+public class SubComment {
 }
