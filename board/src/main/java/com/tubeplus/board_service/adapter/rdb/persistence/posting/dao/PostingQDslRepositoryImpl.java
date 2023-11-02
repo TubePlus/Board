@@ -25,7 +25,8 @@ public class PostingQDslRepositoryImpl implements PostingQDslRepositoryCustom {
                 = QPostingEntity.postingEntity;
 
         long updatedColumns
-                = queryFactory.update(posting)
+                =
+                queryFactory.update(posting)
                 .where(posting.id.eq(postingId))
                 .set(posting.erase, true)
                 .execute();

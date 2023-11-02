@@ -62,8 +62,9 @@ public class BoardQDslRepositoryImpl implements BoardQDslRepositoryCustom {
                 = QBoardEntity.boardEntity;
 
         JPAUpdateClause updateQuery
-                = queryFactory.update(board)
-                .where(board.id.eq(dto.getId()));
+                =
+                queryFactory.update(board)
+                        .where(board.id.eq(dto.getId()));
 
         writeUpdatesToQuery(updateQuery, dto, board);
 
@@ -104,7 +105,8 @@ public class BoardQDslRepositoryImpl implements BoardQDslRepositoryCustom {
         QBoardEntity board
                 = QBoardEntity.boardEntity;
 
-        long executeResult =
+        long executeResult
+                =
                 queryFactory.update(board)
                         .where(board.id.eq(boardId))
                         .set(board.erase, true)
