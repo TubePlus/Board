@@ -39,8 +39,8 @@ public class PostingController {
     @PostMapping
     public ApiResponse<Long> makePosting
             (
-                    @Valid @RequestBody
-                            ReqMakePostingBody reqBody
+                    @RequestBody
+                    @Valid ReqMakePostingBody reqBody
             ) {
 
         MakePostingForm form
@@ -118,27 +118,26 @@ public class PostingController {
     }
 
 
-    @Operation(summary = "게시물 수정", description = "게시물 id로 지정된 게시물을 상단 고정된 상태로 저장")
+    @Operation(summary = "작성자가 게시물 수정",
+            description = "게시물 작성자가 게시물을 수정할때 사용, 요청자가 작성자인지 권한 점검")
     @PutMapping("/{postingId}")
-    public ApiResponse<VoPosting> modifyPosting
+    public ApiResponse<VoPosting> modifyPostingWriting
             (
-                    @Valid @RequestBody
-                            ReqModifyPostingBody reqBody
+                    @PathVariable("postingId")
+                    @Min(1) long id,
+
+                    @RequestBody
+                    @Valid ReqModifyPostingBody reqBody
             ) {
 
         ModifyPostingForm form
                 = reqBody.buildForm();
 
-
         Posting modifiedPosting
-                = postingService.modifyPosting(form);
-
+                = postingService.modifyPostingWriting(id, form);
 
         return ApiResponse.ofSuccess
-                (
-                        VoPosting.builtFrom(modifiedPosting)
-                );
-
+                (VoPosting.builtFrom(modifiedPosting));
     }
 
 
@@ -160,7 +159,8 @@ public class PostingController {
     @DeleteMapping("/{postingId}")
     public ApiResponse softDeletePosting
             (
-                    @PathVariable("postingId") @Min(1) long id
+                    @PathVariable("postingId")
+                    @Min(1) long id
             ) {
 
 

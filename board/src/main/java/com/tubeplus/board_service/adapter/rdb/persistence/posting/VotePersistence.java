@@ -1,4 +1,4 @@
-package com.tubeplus.board_service.adapter.rdb.persistence.vote;
+package com.tubeplus.board_service.adapter.rdb.persistence.posting;
 
 import com.tubeplus.board_service.global.Exceptionable;
 import com.tubeplus.board_service.application.posting.domain.vote.Vote;
