@@ -85,7 +85,7 @@ public class BoardService implements BoardUseCase {
     public void softlyDeleteBoard(Long boardId) {
 
         Boolean softDeleted
-                = boardPersistence.softlyDeleteBoard(boardId)
+                = boardPersistence.softDeleteBoard(boardId)
                 .ifExceptioned.thenThrow(ErrorCode.DELETE_ENTITY_FAILED);
 
         if (!softDeleted)

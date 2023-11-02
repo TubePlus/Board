@@ -53,7 +53,6 @@ public interface BoardPersistent {
     @Slf4j
     @Builder
     class ListFindDto {
-
         private final Long communityId;
         private final Boolean visible;
         private final Boolean erase;
@@ -72,7 +71,6 @@ public interface BoardPersistent {
 
             return findListDto;
         }
-
     }
 
 
@@ -117,6 +115,6 @@ public interface BoardPersistent {
     Exceptionable<Boolean, Long> completelyDeleteBoard(Long boardId);
 
 
-    Exceptionable<Boolean, Long> softlyDeleteBoard(Long boardId);
+    Exceptionable<Boolean, Long> softDeleteBoard(Long boardId);
 
 }
