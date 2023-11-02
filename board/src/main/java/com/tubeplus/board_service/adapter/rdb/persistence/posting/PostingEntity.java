@@ -1,13 +1,11 @@
 package com.tubeplus.board_service.adapter.rdb.persistence.posting;
 
 import com.tubeplus.board_service.adapter.rdb.config.BaseEntity;
-import com.tubeplus.board_service.global.mapper.ModelMapperConfig;
-import com.tubeplus.board_service.posting.domain.posting.Posting;
+import com.tubeplus.board_service.application.posting.domain.posting.Posting;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
-import org.modelmapper.ModelMapper;
 
 
 @Entity

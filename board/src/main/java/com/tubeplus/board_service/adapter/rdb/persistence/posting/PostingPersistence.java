@@ -3,8 +3,8 @@ package com.tubeplus.board_service.adapter.rdb.persistence.posting;
 import com.tubeplus.board_service.adapter.rdb.persistence.posting.dao.PostingJpaDataRepository;
 import com.tubeplus.board_service.adapter.rdb.persistence.posting.dao.PostingQDslRepositoryCustom;
 import com.tubeplus.board_service.global.Exceptionable;
-import com.tubeplus.board_service.posting.domain.posting.Posting;
-import com.tubeplus.board_service.posting.port.out.PostingPersistent;
+import com.tubeplus.board_service.application.posting.domain.posting.Posting;
+import com.tubeplus.board_service.application.posting.port.out.PostingPersistent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -37,6 +37,22 @@ public class PostingPersistence implements PostingPersistent {
 
         return optionalPosting;
     }
+
+
+    @Override
+    public Exceptionable<Boolean, Long> softDeletePosting(long postingId) {
+
+        return new Exceptionable<>(this::softDeletePostingById, postingId);
+    }
+
+    protected Boolean softDeletePostingById(Long postingId) {
+
+        long updatedColumns
+                = queryDslRepo.updateSoftDelete(postingId);
+
+        return updatedColumns == 1;
+    }
+
 
 
 }

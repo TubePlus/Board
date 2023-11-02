@@ -2,8 +2,8 @@ package com.tubeplus.board_service.adapter.rdb.persistence.board;
 
 import com.tubeplus.board_service.adapter.rdb.persistence.board.dao.BoardJpaDataRepository;
 import com.tubeplus.board_service.adapter.rdb.persistence.board.dao.BoardQDslRepositoryCustom;
-import com.tubeplus.board_service.board.domain.Board;
-import com.tubeplus.board_service.board.port.out.BoardPersistent;
+import com.tubeplus.board_service.application.board.domain.Board;
+import com.tubeplus.board_service.application.board.port.out.BoardPersistent;
 import com.tubeplus.board_service.adapter.web.error.BusinessException;
 import com.tubeplus.board_service.adapter.web.error.ErrorCode;
 import com.tubeplus.board_service.global.Exceptionable;
@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 

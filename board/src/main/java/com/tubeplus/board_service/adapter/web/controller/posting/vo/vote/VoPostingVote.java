@@ -1,8 +1,8 @@
 package com.tubeplus.board_service.adapter.web.controller.posting.vo.vote;
 
 
-import com.tubeplus.board_service.posting.domain.vote.Vote;
-import com.tubeplus.board_service.posting.domain.vote.VoteType;
+import com.tubeplus.board_service.application.posting.domain.vote.Vote;
+import com.tubeplus.board_service.application.posting.domain.vote.VoteType;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

@@ -1,6 +1,6 @@
 package com.tubeplus.board_service.adapter.rdb.persistence.board.dao;
 
-import com.tubeplus.board_service.board.port.out.BoardPersistent;
+import com.tubeplus.board_service.application.board.port.out.BoardPersistent;
 import com.tubeplus.board_service.adapter.rdb.persistence.board.BoardEntity;
 
 import java.util.List;

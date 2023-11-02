@@ -3,8 +3,8 @@ package com.tubeplus.board_service.adapter.web.controller.board;
 import com.tubeplus.board_service.adapter.web.controller.board.vo.VoBoardProperty;
 import com.tubeplus.board_service.adapter.web.error.BusinessException;
 import com.tubeplus.board_service.adapter.web.error.ErrorCode;
-import com.tubeplus.board_service.board.domain.Board;
-import com.tubeplus.board_service.board.port.in.BoardUseCase;
+import com.tubeplus.board_service.application.board.domain.Board;
+import com.tubeplus.board_service.application.board.port.in.BoardUseCase;
 import com.tubeplus.board_service.adapter.web.controller.board.vo.ReqMakeBoardBody;
 import com.tubeplus.board_service.adapter.web.common.ApiResponse;
 import com.tubeplus.board_service.adapter.web.common.ApiTag;
@@ -30,7 +30,6 @@ public class BoardController {
 
     private final BoardUseCase boardService;
 
-    //todo 메서드 명, vo 클래스명들 그냥 서비스 로직쪽에 맞추기, port dto build 메서드는 전부 buildForm등으로 수정
 
     @Operation(summary = "게시판 생성", description = "게시판 생성, 생성된 게시판 id 반환")
     @PostMapping()
@@ -116,8 +115,7 @@ public class BoardController {
     }
 
     private boolean haveNoUpdate(VoBoardProperty updateReq) {
-        //todo 생각해보니 Field.get하면 접근제어자 문제 발생
-        // -> getter사용하는 방향으로 수정하면 작동할지도?
+        //todo Field.get하면 접근제어자 문제 발생 -> 생각해보니 getter사용하는 방향으로 수정하면 작동할지도?
 
 
         //한개의 field라도 들어온게 있다면 update가 있는걸로 간주, false 리턴
