@@ -50,7 +50,7 @@ public class PostingPersistence implements PostingPersistent {
                 id -> {
                     long updatedColumns
                             = queryDslRepo.updateSoftDelete(id);
-                    log.info("updatedColumns: {}", updatedColumns);
+
                     return updatedColumns != 0;
                 };
 

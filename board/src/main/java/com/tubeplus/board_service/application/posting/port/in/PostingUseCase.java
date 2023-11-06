@@ -1,7 +1,7 @@
 package com.tubeplus.board_service.application.posting.port.in;
 
 import com.tubeplus.board_service.application.posting.domain.posting.Posting;
-import com.tubeplus.board_service.application.posting.domain.posting.PostingViewInfo;
+import com.tubeplus.board_service.application.posting.domain.posting.PostingView;
 import lombok.Builder;
 import lombok.Data;
 
@@ -11,20 +11,22 @@ import java.util.List;
 public interface PostingUseCase {
 
 
-    PostingViewInfo readPosting(long postingId, String userUuid);
+    PostingView readPostingView(long postingId, String userUuid);
+
+
+    Posting getPosting(long postingId);
 
 
     @Data
     @Builder
     class PostingSimpleInfo {
-        private final Long postingId;
-        private final String title;
-        private final boolean pin;
-        private final boolean withImage;
+        private final Long id;
+        private final String authorUuid;
         private final long voteCount;
+        private final boolean pinned;
+        private final String title;
+        private final boolean withImage;
     }
-
-    Posting getPosting(long postingId);
 
     List<PostingSimpleInfo> readMyPostingTitles(String userUuid);
 

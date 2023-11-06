@@ -1,6 +1,8 @@
 package com.tubeplus.board_service.adapter.rdb.persistence.board.dao;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.dml.UpdateClause;
+import com.querydsl.core.types.Path;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.impl.JPAUpdateClause;
@@ -13,7 +15,11 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.List;
+
+import static java.lang.String.format;
 
 
 @Slf4j
@@ -106,52 +112,51 @@ public class BoardQDslRepositoryImpl implements BoardQDslRepositoryCustom {
                 = QBoardEntity.boardEntity;
 
         long executeResult
-                =
-                queryFactory.update(board)
-                        .where(board.id.eq(boardId))
-                        .set(board.erase, true)
-                        .execute();
+                = queryFactory.update(board)
+                .where(board.id.eq(boardId))
+                .set(board.erase, true)
+                .execute();
 
         return executeResult != 0;
     }
 
+//    public void updateClauseSetter(JPAUpdateClause updateQuery,
+//                                   BoardPersistent.UpdateDto dto,
+//                                   QBoardEntity board) {
+//
+//        Class<BoardEntity> qEntityClazz = BoardEntity.class;
+//        Class<Path> qPathInterface = Path.class;
+//
+//        for (Field qField : qEntityClazz.getFields()) {
+//
+//            if (qPathInterface.isAssignableFrom(qField.getType())) {
+//
+//                Path<?> pathField;
+//                try {
+//                    pathField = (Path<?>) qField.get(board);
+//                } catch (IllegalAccessException e) {
+//                    throw new RuntimeException(
+//                            format("writeUpdatesToQuery by dto(%s) pathField assigned  threw IllegalAccessException\n", dto.toString())
+//                            , e.getCause());
+//                }
+//
+//                String dtoFieldName = pathField.getMetadata().getName();
+//                try {
+//                    Field dtoUpdateField = dto.getClass().getField(dtoFieldName);
+//
+//                    updateQuery.set(pathField, dtoUpdateField.getType().cast(dtoUpdateField.get(board)));
+//
+//                } catch (Exception e) {
+//                    throw new RuntimeException(format("writeUpdatesToQuery by dto(%s)  threw \n", dto.toString()));
+//                }
+//
+//                updateColCount += 1;
+//
+//            }
+//        }
+//
+//        if (dto.getBoardName() != null)
+//            updateQuery.set(board.boardName, dto.getBoardName());
+//    }
+
 }
-
-//write query by reflection
-
-/*        Class<EntityPathBase> qEntityClazz = (Class<EntityPathBase>) board.getClass();
-
-        long updateColCount = 0;
-        Class<Path> qPathInterface = Path.class;
-
-
-        for (Field qField : qEntityClazz.getFields()) {
-
-            Class<?> qFieldType = qField.getType();
-            if (qPathInterface.isAssignableFrom(qFieldType)) {
-
-                Path<?> pathField;
-                try {
-                    pathField = (Path<?>) qField.get(board);
-                } catch (IllegalAccessException e) {//todo throw시 e.getCause도 첨부해서 throw
-                    throw new RuntimeException(String.format("writeUpdatesToQuery by dto(%s) pathField assigned  threw IllegalAccessException\n", dto.toString()));
-                }
-
-                String dtoFieldName = pathField.getMetadata().getName();
-                try {
-                    Field dtoUpdateField = dto.getClass().getField(dtoFieldName);
-
-                    updateQuery.set(pathField, dtoUpdateField.getType().cast(dtoUpdateField.get(board)));
-
-                } catch (Exception e) {
-                    throw new RuntimeException(String.format("writeUpdatesToQuery by dto(%s)  threw \n", dto.toString()));
-                }
-
-                updateColCount += 1;
-
-            }
-        }
-
-        if (dto.getBoardName() != null)
-            updateQuery.set(board.boardName, dto.getBoardName()); */
-
