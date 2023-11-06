@@ -2,7 +2,7 @@ package com.tubeplus.board_service.application.posting.port.in;
 
 import com.tubeplus.board_service.application.posting.domain.vote.Vote;
 
-public interface VoteUsecase {
+public interface VoteUseCase {
     //vote
     long votePosting(Vote vote);
 

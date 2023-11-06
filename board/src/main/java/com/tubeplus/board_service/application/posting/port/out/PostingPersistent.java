@@ -12,17 +12,13 @@ import static com.tubeplus.board_service.application.posting.port.in.PostingUseC
 
 public interface PostingPersistent {
 
-    Exceptionable
-            <Optional<Posting>, Long> findPosting(long postingId);
+    Exceptionable<Optional<Posting>, Long> findPosting(long postingId);
 
-    Exceptionable
-            <Boolean, Long> softDeletePosting(long postingId);
+    Exceptionable<Boolean, Long> softDeletePosting(long postingId);
 
-    Exceptionable
-            <Boolean, Long> changePinState(long id);
+    Exceptionable<Boolean, Long> changePinState(long id);
 
-    Exceptionable
-            <Posting, UpdateWritingDto> updatePostingWriting(UpdateWritingDto dto);
+    Exceptionable<Posting, UpdateWritingDto> updatePostingWriting(UpdateWritingDto dto);
 
     @Data
     @Builder

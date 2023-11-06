@@ -29,6 +29,6 @@ public @interface ApiTag {
     String name();
 
     @AliasFor(annotation = Tag.class)
-    String description();
+    String description() default "";
 
 }

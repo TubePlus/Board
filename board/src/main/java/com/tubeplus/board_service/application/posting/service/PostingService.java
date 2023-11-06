@@ -5,7 +5,7 @@ import com.tubeplus.board_service.application.posting.port.out.VotePersistent;
 import com.tubeplus.board_service.adapter.web.error.BusinessException;
 import com.tubeplus.board_service.adapter.web.error.ErrorCode;
 import com.tubeplus.board_service.application.posting.domain.posting.Posting;
-import com.tubeplus.board_service.application.posting.domain.posting.PostingViewInfo;
+import com.tubeplus.board_service.application.posting.domain.posting.PostingView;
 import com.tubeplus.board_service.application.posting.port.in.PostingUseCase;
 import com.tubeplus.board_service.application.posting.port.out.PostingPersistent;
 import lombok.RequiredArgsConstructor;
@@ -18,38 +18,41 @@ import java.util.Optional;
 import static com.tubeplus.board_service.application.posting.port.out.PostingPersistent.*;
 
 
-@Service("Posting service")
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
+
+@Service("Posting service")
 public class PostingService implements PostingUseCase {
 
     private final PostingPersistent postingPersistence;
-    private final VotePersistent votePersistence;
-    private final CommentPersistent commentPersistence;
+
+    private final VoteService voteService;
+    private final CommentService commentService;
 
 
     @Override
-    public PostingViewInfo readPosting(long postingId, String userUuid) {
+    public PostingView readPostingView(long postingId, String userUuid) {
 
-        Posting foundPosting = getPosting(postingId);
+        Posting foundPosting
+                = this.getPosting(postingId);
 
         //todo 읽음 집계처리 - 카프카
 
-        return PostingViewInfo.of(
-                foundPosting, userUuid, votePersistence, commentPersistence
-        );
+        return PostingView.builtFrom(
+                foundPosting, userUuid,
+                voteService, commentService);
     }
 
     @Override
     public Posting getPosting(long postingId) {
 
-        Optional<Posting> found
+        Optional<Posting> optionalFound
                 = postingPersistence.findPosting(postingId)
                 .ifExceptioned
                 .thenThrow(ErrorCode.FIND_ENTITY_FAILED);
 
         Posting foundPosting
-                = found.orElseThrow(
+                = optionalFound.orElseThrow(
                 () -> new BusinessException(ErrorCode.NOT_FOUND_RESOURCE));
 
         return foundPosting;
@@ -57,6 +60,7 @@ public class PostingService implements PostingUseCase {
 
     @Override
     public List<PostingSimpleInfo> readMyPostingTitles(String userUuid) {
+
         return null;
     }
 
@@ -78,24 +82,22 @@ public class PostingService implements PostingUseCase {
     @Override
     public void changePinState(long postingId) {
 
-        Boolean pinChanged =
-                postingPersistence.changePinState(postingId)
-                        .ifExceptioned
-                        .thenThrow(ErrorCode.UPDATE_ENTITY_FAILED);
+        Boolean pinChanged
+                = postingPersistence.changePinState(postingId)
+                .ifExceptioned
+                .thenThrow(ErrorCode.UPDATE_ENTITY_FAILED);
 
         if (!pinChanged)
             throw new BusinessException(ErrorCode.UPDATE_ENTITY_FAILED);
-
     }
 
     @Override
     public Posting modifyPostingWriting(long postingId, ModifyPostingForm form) {
 
-        String reqUserUuid, authorUuid;
-        reqUserUuid = form.getUserUuid();
-        authorUuid = this.getPosting(postingId).getAuthorUuid();
+        String authorUuid
+                = this.getPosting(postingId).getAuthorUuid();
 
-        if (!reqUserUuid.equals(authorUuid))
+        if (!authorUuid.equals(form.getUserUuid()))
             throw new BusinessException(ErrorCode.UNAUTHORIZED);
 
 
@@ -111,12 +113,12 @@ public class PostingService implements PostingUseCase {
     @Override
     public void softDeletePosting(long postingId) {
 
-        Boolean isDeleted =
-                postingPersistence.softDeletePosting(postingId)
-                        .ifExceptioned
-                        .thenThrow(ErrorCode.SOFT_DELETE_ENTITY_FAILED);
+        Boolean softDeleted
+                = postingPersistence.softDeletePosting(postingId)
+                .ifExceptioned
+                .thenThrow(ErrorCode.SOFT_DELETE_ENTITY_FAILED);
 
-        if (!isDeleted)
+        if (!softDeleted)
             throw new BusinessException(ErrorCode.DELETE_ENTITY_FAILED);
 
     }

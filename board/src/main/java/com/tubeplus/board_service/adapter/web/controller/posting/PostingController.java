@@ -2,11 +2,12 @@ package com.tubeplus.board_service.adapter.web.controller.posting;
 
 import com.tubeplus.board_service.adapter.web.common.ApiResponse;
 import com.tubeplus.board_service.adapter.web.common.ApiTag;
+import com.tubeplus.board_service.adapter.web.controller.posting.vo.posting.ReqUpdatePinBody;
 import com.tubeplus.board_service.adapter.web.controller.posting.vo.posting.*;
 import com.tubeplus.board_service.adapter.web.error.BusinessException;
 import com.tubeplus.board_service.adapter.web.error.ErrorCode;
 import com.tubeplus.board_service.application.posting.domain.posting.Posting;
-import com.tubeplus.board_service.application.posting.domain.posting.PostingViewInfo;
+import com.tubeplus.board_service.application.posting.domain.posting.PostingView;
 import com.tubeplus.board_service.application.posting.port.in.PostingUseCase;
 import com.tubeplus.board_service.application.posting.port.in.PostingUseCase.MakePostingForm;
 import com.tubeplus.board_service.application.posting.port.in.PostingUseCase.PostingSimpleInfo;
@@ -28,7 +29,7 @@ import static com.tubeplus.board_service.application.posting.port.in.PostingUseC
 @RequiredArgsConstructor
 
 @Validated
-@ApiTag(path = "/api/v1/postings", name = "Posting API", description = "게시물 CRUD API")
+@ApiTag(path = "/api/v1/postings", name = "Posting API")
 public class PostingController {
 
 
@@ -39,8 +40,7 @@ public class PostingController {
     @PostMapping
     public ApiResponse<Long> makePosting
             (
-                    @RequestBody
-                    @Valid ReqMakePostingBody reqBody
+                    @RequestBody @Valid ReqMakePostingBody reqBody
             ) {
 
         MakePostingForm form
@@ -58,17 +58,10 @@ public class PostingController {
     @GetMapping
     public ApiResponse<List<PostingSimpleInfo>> readPostingTitles//todo 요구사항 반영해 수정
     (
-            @RequestParam("board_id")
-            @Min(1) long boardId,
-
-            @RequestParam("page_type")
-                    PostingPageType pageType, //todo 나중에 필요한거 더 추가하기
-
-            @RequestParam(name = "pin", required = false)
-                    Boolean pin,
-
-            @RequestParam(value = "title_like", required = false)
-                    String titleLike
+            @RequestParam("board_id") @Min(1) long boardId,
+            @RequestParam("page_type") PostingPageType pageType, //todo 나중에 필요한거 더 추가하기
+            @RequestParam(name = "pin", required = false) Boolean pin,
+            @RequestParam(value = "title_like", required = false) String titleLike
     ) {
 
         List<PostingSimpleInfo> titleViews;
@@ -89,8 +82,7 @@ public class PostingController {
     @GetMapping("/mine")
     public ApiResponse<List<PostingSimpleInfo>> readMyPostingTitles
             (
-                    @RequestParam("userUuid")
-                    @NotBlank String userUuid
+                    @RequestParam("userUuid") @NotBlank String userUuid
             ) {
 
         List<PostingSimpleInfo> titleViews
@@ -102,32 +94,26 @@ public class PostingController {
 
     @Operation(summary = "id로 게시물 읽기", description = "게시물 id로 개별 게시물 조회 및 읽기 처리")
     @GetMapping("/{postingId}")
-    public ApiResponse<PostingViewInfo> readPosting
+    public ApiResponse<PostingView> readPosting
             (
-                    @PathVariable("postingId")
-                    @Min(1) long id,
-
-                    @RequestParam("user-uuid")
-                    @NotBlank String userUuid
+                    @PathVariable("postingId") @Min(1) long id,
+                    @RequestParam("user-uuid") @NotBlank String userUuid
             ) {
 
-        PostingViewInfo viewInfo
-                = postingService.readPosting(id, userUuid);
+        PostingView postingView
+                = postingService.readPostingView(id, userUuid);
 
-        return ApiResponse.ofSuccess(viewInfo);
+        return ApiResponse.ofSuccess(postingView);
     }
 
 
     @Operation(summary = "작성자가 게시물 수정",
             description = "게시물 작성자가 게시물을 수정할때 사용, 요청자가 작성자인지 권한 점검")
-    @PutMapping("/{postingId}")
+    @PutMapping("/{postingId}/article")
     public ApiResponse<VoPosting> modifyPostingWriting
             (
-                    @PathVariable("postingId")
-                    @Min(1) long id,
-
-                    @RequestBody
-                    @Valid ReqModifyPostingBody reqBody
+                    @PathVariable("postingId") @Min(1) long id,
+                    @RequestBody @Valid ReqModifyPostingBody reqBody
             ) {
 
         ModifyPostingForm form
@@ -142,11 +128,11 @@ public class PostingController {
 
 
     @Operation(summary = "게시물 고정", description = "게시물 id로 지정된 게시물을 상단 고정된 상태로 저장")
-    @PostMapping("/{postingId}/change-pin-state")
-    public ApiResponse changePinState
+    @PostMapping("/{postingId}/pin-state")
+    public ApiResponse updatePinState
             (
-                    @PathVariable("postingId")
-                    @Min(1) long id
+                    @PathVariable("postingId") @Min(1) long id,
+                    @RequestBody @Valid ReqUpdatePinBody reqBody
             ) {
 
         postingService.changePinState(id);
@@ -159,10 +145,8 @@ public class PostingController {
     @DeleteMapping("/{postingId}")
     public ApiResponse softDeletePosting
             (
-                    @PathVariable("postingId")
-                    @Min(1) long id
+                    @PathVariable("postingId") @Min(1) long id
             ) {
-
 
         postingService.softDeletePosting(id);
 

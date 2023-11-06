@@ -41,7 +41,6 @@ public class Exceptionable<RETURN_TYPE, PARAM_TYPE> {
                 log.info(e.getMessage());
                 throw new BusinessException(errorCode);
             }
-
         }
 
         Executor() {

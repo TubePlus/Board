@@ -12,9 +12,9 @@ public interface VotePersistent {
 
     Exceptionable<Optional<Vote>, FindVoteDto> findVote(FindVoteDto dto);
 
-    @Data
+    @Data(staticConstructor = "of")
     class FindVoteDto {
-        final long postingId;
+        final Long postingId;
         final String voterUuid;
     }
 
