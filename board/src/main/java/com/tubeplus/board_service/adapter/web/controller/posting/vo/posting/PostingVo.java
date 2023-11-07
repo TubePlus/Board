@@ -7,7 +7,7 @@ import lombok.Value;
 
 @Value
 @Builder
-public class VoPosting {
+public class PostingVo {
 
     private final Long id;
     private final String authorUuid;
@@ -19,9 +19,9 @@ public class VoPosting {
     private final boolean erase;
 
 
-    public static VoPosting builtFrom(Posting posting) {
+    public static PostingVo builtFrom(Posting posting) {
 
-        return VoPosting.builder()
+        return PostingVo.builder()
                 .id(posting.getId())
                 .authorUuid(posting.getAuthorUuid())
                 .voteCounts(posting.getVoteCount())
@@ -29,7 +29,7 @@ public class VoPosting {
                 .pin(posting.isPin())
                 .contents(posting.getContents())
                 .title(posting.getTitle())
-                .erase(posting.isErase())
+                .erase(posting.isSoftDelete())
                 .build();
     }
 

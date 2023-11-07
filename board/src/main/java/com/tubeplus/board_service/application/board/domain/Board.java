@@ -18,6 +18,6 @@ public class Board {
     private String boardDescription;
     private boolean visible;
     private LocalDateTime limitDateTime;
-    private boolean erase;
+    private boolean softDeleted;
 
 }

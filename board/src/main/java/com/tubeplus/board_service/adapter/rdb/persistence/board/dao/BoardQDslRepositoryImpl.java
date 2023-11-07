@@ -1,22 +1,19 @@
 package com.tubeplus.board_service.adapter.rdb.persistence.board.dao;
 
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.dml.UpdateClause;
-import com.querydsl.core.types.Path;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.impl.JPAUpdateClause;
 import com.tubeplus.board_service.adapter.rdb.persistence.board.QBoardEntity;
 import com.tubeplus.board_service.application.board.port.out.BoardPersistent;
 import com.tubeplus.board_service.adapter.rdb.persistence.board.BoardEntity;
+import com.tubeplus.board_service.application.board.port.out.BoardPersistent.ListFindDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.lang.reflect.Field;
-import java.util.HashMap;
 import java.util.List;
 
 import static java.lang.String.format;
@@ -31,7 +28,7 @@ public class BoardQDslRepositoryImpl implements BoardQDslRepositoryCustom {
 
 
     @Override
-    public List<BoardEntity> findBoards(BoardPersistent.ListFindDto dto) {
+    public List<BoardEntity> findBoards(ListFindDto dto) {
 
         QBoardEntity board
                 = QBoardEntity.boardEntity;
@@ -44,8 +41,8 @@ public class BoardQDslRepositoryImpl implements BoardQDslRepositoryCustom {
                 = new BooleanBuilder();
         if (dto.getVisible() != null)
             accessStatus.and(board.visible.eq(dto.getVisible()));
-        if (dto.getErase() != null)
-            accessStatus.and(board.erase.eq(dto.getErase()));
+        if (dto.getSoftDelete() != null)
+            accessStatus.and(board.softDelete.eq(dto.getSoftDelete()));
 
 
         BooleanExpression nameLike
@@ -68,9 +65,8 @@ public class BoardQDslRepositoryImpl implements BoardQDslRepositoryCustom {
                 = QBoardEntity.boardEntity;
 
         JPAUpdateClause updateQuery
-                =
-                queryFactory.update(board)
-                        .where(board.id.eq(dto.getId()));
+                = queryFactory.update(board)
+                .where(board.id.eq(dto.getId()));
 
         writeUpdatesToQuery(updateQuery, dto, board);
 
@@ -98,7 +94,7 @@ public class BoardQDslRepositoryImpl implements BoardQDslRepositoryCustom {
             updateQuery.set(board.limitDateTime, dto.getLimitDateTime());
         }
         if (dto.getErase() != null) {
-            updateQuery.set(board.erase, dto.getErase());
+            updateQuery.set(board.softDelete, dto.getErase());
         }
 
     }
@@ -114,7 +110,7 @@ public class BoardQDslRepositoryImpl implements BoardQDslRepositoryCustom {
         long executeResult
                 = queryFactory.update(board)
                 .where(board.id.eq(boardId))
-                .set(board.erase, true)
+                .set(board.softDelete, true)
                 .execute();
 
         return executeResult != 0;

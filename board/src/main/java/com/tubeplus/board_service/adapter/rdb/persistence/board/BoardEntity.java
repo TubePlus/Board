@@ -40,11 +40,11 @@ public class BoardEntity extends BaseEntity {
     @Column(nullable = true, name = "limit_datetime")
     private LocalDateTime limitDateTime;
 
-    @Column(nullable = false, name = "erase")
-    private boolean erase;
+    @Column(nullable = false, name = "soft_delete")
+    private boolean softDelete;
 
 
-    public static BoardEntity builtOf(BoardPersistent.SaveDto saveDto) {
+    public static BoardEntity builtFrom(BoardPersistent.SaveDto saveDto) {
         return BoardEntity.builder()
                 .communityId(saveDto.getCommunityId())
                 .boardName(saveDto.getBoardName())
@@ -52,11 +52,11 @@ public class BoardEntity extends BaseEntity {
                 .boardDescription(saveDto.getBoardDescription())
                 .visible(saveDto.isVisible())
                 .limitDateTime(saveDto.getLimitDateTime())
-                .erase(false)
+                .softDelete(false)
                 .build();
     }
 
-    public Board buildBoard() {
+    public Board buildDomain() {
         return Board.builder().
                 id(id).
                 communityId(communityId).
@@ -65,7 +65,7 @@ public class BoardEntity extends BaseEntity {
                 boardDescription(boardDescription).
                 visible(visible).
                 limitDateTime(limitDateTime).
-                erase(erase).
+                softDeleted(softDelete).
                 build();
     }
 

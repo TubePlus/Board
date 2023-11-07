@@ -3,8 +3,10 @@ package com.tubeplus.board_service.application.posting.port.out;
 
 import com.tubeplus.board_service.global.Exceptionable;
 import com.tubeplus.board_service.application.posting.domain.posting.Posting;
-import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 
 import java.util.Optional;
 
@@ -14,30 +16,64 @@ public interface PostingPersistent {
 
     Exceptionable<Optional<Posting>, Long> findPosting(long postingId);
 
-    Exceptionable<Boolean, Long> softDeletePosting(long postingId);
+    Exceptionable<Posting, UpdatePostingDto> updatePosting(UpdatePostingDto dto);
 
-    Exceptionable<Boolean, Long> changePinState(long id);
-
-    Exceptionable<Posting, UpdateWritingDto> updatePostingWriting(UpdateWritingDto dto);
+    @Getter
+    @SuperBuilder
+    abstract class UpdatePostingDto {
+        protected long postingId;
+    }
 
     @Data
-    @Builder
-    class UpdateWritingDto {
-        private final long postingId;
-        private final String userUuid;
+    @SuperBuilder
+    @EqualsAndHashCode(callSuper = true)
+    class UpdatePinStateDto
+            extends UpdatePostingDto {
+        private final boolean pin;
+
+        public static UpdatePinStateDto builtFrom(ModifyPinStateInfo form) {
+            return UpdatePinStateDto.builder()
+                    .postingId(form.getPostingId())
+                    .pin(form.isPinned())
+                    .build();
+        }
+    }
+
+    @Data
+    @SuperBuilder
+    @EqualsAndHashCode(callSuper = true)
+    class UpdateArticleDto
+            extends UpdatePostingDto {
         private final String title;
         private final String contents;
 
-        public static UpdateWritingDto builtFrom(long postingId,
-                                                 ModifyPostingForm form) {
-            return UpdateWritingDto
-                    .builder()
+        public static UpdateArticleDto builtFrom(long postingId,
+                                                 ModifyArticleForm form) {
+            return UpdateArticleDto.builder()
                     .postingId(postingId)
-                    .userUuid(form.getUserUuid())
                     .title(form.getTitle())
                     .contents(form.getContents())
                     .build();
         }
 
     }
+
+    @Data
+    @SuperBuilder
+    @EqualsAndHashCode(callSuper = true)
+    class UpdateSoftDeleteDto
+            extends UpdatePostingDto {
+
+        private final boolean softDelete;
+
+        public static UpdateSoftDeleteDto builtFrom(ModifySoftDeleteInfo info) {
+
+            return UpdateSoftDeleteDto.builder()
+                    .postingId(info.getPostingId())
+                    .softDelete(info.isSoftDelete())
+                    .build();
+        }
+
+    }
+
 }

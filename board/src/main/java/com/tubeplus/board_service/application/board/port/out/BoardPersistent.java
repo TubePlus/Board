@@ -55,7 +55,7 @@ public interface BoardPersistent {
     class ListFindDto {
         private final Long communityId;
         private final Boolean visible;
-        private final Boolean erase;
+        private final Boolean softDelete;
         private final String nameToSearch;
 
         public static ListFindDto of(BoardUseCase.BoardListInfo findInfo) {

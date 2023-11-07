@@ -25,7 +25,7 @@ public class Posting {
 
     private final String title;
 
-    private final boolean erase;
+    private final boolean softDelete;
 
     private final boolean withImage;
 

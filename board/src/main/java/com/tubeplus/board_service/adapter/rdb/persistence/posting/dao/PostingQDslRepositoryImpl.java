@@ -1,10 +1,7 @@
 package com.tubeplus.board_service.adapter.rdb.persistence.posting.dao;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.querydsl.jpa.impl.JPAUpdateClause;
 import com.tubeplus.board_service.adapter.rdb.persistence.posting.QPostingEntity;
-import com.tubeplus.board_service.application.posting.port.out.PostingPersistent;
-import com.tubeplus.board_service.application.posting.port.out.PostingPersistent.UpdateWritingDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
@@ -19,39 +16,37 @@ public class PostingQDslRepositoryImpl implements PostingQDslRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
 
-    @Override
-    @Transactional
-    public long updateSoftDelete(Long postingId) {
+//    @Transactional
+//    public long updateSoftDelete(Long postingId) {
+//
+//        QPostingEntity posting
+//                = QPostingEntity.postingEntity;
+//
+//        long updatedColumns =
+//                queryFactory.update(posting)
+//                        .where(posting.id.eq(postingId))
+//                        .set(posting.softDelete, true)
+//                        .execute();
+//
+//        return updatedColumns;
+//    }
+//
+//    @Transactional
+//    public long updatePinReversed(Long postingId) {
+//
+//        QPostingEntity posting
+//                = QPostingEntity.postingEntity;
+//
+//        long updatedColumns =
+//                queryFactory.update(posting)
+//                        .where(posting.id.eq(postingId))
+//                        .set(posting.pin, posting.pin.not())
+//                        .execute();
+//
+//        return updatedColumns;
+//    }
 
-        QPostingEntity posting
-                = QPostingEntity.postingEntity;
-
-        long updatedColumns =
-                queryFactory.update(posting)
-                        .where(posting.id.eq(postingId))
-                        .set(posting.erase, true)
-                        .execute();
-
-        return updatedColumns;
-    }
-
-    @Override
-    @Transactional
-    public long updatePinReversed(Long postingId) {
-
-        QPostingEntity posting
-                = QPostingEntity.postingEntity;
-
-        long updatedColumns =
-                queryFactory.update(posting)
-                        .where(posting.id.eq(postingId))
-                        .set(posting.pin, posting.pin.not())
-                        .execute();
-
-        return updatedColumns;
-    }
-
-//    public long updatePostingWriting(UpdateWritingDto dto) {
+//    public long updatePostingWriting(UpdateArticleDto dto) {
 //
 //        QPostingEntity posting
 //                = QPostingEntity.postingEntity;
