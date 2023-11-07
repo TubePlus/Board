@@ -3,10 +3,8 @@ package com.tubeplus.board_service.adapter.rdb.persistence.posting;
 import com.tubeplus.board_service.adapter.rdb.config.BaseEntity;
 import com.tubeplus.board_service.application.posting.domain.posting.Posting;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
 
 @Entity
@@ -15,13 +13,14 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class PostingEntity extends BaseEntity {//todo posting_seq 정체 찾아보기
     //todo 수정된 erd 반영하기
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @Column(name = "author_uuid", nullable = false)
+    @Column(name = "author_uuid", nullable = false,length = 50)
     private String authorUuid;
 
     @Column(name = "vote_count", nullable = false)
@@ -40,8 +39,8 @@ public class PostingEntity extends BaseEntity {//todo posting_seq 정체 찾아�
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "erase", nullable = false)
-    private boolean erase;
+    @Column(name = "soft_delete", nullable = false)
+    private boolean softDelete;
 
 
     public Posting buildDomain() {//todo 수정
@@ -54,7 +53,7 @@ public class PostingEntity extends BaseEntity {//todo posting_seq 정체 찾아�
                 .pin(pin)
                 .contents(contents)
                 .title(title)
-                .erase(erase)
+                .softDelete(softDelete)
                 .withImage(true)//todo 수정하기
                 .build();
     }

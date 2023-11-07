@@ -30,12 +30,12 @@ public class BoardPersistence implements BoardPersistent {
         Function<SaveDto, Board> saveBoardByDto =
                 dto -> {
                     BoardEntity boardEntity
-                            = BoardEntity.builtOf(dto);
+                            = BoardEntity.builtFrom(dto);
 
                     BoardEntity savedEntity
                             = jpaDataRepo.save(boardEntity);
 
-                    return savedEntity.buildBoard();
+                    return savedEntity.buildDomain();
                 };
 
         return new Exceptionable<>(saveBoardByDto, saveDto);
@@ -51,7 +51,7 @@ public class BoardPersistence implements BoardPersistent {
                             = jpaDataRepo.findById(id)
                             .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_RESOURCE));
 
-                    return foundEntity.buildBoard();
+                    return foundEntity.buildDomain();
                 };
 
         return new Exceptionable<>(findBoardById, boardId);
@@ -67,7 +67,7 @@ public class BoardPersistence implements BoardPersistent {
 
                     List<Board> foundBoards
                             = foundBoardEntities.stream()
-                            .map(BoardEntity::buildBoard)
+                            .map(BoardEntity::buildDomain)
                             .collect(Collectors.toList());
 
                     return foundBoards;

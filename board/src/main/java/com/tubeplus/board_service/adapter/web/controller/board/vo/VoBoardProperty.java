@@ -33,7 +33,7 @@ public class VoBoardProperty implements Serializable {
                 .boardDescription(board.getBoardDescription())
                 .visible(board.isVisible())
                 .limitDateTime(board.getLimitDateTime())
-                .erase(board.isErase())
+                .erase(board.isSoftDeleted())
                 .build();
         log.info(boardProperty.toString());
 

@@ -1,7 +1,5 @@
 package com.tubeplus.board_service.application.posting.service;
 
-import com.tubeplus.board_service.application.posting.port.out.CommentPersistent;
-import com.tubeplus.board_service.application.posting.port.out.VotePersistent;
 import com.tubeplus.board_service.adapter.web.error.BusinessException;
 import com.tubeplus.board_service.adapter.web.error.ErrorCode;
 import com.tubeplus.board_service.application.posting.domain.posting.Posting;
@@ -80,20 +78,22 @@ public class PostingService implements PostingUseCase {
     }
 
     @Override
-    public void changePinState(long postingId) {
+    public void modifyPostingPinState(ModifyPinStateInfo modifyInfo) {
 
-        Boolean pinChanged
-                = postingPersistence.changePinState(postingId)
-                .ifExceptioned
-                .thenThrow(ErrorCode.UPDATE_ENTITY_FAILED);
+        UpdatePinStateDto dto = UpdatePinStateDto.builtFrom(modifyInfo);
 
-        if (!pinChanged)
+        Posting updatedPosting
+                = postingPersistence.updatePosting(dto)
+                .ifExceptioned.thenThrow(ErrorCode.UPDATE_ENTITY_FAILED);
+
+        if (updatedPosting == null)
             throw new BusinessException(ErrorCode.UPDATE_ENTITY_FAILED);
     }
 
     @Override
-    public Posting modifyPostingWriting(long postingId, ModifyPostingForm form) {
+    public Posting modifyPostingArticle(long postingId, ModifyArticleForm form) {
 
+        // User 권한점검, Posting 작성자인지
         String authorUuid
                 = this.getPosting(postingId).getAuthorUuid();
 
@@ -101,25 +101,28 @@ public class PostingService implements PostingUseCase {
             throw new BusinessException(ErrorCode.UNAUTHORIZED);
 
 
+        // 글 내용, 제목 수정
+        UpdateArticleDto dto = UpdateArticleDto.builtFrom(postingId, form);
+
         Posting modifiedPosting
-                = postingPersistence.updatePostingWriting(
-                        UpdateWritingDto.builtFrom(postingId, form))
-                .ifExceptioned
-                .thenThrow(ErrorCode.UPDATE_ENTITY_FAILED);
+                = postingPersistence.updatePosting(dto)
+                .ifExceptioned.thenThrow(ErrorCode.UPDATE_ENTITY_FAILED);
 
         return modifiedPosting;
     }
 
     @Override
-    public void softDeletePosting(long postingId) {
+    public void modifyDeletePosting(ModifySoftDeleteInfo info) {
 
-        Boolean softDeleted
-                = postingPersistence.softDeletePosting(postingId)
-                .ifExceptioned
-                .thenThrow(ErrorCode.SOFT_DELETE_ENTITY_FAILED);
+        UpdateSoftDeleteDto dto = UpdateSoftDeleteDto.builtFrom(info);
 
-        if (!softDeleted)
+        Posting softDeletedPosting
+                = postingPersistence.updatePosting(dto)
+                .ifExceptioned.thenThrow(ErrorCode.SOFT_DELETE_ENTITY_FAILED);
+
+        if (softDeletedPosting.isSoftDelete() != info.isSoftDelete())
             throw new BusinessException(ErrorCode.DELETE_ENTITY_FAILED);
 
     }
+
 }

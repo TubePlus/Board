@@ -2,7 +2,7 @@ package com.tubeplus.board_service.adapter.web.controller.posting;
 
 import com.tubeplus.board_service.adapter.web.common.ApiResponse;
 import com.tubeplus.board_service.adapter.web.common.ApiTag;
-import com.tubeplus.board_service.adapter.web.controller.posting.vo.posting.ReqUpdatePinBody;
+import com.tubeplus.board_service.adapter.web.controller.posting.vo.posting.ReqUpdatePinStateBody;
 import com.tubeplus.board_service.adapter.web.controller.posting.vo.posting.*;
 import com.tubeplus.board_service.adapter.web.error.BusinessException;
 import com.tubeplus.board_service.adapter.web.error.ErrorCode;
@@ -36,15 +36,14 @@ public class PostingController {
     private final PostingUseCase postingService;
 
 
-    @Operation(summary = "게시물 작성", description = "게시물 작성 api, 작성된 게시물의 id 반환")
+    @Operation(summary = "게시물 작성", description = "작성된 게시물의 id 반환")
     @PostMapping
     public ApiResponse<Long> makePosting
             (
                     @RequestBody @Valid ReqMakePostingBody reqBody
             ) {
 
-        MakePostingForm form
-                = reqBody.buildForm();
+        MakePostingForm form = reqBody.buildForm();
 
         Long postedBoardId
                 = postingService.makePosting(form);
@@ -54,27 +53,27 @@ public class PostingController {
     }
 
 
-    @Operation(summary = "게시판내 게시물 목록 조회", description = "특정 id의 게시판내 게시물들 제목, 고정글 여부등의 간단한 정보 목록 조회")
+    @Operation(summary = "게시판내 게시물 목록 조회", description = "제목, 고정글 여부등의 간단한 정보 목록 조회")
     @GetMapping
     public ApiResponse<List<PostingSimpleInfo>> readPostingTitles//todo 요구사항 반영해 수정
     (
             @RequestParam("board_id") @Min(1) long boardId,
-            @RequestParam("page_type") PostingPageType pageType, //todo 나중에 필요한거 더 추가하기
+            @RequestParam("view_req_type") PostingsViewReqType viewReqType, //todo 나중에 필요한거 더 추가하기
             @RequestParam(name = "pin", required = false) Boolean pin,
             @RequestParam(value = "title_like", required = false) String titleLike
     ) {
 
-        List<PostingSimpleInfo> titleViews;
-        switch (pageType) {
+        List<PostingSimpleInfo> postingSimpleInfos;
+        switch (viewReqType) {
 
-            case FEED -> titleViews = postingService.feedPostingTitles(boardId, null);//todo null없애기
+            case FEED -> postingSimpleInfos = postingService.feedPostingTitles(boardId, null);//todo null없애기
 
-            case LIST -> titleViews = postingService.pagePostingTitles(boardId, null);
+            case PAGE -> postingSimpleInfos = postingService.pagePostingTitles(boardId, null);
 
             default -> throw new BusinessException(ErrorCode.BAD_REQUEST);
         }
 
-        return ApiResponse.ofSuccess(titleViews);
+        return ApiResponse.ofSuccess(postingSimpleInfos);
     }
 
 
@@ -92,11 +91,11 @@ public class PostingController {
     }
 
 
-    @Operation(summary = "id로 게시물 읽기", description = "게시물 id로 개별 게시물 조회 및 읽기 처리")
-    @GetMapping("/{postingId}")
+    @Operation(summary = "id로 게시물 읽기", description = "게시물 id로 개별 게시물 조회 및 읽기(조회수 반영등) 처리")
+    @GetMapping("/{id}")
     public ApiResponse<PostingView> readPosting
             (
-                    @PathVariable("postingId") @Min(1) long id,
+                    @PathVariable("id") @Min(1) long id,
                     @RequestParam("user-uuid") @NotBlank String userUuid
             ) {
 
@@ -109,46 +108,49 @@ public class PostingController {
 
     @Operation(summary = "작성자가 게시물 수정",
             description = "게시물 작성자가 게시물을 수정할때 사용, 요청자가 작성자인지 권한 점검")
-    @PutMapping("/{postingId}/article")
-    public ApiResponse<VoPosting> modifyPostingWriting
+    @PutMapping("/{id}/article")
+    public ApiResponse<PostingVo> modifyPostingArticle
             (
-                    @PathVariable("postingId") @Min(1) long id,
+                    @PathVariable("id") @Min(1) long id,
                     @RequestBody @Valid ReqModifyPostingBody reqBody
             ) {
 
-        ModifyPostingForm form
+        ModifyArticleForm form
                 = reqBody.buildForm();
 
         Posting modifiedPosting
-                = postingService.modifyPostingWriting(id, form);
+                = postingService.modifyPostingArticle(id, form);
 
         return ApiResponse.ofSuccess
-                (VoPosting.builtFrom(modifiedPosting));
+                (PostingVo.builtFrom(modifiedPosting));
     }
 
 
-    @Operation(summary = "게시물 고정", description = "게시물 id로 지정된 게시물을 상단 고정된 상태로 저장")
-    @PostMapping("/{postingId}/pin-state")
-    public ApiResponse updatePinState
+    @Operation(summary = "게시물 상단고정 상태 변경")
+    @PutMapping("/{id}/pin-state")
+    public ApiResponse modifyPostingPinState
             (
-                    @PathVariable("postingId") @Min(1) long id,
-                    @RequestBody @Valid ReqUpdatePinBody reqBody
+                    @PathVariable("id") @Min(1) long postingId,
+                    @RequestBody @Valid ReqUpdatePinStateBody reqBody
             ) {
 
-        postingService.changePinState(id);
+        ModifyPinStateInfo updateInfo
+                = reqBody.buildUpdateInfoOf(postingId);
+
+        postingService.modifyPostingPinState(updateInfo);
 
         return ApiResponse.ofSuccess(null);
     }
 
 
-    @Operation(summary = "게시물 삭제", description = "게시물 id로 지정된 게시물을 삭제")
-    @DeleteMapping("/{postingId}")
+    @Operation(summary = "게시물 삭제(Soft Delete)")
+    @DeleteMapping("/{id}")
     public ApiResponse softDeletePosting
             (
-                    @PathVariable("postingId") @Min(1) long id
+                    @PathVariable("id") @Min(1) long id
             ) {
 
-        postingService.softDeletePosting(id);
+        postingService.modifyDeletePosting(ModifySoftDeleteInfo.of(id, true));
 
         return ApiResponse.ofSuccess(null);
     }

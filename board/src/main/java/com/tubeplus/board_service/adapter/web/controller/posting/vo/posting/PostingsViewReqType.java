@@ -3,16 +3,16 @@ package com.tubeplus.board_service.adapter.web.controller.posting.vo.posting;
 import org.springframework.core.convert.converter.Converter;
 
 
-public enum PostingPageType {
+public enum PostingsViewReqType {
 
     FEED,
-    LIST;
+    PAGE;
 
 
-    public static class ReqConverter implements Converter<String, PostingPageType> {
+    public static class ReqConverter implements Converter<String, PostingsViewReqType> {
 
         @Override
-        public PostingPageType convert(String name) {
+        public PostingsViewReqType convert(String name) {
             return valueOf(name);
         }
 

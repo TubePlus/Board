@@ -58,20 +58,33 @@ public interface PostingUseCase {
     }
 
 
-    void changePinState(long postingId);
-
-
-    Posting modifyPostingWriting(long postingId, ModifyPostingForm form);//todo 작성자 권한체크 하기
+    void modifyPostingPinState(ModifyPinStateInfo form);
 
     @Data
     @Builder
-    class ModifyPostingForm {
+    class ModifyPinStateInfo {
+        private final long postingId;
+        private final boolean pinned;
+    }
+
+
+    Posting modifyPostingArticle(long postingId, ModifyArticleForm form);
+
+    @Data
+    @Builder
+    class ModifyArticleForm {
         private final String userUuid;
         private final String title;
         private final String contents;
     }
 
 
-    void softDeletePosting(long postingId);
+    void modifyDeletePosting(ModifySoftDeleteInfo info);
+
+    @Data(staticConstructor = "of")
+    class ModifySoftDeleteInfo {
+        private final long postingId;
+        private final boolean softDelete;
+    }
 
 }
