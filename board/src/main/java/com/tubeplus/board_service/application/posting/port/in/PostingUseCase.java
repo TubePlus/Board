@@ -4,44 +4,71 @@ import com.tubeplus.board_service.application.posting.domain.posting.Posting;
 import com.tubeplus.board_service.application.posting.domain.posting.PostingView;
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 
 
 public interface PostingUseCase {
 
-
     PostingView readPostingView(long postingId, String userUuid);
-
-
-    Posting getPosting(long postingId);
 
 
     @Data
     @Builder
-    class PostingSimpleInfo {
+    class PostingSimpleData {
         private final Long id;
         private final String authorUuid;
         private final long voteCount;
         private final boolean pinned;
         private final String title;
         private final boolean withImage;
+
+        public static PostingSimpleData builtFrom(Posting posting) {
+            return PostingSimpleData.builder()
+                    .id(posting.getId())
+                    .authorUuid(posting.getAuthorUuid())
+                    .voteCount(posting.getVoteCount())
+                    .pinned(posting.isPin())
+                    .title(posting.getTitle())
+                    .withImage(posting.isWithImage())
+                    .build();
+        }
     }
-
-    List<PostingSimpleInfo> readMyPostingTitles(String userUuid);
-
-    List<PostingSimpleInfo> pagePostingTitles(Long boardId, PageDto dto);
 
     @Data
     @Builder
-    class PageDto {
+    class SearchPostingsInfo {
+        private final Long boardId;
+        private final String authorUuid;
+        private final Boolean softDelete;
     }
 
-    List<PostingSimpleInfo> feedPostingTitles(Long boardId, FeedDto dto);
+    Page<PostingSimpleData> pagePostingSimpleData(InfoToPagePostingData info);
 
     @Data
     @Builder
-    class FeedDto {
+    class InfoToPagePostingData {
+        private final SearchPostingsInfo searchInfo;
+        private final PageRequest pageReq;
+    }
+
+    @Data
+    @Builder
+    class Feed<T> {
+        private final List<T> data;
+        private final Long lastCursoredId;
+    }
+
+    Feed<PostingSimpleData> feedPostingSimpleData(InfoToFeedPostingData info);
+
+    @Data
+    @Builder
+    class InfoToFeedPostingData {
+        private final SearchPostingsInfo searchInfo;
+        private final Long cursorId;
+        private final int size;
 
     }
 
@@ -58,7 +85,7 @@ public interface PostingUseCase {
     }
 
 
-    void modifyPostingPinState(ModifyPinStateInfo form);
+    void modifyPostingPinState(ModifyPinStateInfo info);
 
     @Data
     @Builder

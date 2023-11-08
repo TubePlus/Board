@@ -9,6 +9,7 @@ import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +31,7 @@ public class PostingPersistence implements PostingPersistent {
 
 
     @Override
+    @Transactional(readOnly = true)
     public Exceptionable<Optional<Posting>, Long> findPosting(final long postingId) {
 
         Function<Long, Optional<Posting>> findPostingById
@@ -47,15 +49,41 @@ public class PostingPersistence implements PostingPersistent {
         return new Exceptionable<>(findPostingById, postingId);
     }
 
-    @Override
-    @Transactional
-    public Exceptionable<Posting, UpdatePostingDto> updatePosting(UpdatePostingDto updateDto) {
-        //todo 영속성 컨텍스트 공부해보고, 최적화 가능하다면 queryDsl로 바꾸기 - 하나의 엔티티만 컨텍스트 초기화 되는지 확인
 
-        Function<UpdatePostingDto, Posting> updatePosting
+    @Override
+    @Transactional(readOnly = true)
+    public Exceptionable<Page<Posting>, PagePostingsDto> CursorPostings(CursorPostingsDto dto) {
+        return null;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Exceptionable<Page<Posting>, PagePostingsDto> pagePostings(PagePostingsDto pagePostingsDto) {
+
+        Function<PagePostingsDto, Page<Posting>> pagePostings
                 = (dto) -> {
 
-            // dto로 요청된 수정 내역 엔티티에 반영
+            Page<PostingEntity> pagedEntities
+                    = queryDslRepo.pagePostingEntities(dto);
+
+            Page<Posting> pagedPostings
+                    = pagedEntities.map(PostingEntity::buildDomain);
+
+            return pagedPostings;
+        };
+
+        return new Exceptionable<>(pagePostings, pagePostingsDto);
+    }
+
+
+    @Override
+    @Transactional
+    public Exceptionable<Posting, BaseUpdatePostingDto> updatePosting(BaseUpdatePostingDto updateDto) {
+        //todo 영속성 컨텍스트 공부해보고, 최적화 가능하다면 queryDsl로 바꾸기 - 하나의 엔티티만 컨텍스트 초기화 되는지 확인
+
+        Function<BaseUpdatePostingDto, Posting> updatePosting
+                = (dto) -> {
+            // dto로 수정 요청된 필드 엔티티에 반영
             PostingEntity entityToUpdate
                     = em.find(PostingEntity.class, dto.getPostingId());
 
@@ -76,4 +104,6 @@ public class PostingPersistence implements PostingPersistent {
 
         return new Exceptionable<>(updatePosting, updateDto);
     }
+
+
 }

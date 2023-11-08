@@ -5,12 +5,14 @@ import com.tubeplus.board_service.adapter.web.error.ErrorCode;
 import com.tubeplus.board_service.application.posting.domain.posting.Posting;
 import com.tubeplus.board_service.application.posting.domain.posting.PostingView;
 import com.tubeplus.board_service.application.posting.port.in.PostingUseCase;
+import com.tubeplus.board_service.application.posting.port.out.CommentPersistent;
 import com.tubeplus.board_service.application.posting.port.out.PostingPersistent;
+import com.tubeplus.board_service.application.posting.port.out.VotePersistent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 import static com.tubeplus.board_service.application.posting.port.out.PostingPersistent.*;
@@ -23,9 +25,8 @@ import static com.tubeplus.board_service.application.posting.port.out.PostingPer
 public class PostingService implements PostingUseCase {
 
     private final PostingPersistent postingPersistence;
-
-    private final VoteService voteService;
-    private final CommentService commentService;
+    private final VotePersistent votePersistence;
+    private final CommentPersistent commentPersistent;
 
 
     @Override
@@ -37,46 +38,40 @@ public class PostingService implements PostingUseCase {
         //todo 읽음 집계처리 - 카프카
 
         return PostingView.builtFrom(
-                foundPosting, userUuid,
-                voteService, commentService);
+                foundPosting, userUuid, votePersistence, commentPersistent);
+    }
+
+
+    @Override
+    public Page<PostingSimpleData> pagePostingSimpleData(InfoToPagePostingData info) {
+
+        Page<Posting> pagedPostings
+                = postingPersistence.pagePostings(
+                        PagePostingsDto.builtFrom(info)
+                )
+                .ifExceptioned.thenThrow(ErrorCode.FIND_ENTITY_FAILED);
+
+
+        Page<PostingSimpleData> pagedPostingData
+                = pagedPostings.map(PostingSimpleData::builtFrom);
+
+        return pagedPostingData;
     }
 
     @Override
-    public Posting getPosting(long postingId) {
-
-        Optional<Posting> optionalFound
-                = postingPersistence.findPosting(postingId)
-                .ifExceptioned
-                .thenThrow(ErrorCode.FIND_ENTITY_FAILED);
-
-        Posting foundPosting
-                = optionalFound.orElseThrow(
-                () -> new BusinessException(ErrorCode.NOT_FOUND_RESOURCE));
-
-        return foundPosting;
-    }
-
-    @Override
-    public List<PostingSimpleInfo> readMyPostingTitles(String userUuid) {
-
+    public Feed<PostingSimpleData> feedPostingSimpleData(InfoToFeedPostingData info) {
         return null;
     }
 
-    @Override
-    public List<PostingSimpleInfo> pagePostingTitles(Long boardId, PageDto dto) {
-        return null;
-    }
 
-    @Override
-    public List<PostingSimpleInfo> feedPostingTitles(Long boardId, FeedDto dto) {
-        return null;
-    }
-
+    // Create
     @Override
     public Long makePosting(MakePostingForm form) {
         return null;
     }
 
+
+    // Update
     @Override
     public void modifyPostingPinState(ModifyPinStateInfo modifyInfo) {
 
@@ -93,7 +88,7 @@ public class PostingService implements PostingUseCase {
     @Override
     public Posting modifyPostingArticle(long postingId, ModifyArticleForm form) {
 
-        // User 권한점검, Posting 작성자인지
+        // User 권한점검: Posting 작성자인지 확인
         String authorUuid
                 = this.getPosting(postingId).getAuthorUuid();
 
@@ -125,4 +120,18 @@ public class PostingService implements PostingUseCase {
 
     }
 
+
+    private Posting getPosting(long postingId) {
+
+        Optional<Posting> optionalFound
+                = postingPersistence.findPosting(postingId)
+                .ifExceptioned
+                .thenThrow(ErrorCode.FIND_ENTITY_FAILED);
+
+        Posting foundPosting
+                = optionalFound.orElseThrow(
+                () -> new BusinessException(ErrorCode.NOT_FOUND_RESOURCE));
+
+        return foundPosting;
+    }
 }

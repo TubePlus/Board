@@ -3,10 +3,13 @@ package com.tubeplus.board_service.application.posting.port.out;
 
 import com.tubeplus.board_service.global.Exceptionable;
 import com.tubeplus.board_service.application.posting.domain.posting.Posting;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.Optional;
 
@@ -16,11 +19,57 @@ public interface PostingPersistent {
 
     Exceptionable<Optional<Posting>, Long> findPosting(long postingId);
 
-    Exceptionable<Posting, UpdatePostingDto> updatePosting(UpdatePostingDto dto);
+
+    @Data
+    @Builder
+    class FindPostingsCondition {
+        private final Long boardId;
+        private final String authorUuid;
+        private final Boolean softDelete;
+
+        public static FindPostingsCondition builtFrom(SearchPostingsInfo info) {
+            return FindPostingsCondition.builder()
+                    .boardId(info.getBoardId())
+                    .authorUuid(info.getAuthorUuid())
+                    .softDelete(info.getSoftDelete())
+                    .build();
+        }
+    }
+
+    Exceptionable<Page<Posting>, PagePostingsDto> pagePostings(PagePostingsDto dto);
+
+    @Data
+    @Builder
+    class PagePostingsDto {
+        private final FindPostingsCondition findCondition;
+        private final PageRequest pageReq;
+
+        public static PagePostingsDto builtFrom(InfoToPagePostingData info) {
+            return PagePostingsDto.builder()
+                    .findCondition(FindPostingsCondition.builtFrom
+                            (info.getSearchInfo())
+                    )
+                    .pageReq(info.getPageReq())
+                    .build();
+        }
+    }
+
+    //todo 리턴값 수정
+    Exceptionable<Page<Posting>, PagePostingsDto> CursorPostings(CursorPostingsDto dto);
+
+    @Data
+    @Builder
+    class CursorPostingsDto {
+        private final FindPostingsCondition findCondition;
+        private final Long cursor;
+    }
+
+
+    Exceptionable<Posting, BaseUpdatePostingDto> updatePosting(BaseUpdatePostingDto dto);
 
     @Getter
     @SuperBuilder
-    abstract class UpdatePostingDto {
+    abstract class BaseUpdatePostingDto {
         protected long postingId;
     }
 
@@ -28,7 +77,7 @@ public interface PostingPersistent {
     @SuperBuilder
     @EqualsAndHashCode(callSuper = true)
     class UpdatePinStateDto
-            extends UpdatePostingDto {
+            extends BaseUpdatePostingDto {
         private final boolean pin;
 
         public static UpdatePinStateDto builtFrom(ModifyPinStateInfo form) {
@@ -43,7 +92,7 @@ public interface PostingPersistent {
     @SuperBuilder
     @EqualsAndHashCode(callSuper = true)
     class UpdateArticleDto
-            extends UpdatePostingDto {
+            extends BaseUpdatePostingDto {
         private final String title;
         private final String contents;
 
@@ -62,7 +111,7 @@ public interface PostingPersistent {
     @SuperBuilder
     @EqualsAndHashCode(callSuper = true)
     class UpdateSoftDeleteDto
-            extends UpdatePostingDto {
+            extends BaseUpdatePostingDto {
 
         private final boolean softDelete;
 

@@ -2,6 +2,7 @@ package com.tubeplus.board_service.adapter.web.controller.posting;
 
 import com.tubeplus.board_service.adapter.web.common.ApiResponse;
 import com.tubeplus.board_service.adapter.web.common.ApiTag;
+import com.tubeplus.board_service.adapter.web.controller.posting.vo.VoReadPostingSimpleData;
 import com.tubeplus.board_service.adapter.web.controller.posting.vo.posting.ReqUpdatePinStateBody;
 import com.tubeplus.board_service.adapter.web.controller.posting.vo.posting.*;
 import com.tubeplus.board_service.adapter.web.error.BusinessException;
@@ -10,17 +11,16 @@ import com.tubeplus.board_service.application.posting.domain.posting.Posting;
 import com.tubeplus.board_service.application.posting.domain.posting.PostingView;
 import com.tubeplus.board_service.application.posting.port.in.PostingUseCase;
 import com.tubeplus.board_service.application.posting.port.in.PostingUseCase.MakePostingForm;
-import com.tubeplus.board_service.application.posting.port.in.PostingUseCase.PostingSimpleInfo;
+import com.tubeplus.board_service.application.posting.port.in.PostingUseCase.PostingSimpleData;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 import static com.tubeplus.board_service.application.posting.port.in.PostingUseCase.*;
 
@@ -48,46 +48,48 @@ public class PostingController {
         Long postedBoardId
                 = postingService.makePosting(form);
 
-
         return ApiResponse.ofSuccess(postedBoardId);
     }
 
 
     @Operation(summary = "게시판내 게시물 목록 조회", description = "제목, 고정글 여부등의 간단한 정보 목록 조회")
-    @GetMapping
-    public ApiResponse<List<PostingSimpleInfo>> readPostingTitles//todo 요구사항 반영해 수정
-    (
-            @RequestParam("board_id") @Min(1) long boardId,
-            @RequestParam("view_req_type") PostingsViewReqType viewReqType, //todo 나중에 필요한거 더 추가하기
-            @RequestParam(name = "pin", required = false) Boolean pin,
-            @RequestParam(value = "title_like", required = false) String titleLike
-    ) {
+    @GetMapping()
+    public ApiResponse<VoReadPostingSimpleData.Res> readPostingSimpleData
+            (
+                    @RequestParam("view_req_type") PostingsViewReqType viewReqType, //todo 나중에 필요한거 더 추가하기
+                    @RequestParam(value = "board_id", required = false) Long boardId,
+                    @RequestParam(name = "authorUuid", required = false) String authorUuid,
+                    @RequestParam(name = "pin", required = false) Boolean pin,
+                    @RequestParam(value = "title_like", required = false) String titleLike
+            ) {
 
-        List<PostingSimpleInfo> postingSimpleInfos;
+        // todo searchType enum 받아서 요청 타입별로 reqParam 유효성 조건점검 로직 깔끔하게 하기
+
+        VoReadPostingSimpleData.Res responseVo;
         switch (viewReqType) {
 
-            case FEED -> postingSimpleInfos = postingService.feedPostingTitles(boardId, null);//todo null없애기
+            case FEED -> {
 
-            case PAGE -> postingSimpleInfos = postingService.pagePostingTitles(boardId, null);
+                Feed<PostingSimpleData> fedPostingData
+                        = postingService.feedPostingSimpleData(null); //todo null 없애기
+
+                responseVo = VoReadPostingSimpleData.Res.of(fedPostingData);
+            }
+
+
+            case PAGE -> {
+
+                Page<PostingSimpleData> pagedPostingData
+                        = postingService.pagePostingSimpleData(null);
+
+                responseVo = VoReadPostingSimpleData.Res.of(pagedPostingData);
+            }
+
 
             default -> throw new BusinessException(ErrorCode.BAD_REQUEST);
         }
 
-        return ApiResponse.ofSuccess(postingSimpleInfos);
-    }
-
-
-    @Operation(summary = "내 게시물 title 목록 읽어오기")
-    @GetMapping("/mine")
-    public ApiResponse<List<PostingSimpleInfo>> readMyPostingTitles
-            (
-                    @RequestParam("userUuid") @NotBlank String userUuid
-            ) {
-
-        List<PostingSimpleInfo> titleViews
-                = postingService.readMyPostingTitles(userUuid);
-
-        return ApiResponse.ofSuccess(titleViews);
+        return ApiResponse.ofSuccess(responseVo);
     }
 
 

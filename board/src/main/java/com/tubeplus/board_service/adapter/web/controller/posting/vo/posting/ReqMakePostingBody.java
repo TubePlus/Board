@@ -26,6 +26,7 @@ public class ReqMakePostingBody {
     @NotEmpty
     private final String contents;
 
+
     public MakePostingForm buildForm() {
         return MakePostingForm
                 .builder()

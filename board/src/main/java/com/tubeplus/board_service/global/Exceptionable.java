@@ -5,6 +5,7 @@ import com.tubeplus.board_service.adapter.web.error.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 
 @Slf4j
@@ -18,9 +19,14 @@ public class Exceptionable<RETURN_TYPE, PARAM_TYPE> {
 
 
     public Exceptionable(Function<PARAM_TYPE, RETURN_TYPE> function, PARAM_TYPE parameter) {
-
         this.exceptionableTask = function;
         this.parameter = parameter;
+    }
+
+
+    public static Exceptionable<?, ?> act(Supplier functionWithParam) {
+
+        return new Exceptionable<>(o -> functionWithParam.get(), null);
     }
 
 
@@ -43,6 +49,18 @@ public class Exceptionable<RETURN_TYPE, PARAM_TYPE> {
             }
         }
 
+        public RETURN_TYPE thenThrow(RuntimeException runtimeException) {
+
+            try {
+                RETURN_TYPE result = exceptionableTask.apply(parameter);
+                return result;
+
+            }  catch (Exception e) {
+//                e.printStackTrace();
+                log.info(e.getMessage());
+                throw runtimeException;
+            }
+        }
         Executor() {
         }
     }
