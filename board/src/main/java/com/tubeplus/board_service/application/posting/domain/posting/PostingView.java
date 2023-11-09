@@ -1,6 +1,9 @@
 package com.tubeplus.board_service.application.posting.domain.posting;
 
 
+import com.tubeplus.board_service.adapter.web.error.ErrorCode;
+import com.tubeplus.board_service.application.posting.port.out.CommentPersistent;
+import com.tubeplus.board_service.application.posting.port.out.VotePersistent;
 import com.tubeplus.board_service.application.posting.port.out.VotePersistent.FindVoteDto;
 import com.tubeplus.board_service.application.posting.domain.vote.Vote;
 import com.tubeplus.board_service.application.posting.service.CommentService;
@@ -32,13 +35,14 @@ public class PostingView {
 
     public static PostingView builtFrom(Posting posting,
                                         String userUuid,
-                                        VoteService voteService,
-                                        CommentService commentService) {
+                                        VotePersistent votePersistence,
+                                        CommentPersistent commentPersistence) {
 
         FindVoteDto dto = FindVoteDto.of(posting.getId(), userUuid);
 
         Optional<Vote> optionalUserVote
-                = voteService.findVote(dto);
+                = votePersistence.findVote(dto)
+                .ifExceptioned.thenThrow(ErrorCode.FIND_ENTITY_FAILED);
 
         Long userVoteId
                 = optionalUserVote.map(Vote::getId)

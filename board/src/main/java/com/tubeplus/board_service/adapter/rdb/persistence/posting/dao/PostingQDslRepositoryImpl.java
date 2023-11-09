@@ -1,11 +1,21 @@
 package com.tubeplus.board_service.adapter.rdb.persistence.posting.dao;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.tubeplus.board_service.adapter.rdb.persistence.posting.PostingEntity;
 import com.tubeplus.board_service.adapter.rdb.persistence.posting.QPostingEntity;
+import com.tubeplus.board_service.application.posting.port.out.PostingPersistent.FindPostingsDto.SortScope;
+import com.tubeplus.board_service.global.Exceptionable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+import static com.tubeplus.board_service.application.posting.port.out.PostingPersistent.*;
 
 
 @Slf4j
@@ -14,6 +24,135 @@ import org.springframework.transaction.annotation.Transactional;
 public class PostingQDslRepositoryImpl implements PostingQDslRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public Long countPostingEntities(FindPostingsDto.ConditionByFields condition) {
+
+        QPostingEntity posting = QPostingEntity.postingEntity;
+
+        // query 생성
+        JPAQuery<Long> query
+                = queryFactory.select(posting.count())
+                .from(posting)
+                .where(equalsToConditionByFields(posting, condition));
+
+        // count query 실행 및 결과 반환
+        Long entitiesNum
+                = Exceptionable.act(query::fetchOne)
+                .ifExceptioned.thenThrow(new RuntimeException("count postings query failed"));
+
+        return entitiesNum;
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<PostingEntity> findPostingEntities(FindPostingsDto dto) {
+
+
+        QPostingEntity posting = QPostingEntity.postingEntity;
+
+        FindPostingsDto.ConditionByFields condition = dto.getConditionByFields();
+
+        // query 생성
+        JPAQuery<PostingEntity> query
+                = queryFactory.selectFrom(posting)
+                .where(equalsToConditionByFields(posting, condition));
+        // find 정렬방식, 범위 설정
+        SortScope scope = dto.getSortScope();
+        if (scope.getOffset() != null)
+            query.offset(scope.getOffset());
+        if (scope.getLimit() != null)
+            query.limit(scope.getLimit());
+        if (scope.getOrderSpec() != null)
+            query.orderBy(scope.getOrderSpec());
+
+
+        // query 실행 및 결과 반환
+        List<PostingEntity> foundEntities = query.fetch();
+
+        return foundEntities;
+    }
+
+
+    // BooleanExpression 생성 메소드들
+    private BooleanExpression equalsToConditionByFields(QPostingEntity posting,
+                                                        FindPostingsDto.ConditionByFields condition) {
+
+        BooleanExpression findConditionEqual
+                = Expressions.TRUE // cursorId가 null일때(= boardId로 검색X) NullPointException 방지
+                .and(idLessThanCursor(posting, condition))
+                .and(boardIdEq(posting, condition))
+                .and(authorUuidEq(posting, condition))
+                .and(pinEq(posting, condition))
+                .and(titleContains(posting, condition))
+                .and(contentContains(posting, condition))
+                .and(softDeleteEq(posting, condition));
+
+        return findConditionEqual;
+    }
+
+    private BooleanExpression idLessThanCursor(QPostingEntity posting,
+                                               FindPostingsDto.ConditionByFields condition) {
+
+        if (condition.getCursorId() == null) return null;
+
+        return posting.id.lt(condition.getCursorId());
+    }
+
+
+    private BooleanExpression contentContains(QPostingEntity posting,
+                                              FindPostingsDto.ConditionByFields condition) {
+
+        if (condition.getContentsContaining() == null) return null;
+
+        return posting.contents.contains(condition.getContentsContaining());
+    }
+
+    private BooleanExpression titleContains(QPostingEntity posting,
+                                            FindPostingsDto.ConditionByFields condition) {
+
+        if (condition.getTitleContaining() == null) return null;
+
+        return posting.title.contains(condition.getTitleContaining());
+    }
+
+    private BooleanExpression pinEq(QPostingEntity posting,
+                                    FindPostingsDto.ConditionByFields condition) {
+
+        if (condition.getPin() == null) return null;
+
+        return posting.pin.eq(condition.getPin());
+    }
+
+    private BooleanExpression boardIdEq(QPostingEntity posting,
+                                        FindPostingsDto.ConditionByFields condition) {
+
+        if (condition.getBoardId() == null) return null;
+
+        return posting.boardId.eq(condition.getBoardId());
+    }
+
+    private BooleanExpression authorUuidEq(QPostingEntity posting,
+                                           FindPostingsDto.ConditionByFields condition) {
+
+        if (condition.getAuthorUuid() == null) return null;
+
+        return posting.authorUuid.eq(condition.getAuthorUuid());
+    }
+
+    private BooleanExpression softDeleteEq(QPostingEntity posting,
+                                           FindPostingsDto.ConditionByFields condition) {
+
+        if (condition.getSoftDelete() == null) return null;
+
+        return posting.softDelete.eq(condition.getSoftDelete());
+    }
+
+
+}
 
 
 //    @Transactional
@@ -65,4 +204,3 @@ public class PostingQDslRepositoryImpl implements PostingQDslRepositoryCustom {
 //
 //        return updatedColumns;
 //    }
-}

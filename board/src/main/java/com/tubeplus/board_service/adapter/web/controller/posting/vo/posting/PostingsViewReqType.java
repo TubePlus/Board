@@ -1,5 +1,6 @@
 package com.tubeplus.board_service.adapter.web.controller.posting.vo.posting;
 
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.core.convert.converter.Converter;
 
 

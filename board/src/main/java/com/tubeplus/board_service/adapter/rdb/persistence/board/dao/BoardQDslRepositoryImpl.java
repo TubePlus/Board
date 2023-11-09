@@ -10,6 +10,7 @@ import com.tubeplus.board_service.adapter.rdb.persistence.board.BoardEntity;
 import com.tubeplus.board_service.application.board.port.out.BoardPersistent.ListFindDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -34,18 +35,18 @@ public class BoardQDslRepositoryImpl implements BoardQDslRepositoryCustom {
                 = QBoardEntity.boardEntity;
 
 
-        BooleanExpression commuId
+        BooleanExpression commuIdEq
                 = board.communityId.eq(dto.getCommunityId());
 
-        BooleanBuilder accessStatus
+        BooleanBuilder accessStatusEq
                 = new BooleanBuilder();
         if (dto.getVisible() != null)
-            accessStatus.and(board.visible.eq(dto.getVisible()));
+            accessStatusEq.and(board.visible.eq(dto.getVisible()));
         if (dto.getSoftDelete() != null)
-            accessStatus.and(board.softDelete.eq(dto.getSoftDelete()));
+            accessStatusEq.and(board.softDelete.eq(dto.getSoftDelete()));
 
 
-        BooleanExpression nameLike
+        BooleanExpression boardNameLike
                 = StringUtils.hasText(dto.getNameToSearch())
                 ? board.boardName.like("%" + dto.getNameToSearch() + "%")
                 : null;
@@ -53,12 +54,14 @@ public class BoardQDslRepositoryImpl implements BoardQDslRepositoryCustom {
 
         return queryFactory
                 .selectFrom(board)
-                .where(commuId.and(accessStatus).and(nameLike))
+                .where(commuIdEq.and(accessStatusEq).and(boardNameLike))
                 .fetch();
     }
 
     @Override
-    @Transactional //todo 엔티티메니저.flush,clear로 수정후 테스트, 좀 더 알아보고 쓸데없이 작업 두번세번 안하게 리팩토링
+    @Transactional
+    //todo 엔티티메니저.flush,clear로 수정후 테스트, 좀 더 알아보고 쓸데없이 작업 두번세번 안하게 리팩토링
+    @Modifying
     public Boolean updateBoard(BoardPersistent.UpdateDto dto) {
 
         QBoardEntity board

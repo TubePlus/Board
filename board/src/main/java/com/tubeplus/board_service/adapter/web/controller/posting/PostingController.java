@@ -2,6 +2,7 @@ package com.tubeplus.board_service.adapter.web.controller.posting;
 
 import com.tubeplus.board_service.adapter.web.common.ApiResponse;
 import com.tubeplus.board_service.adapter.web.common.ApiTag;
+import com.tubeplus.board_service.adapter.web.controller.posting.vo.VoReadPostingSimpleData;
 import com.tubeplus.board_service.adapter.web.controller.posting.vo.posting.ReqUpdatePinStateBody;
 import com.tubeplus.board_service.adapter.web.controller.posting.vo.posting.*;
 import com.tubeplus.board_service.adapter.web.error.BusinessException;
@@ -10,17 +11,17 @@ import com.tubeplus.board_service.application.posting.domain.posting.Posting;
 import com.tubeplus.board_service.application.posting.domain.posting.PostingView;
 import com.tubeplus.board_service.application.posting.port.in.PostingUseCase;
 import com.tubeplus.board_service.application.posting.port.in.PostingUseCase.MakePostingForm;
-import com.tubeplus.board_service.application.posting.port.in.PostingUseCase.PostingSimpleInfo;
+import com.tubeplus.board_service.application.posting.port.in.PostingUseCase.PostingSimpleData;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 import static com.tubeplus.board_service.application.posting.port.in.PostingUseCase.*;
 
@@ -37,7 +38,7 @@ public class PostingController {
 
 
     @Operation(summary = "게시물 작성", description = "작성된 게시물의 id 반환")
-    @PostMapping
+    @PostMapping()
     public ApiResponse<Long> makePosting
             (
                     @RequestBody @Valid ReqMakePostingBody reqBody
@@ -48,46 +49,73 @@ public class PostingController {
         Long postedBoardId
                 = postingService.makePosting(form);
 
-
         return ApiResponse.ofSuccess(postedBoardId);
     }
 
 
     @Operation(summary = "게시판내 게시물 목록 조회", description = "제목, 고정글 여부등의 간단한 정보 목록 조회")
-    @GetMapping
-    public ApiResponse<List<PostingSimpleInfo>> readPostingTitles//todo 요구사항 반영해 수정
-    (
-            @RequestParam("board_id") @Min(1) long boardId,
-            @RequestParam("view_req_type") PostingsViewReqType viewReqType, //todo 나중에 필요한거 더 추가하기
-            @RequestParam(name = "pin", required = false) Boolean pin,
-            @RequestParam(value = "title_like", required = false) String titleLike
-    ) {
+    @GetMapping()
+    public ApiResponse<VoReadPostingSimpleData.Res> readPostingSimpleData
+            (
+                    // 검색 조건
+                    // 주요 검색 조건 - searchReqType에 따라 필수 요청이 될 수 있는 파라미터
+                    @RequestParam(name = "search-req-type", required = true) PostingsSearchReqType searchReqType,
+                    @RequestParam(name = "board-id", required = false) Long boardId,
+                    @RequestParam(name = "author-uuid", required = false) String authorUuid,
+                    @RequestParam(name = "title-containing", required = false) String titleContaining,
+                    @RequestParam(name = "content-containing", required = false) String contentContaining,
+                    // 부가 조건 - 항상 필수 요청이 아닌 파라미터
+                    @RequestParam(name = "pin", required = false) Boolean pin,
+                    @RequestParam(name = "deleted", required = false) Boolean softDeleted,
 
-        List<PostingSimpleInfo> postingSimpleInfos;
+                    // 요청된 화면표시 타입 관련
+                    @RequestParam("view-req-type") PostingsViewReqType viewReqType, //todo AllArgsConstructor 있는 클래스로 받아서 한번에 처리
+                    // pagination 요청시
+                    @RequestParam(name = "previous-page-num", required = false) Integer pageIndex,
+                    @RequestParam(name = "page-size", required = false) Integer pageSize,
+                    // feed(무한스크롤) 요청시
+                    @RequestParam(name = "cursor-id", required = false) Long cursorId
+            ) {
+
+        // todo searchType enum 받아서 요청 타입별로 reqParam 유효성 조건점검 로직 깔끔하게 하기
+
+        VoReadPostingSimpleData.Res responseVo;
+
         switch (viewReqType) {
 
-            case FEED -> postingSimpleInfos = postingService.feedPostingTitles(boardId, null);//todo null없애기
+            case FEED -> {
+                Feed<PostingSimpleData> fedPostingData
+                        = postingService.feedPostingSimpleData(null); //todo null 없애기
 
-            case PAGE -> postingSimpleInfos = postingService.pagePostingTitles(boardId, null);
+                responseVo = VoReadPostingSimpleData.Res.of(fedPostingData);
+            }
+
+            case PAGE -> responseVo = controlToPagePostingData
+                    (boardId, authorUuid, titleContaining, contentContaining, pin, softDeleted, pageIndex, pageSize);
+
 
             default -> throw new BusinessException(ErrorCode.BAD_REQUEST);
         }
 
-        return ApiResponse.ofSuccess(postingSimpleInfos);
+        return ApiResponse.ofSuccess(responseVo);
     }
 
+    private VoReadPostingSimpleData.Res controlToPagePostingData(Long boardId, String authorUuid, String titleContaining, String contentContaining, Boolean pin, Boolean softDeleted, Integer pageIndex, Integer pageSize) {
 
-    @Operation(summary = "내 게시물 title 목록 읽어오기")
-    @GetMapping("/mine")
-    public ApiResponse<List<PostingSimpleInfo>> readMyPostingTitles
-            (
-                    @RequestParam("userUuid") @NotBlank String userUuid
-            ) {
+        //todo request param을 객체로 받은 후, requestParam 객체를 이용해서 searchPostingInfo 객체 생성
+        SearchPostingsInfo searchInfo
+                = SearchPostingsInfo.builder().boardId(boardId).authorUuid(authorUuid).pin(pin).titleContaining(titleContaining).contentsContaining(contentContaining).softDelete(softDeleted).build();
 
-        List<PostingSimpleInfo> titleViews
-                = postingService.readMyPostingTitles(userUuid);
+        PageRequest pageReq = PageRequest.of(pageIndex, pageSize);
 
-        return ApiResponse.ofSuccess(titleViews);
+        InfoToPagePostingData infoToPage
+                = InfoToPagePostingData.of(searchInfo, pageReq);
+
+
+        Page<PostingSimpleData> pagedPostingData
+                = postingService.pagePostingSimpleData(infoToPage);
+
+        return VoReadPostingSimpleData.Res.of(pagedPostingData);
     }
 
 

@@ -23,12 +23,12 @@ public class VoteService implements VoteUseCase {
         return 0;
     }
 
-    public Optional<Vote> findVote(FindVoteDto dto) {
-        Optional<Vote> optionalUserVote
-                = votePersistence.findVote(dto)
-                .ifExceptioned.thenThrow(ErrorCode.FIND_ENTITY_FAILED);
-        return optionalUserVote;
-    }
+//    public Optional<Vote> findVote(FindVoteDto dto) {
+//        Optional<Vote> optionalUserVote
+//                = votePersistence.findVote(dto)
+//                .ifExceptioned.thenThrow(ErrorCode.FIND_ENTITY_FAILED);
+//        return optionalUserVote;
+//    }
 
     @Override
     public long modifyPostingVote(Vote vote) {
