@@ -1,6 +1,7 @@
 package com.tubeplus.board_service.adapter.web.config;
 
 import com.tubeplus.board_service.adapter.web.controller.board.vo.BoardSearchType;
+import com.tubeplus.board_service.adapter.web.controller.posting.vo.posting.PostingsSearchReqType;
 import com.tubeplus.board_service.adapter.web.controller.posting.vo.posting.PostingsViewReqType;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
@@ -17,7 +18,9 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     protected void addPostingFormatters(FormatterRegistry registry) {
+
         registry.addConverter(new PostingsViewReqType.ReqConverter());
+        registry.addConverter(new PostingsSearchReqType.ReqConverter());
     }
 
 

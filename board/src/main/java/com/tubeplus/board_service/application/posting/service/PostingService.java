@@ -10,10 +10,15 @@ import com.tubeplus.board_service.application.posting.port.out.PostingPersistent
 import com.tubeplus.board_service.application.posting.port.out.VotePersistent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.Converters;
 import org.springframework.data.domain.Page;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.function.LongSupplier;
+import java.util.function.Supplier;
 
 import static com.tubeplus.board_service.application.posting.port.out.PostingPersistent.*;
 
@@ -45,12 +50,20 @@ public class PostingService implements PostingUseCase {
     @Override
     public Page<PostingSimpleData> pagePostingSimpleData(InfoToPagePostingData info) {
 
-        Page<Posting> pagedPostings
-                = postingPersistence.pagePostings(
-                        PagePostingsDto.builtFrom(info)
-                )
+        FindPostingsDto dto = FindPostingsDto.of(info);
+
+        List<Posting> foundPostings
+                = postingPersistence.findPostings(dto)
                 .ifExceptioned.thenThrow(ErrorCode.FIND_ENTITY_FAILED);
 
+        LongSupplier countPostingsFunction
+                = () -> postingPersistence.countPostings(dto.getConditionByFields())
+                .ifExceptioned.thenThrow(ErrorCode.COUNT_ENTITY_FAILED);
+
+
+        Page<Posting> pagedPostings
+                = PageableExecutionUtils.getPage // PageableExecutionUtils.getPage: count 쿼리 최적화 위해 사용
+                (foundPostings, info.getPageReq(), countPostingsFunction);
 
         Page<PostingSimpleData> pagedPostingData
                 = pagedPostings.map(PostingSimpleData::builtFrom);

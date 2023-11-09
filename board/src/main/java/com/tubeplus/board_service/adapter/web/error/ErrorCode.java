@@ -17,6 +17,7 @@ public enum ErrorCode {
     UPDATE_ENTITY_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "C009", "db 테이블 엔티티 업데이트 실패"),
     DELETE_ENTITY_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "C010", "db 테이블 엔티티 삭제 실패"),
     SOFT_DELETE_ENTITY_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "C011", "db 테이블 엔티티 soft delete 처리 실패"),
+    COUNT_ENTITY_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "C012", "db 테이블 엔티티 카운트 실패"),
 
     /*로그인*/
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "L001", "로그인이 필요합니다."),

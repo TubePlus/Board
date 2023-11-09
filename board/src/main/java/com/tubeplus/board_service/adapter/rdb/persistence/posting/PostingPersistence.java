@@ -9,12 +9,13 @@ import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 
 @SuppressWarnings("ConstantConditions")
@@ -29,6 +30,7 @@ public class PostingPersistence implements PostingPersistent {
     private final EntityManager em;
     private final ModelMapper modelMapper;
 
+    //todo 그냥 리턴하고 서비스 로직에서 Exceptionable.act로 감싸서 처리하는게 더 좋을듯
 
     @Override
     @Transactional(readOnly = true)
@@ -52,27 +54,30 @@ public class PostingPersistence implements PostingPersistent {
 
     @Override
     @Transactional(readOnly = true)
-    public Exceptionable<Page<Posting>, PagePostingsDto> CursorPostings(CursorPostingsDto dto) {
-        return null;
+    public Exceptionable<Long, FindPostingsDto.ConditionByFields> countPostings(FindPostingsDto.ConditionByFields conditionByFields) {
+
+        return Exceptionable.act(queryDslRepo::countPostingEntities, conditionByFields);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Exceptionable<Page<Posting>, PagePostingsDto> pagePostings(PagePostingsDto pagePostingsDto) {
+    public Exceptionable<List<Posting>, FindPostingsDto> findPostings(FindPostingsDto findDto) {
 
-        Function<PagePostingsDto, Page<Posting>> pagePostings
+        Function<FindPostingsDto, List<Posting>> findPostings
                 = (dto) -> {
 
-            Page<PostingEntity> pagedEntities
-                    = queryDslRepo.pagePostingEntities(dto);
+            List<PostingEntity> foundPostingEntities
+                    = queryDslRepo.findPostingEntities(findDto);
 
-            Page<Posting> pagedPostings
-                    = pagedEntities.map(PostingEntity::buildDomain);
+            List<Posting> foundPostings
+                    = foundPostingEntities.stream()
+                    .map(PostingEntity::buildDomain)
+                    .collect(Collectors.toList());
 
-            return pagedPostings;
+            return foundPostings;
         };
 
-        return new Exceptionable<>(pagePostings, pagePostingsDto);
+        return new Exceptionable<>(findPostings, findDto);
     }
 
 
@@ -83,7 +88,8 @@ public class PostingPersistence implements PostingPersistent {
 
         Function<BaseUpdatePostingDto, Posting> updatePosting
                 = (dto) -> {
-            // dto로 수정 요청된 필드 엔티티에 반영
+
+            // dto로 요청된 필드 수정 엔티티에 반영
             PostingEntity entityToUpdate
                     = em.find(PostingEntity.class, dto.getPostingId());
 
@@ -91,7 +97,7 @@ public class PostingPersistence implements PostingPersistent {
             modelMapper.map(dtoClazz.cast(dto), entityToUpdate);
 
 
-            // 엔티티 수정, 수정된 엔티티로 도메인 객체 생성 및 반환
+            // 엔티티 수정, 수정된 엔티티로 도메인 생성 및 반환
             PostingEntity updatedEntity
                     = jpaDataRepo.save(entityToUpdate);
 
@@ -107,3 +113,23 @@ public class PostingPersistence implements PostingPersistent {
 
 
 }
+
+
+//    @Override
+//    @Transactional(readOnly = true)
+//    public Exceptionable<Page<Posting>, PagePostingsDto> pagePostings(PagePostingsDto pagePostingsDto) {
+//
+//        Function<PagePostingsDto, Page<Posting>> pagePostings
+//                = (dto) -> {
+//
+//            Page<PostingEntity> pagedEntities
+//                    = queryDslRepo.pagePostingEntities(dto);
+//
+//            Page<Posting> pagedPostings
+//                    = pagedEntities.map(PostingEntity::buildDomain);
+//
+//            return pagedPostings;
+//        };
+//
+//        return new Exceptionable<>(pagePostings, pagePostingsDto);
+//    }

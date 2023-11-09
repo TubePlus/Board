@@ -42,34 +42,39 @@ public interface PostingUseCase {
     class SearchPostingsInfo {
         private final Long boardId;
         private final String authorUuid;
+        private final Boolean pin;
+        private final String titleContaining;
+        private final String contentsContaining;
         private final Boolean softDelete;
     }
 
     Page<PostingSimpleData> pagePostingSimpleData(InfoToPagePostingData info);
 
-    @Data
-    @Builder
+    @Data(staticConstructor = "of")
     class InfoToPagePostingData {
         private final SearchPostingsInfo searchInfo;
         private final PageRequest pageReq;
     }
 
-    @Data
-    @Builder
+
+    Feed<PostingSimpleData> feedPostingSimpleData(InfoToFeedPostingData info);
+
+    @Data(staticConstructor = "of")
     class Feed<T> {
         private final List<T> data;
         private final Long lastCursoredId;
     }
 
-    Feed<PostingSimpleData> feedPostingSimpleData(InfoToFeedPostingData info);
-
-    @Data
-    @Builder
+    @Data(staticConstructor = "of")
     class InfoToFeedPostingData {
         private final SearchPostingsInfo searchInfo;
-        private final Long cursorId;
-        private final int size;
+        private final FeedRequest feedReq;
+    }
 
+    @Data(staticConstructor = "of")
+    class FeedRequest {
+        private final Long cursorId;
+        private final int feedSize;
     }
 
 

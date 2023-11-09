@@ -52,9 +52,9 @@ public class BoardController {
     @GetMapping()
     public ApiResponse<List<Board>> readBoardList
             (
-                    @RequestParam("community_id") Long communityId,
-                    @RequestParam("board_search_type") BoardSearchType searchType,
-                    @RequestParam(value = "board_name", required = false) String nameToSearch
+                    @RequestParam("community-id") Long communityId,
+                    @RequestParam("board-search-type") BoardSearchType searchType,
+                    @RequestParam(value = "board-name", required = false) String nameToSearch
             ) {
         log.info(communityId.toString());
 

@@ -1,17 +1,15 @@
 package com.tubeplus.board_service.adapter.rdb.persistence.posting.dao;
 
-import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tubeplus.board_service.adapter.rdb.persistence.posting.PostingEntity;
 import com.tubeplus.board_service.adapter.rdb.persistence.posting.QPostingEntity;
+import com.tubeplus.board_service.application.posting.port.out.PostingPersistent.FindPostingsDto.SortScope;
 import com.tubeplus.board_service.global.Exceptionable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,81 +25,43 @@ public class PostingQDslRepositoryImpl implements PostingQDslRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
 
-    @Override
-    public Page<PostingEntity> pagePostingEntities(PagePostingsDto dto) {
-
-        return this.pagePostingEntities(dto.getFindCondition(), dto.getPageReq(), null);
-    }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<PostingEntity> pagePostingEntities(FindPostingsCondition findCondition,
-                                                   PageRequest pageReq,
-                                                   OrderSpecifier orderSpec) {
+    public Long countPostingEntities(FindPostingsDto.ConditionByFields condition) {
 
-        List<PostingEntity> foundEntities
-                = findPostingEntities
-                (findCondition, SortScope.of(pageReq, orderSpec), null);
-
-
-        Page<PostingEntity> pagedEntities
-                = PageableExecutionUtils.getPage // count 쿼리 최적화 위해 사용
-                (foundEntities, pageReq, () -> countPostingEntities(findCondition));
-
-        return pagedEntities;
-    }
-
-
-    @Override
-    @Transactional(readOnly = true)
-    public Long countPostingEntities(FindPostingsCondition findCondition) {
-
-        //query에 쓸 변수 선언
         QPostingEntity posting = QPostingEntity.postingEntity;
-
-        BooleanExpression findConditionEqual
-                = equalsToFindCondition(posting, findCondition);
 
         // query 생성
         JPAQuery<Long> query
                 = queryFactory.select(posting.count())
-                .where(findConditionEqual);
+                .from(posting)
+                .where(equalsToConditionByFields(posting, condition));
 
+        // count query 실행 및 결과 반환
+        Long entitiesNum
+                = Exceptionable.act(query::fetchOne)
+                .ifExceptioned.thenThrow(new RuntimeException("count postings query failed"));
 
-        // query 실행 및 결과 반환
-        Long numEntities
-                = (Long) Exceptionable.act(query::fetchOne)
-                .ifExceptioned.thenThrow(new RuntimeException("게시글 개수 조회 실패"));
-
-        return numEntities;
+        return entitiesNum;
     }
 
 
     @Override
     @Transactional(readOnly = true)
-    public List<PostingEntity> findPostingEntities(FindPostingsCondition findCondition,
-                                                   SortScope scope,
-                                                   Long cursorId) {
+    public List<PostingEntity> findPostingEntities(FindPostingsDto dto) {
+
 
         QPostingEntity posting = QPostingEntity.postingEntity;
 
-
-        // where 구문에 쓸 BooleanExpression 변수들 생성
-        // find 조건설정
-        BooleanExpression findConditionEqual
-                = equalsToFindCondition(posting, findCondition);
-        // cursor 조건설정
-        BooleanExpression idLessThanCursor
-                = cursorId != null
-                ? posting.id.lt(cursorId) : null;
-
+        FindPostingsDto.ConditionByFields condition = dto.getConditionByFields();
 
         // query 생성
         JPAQuery<PostingEntity> query
                 = queryFactory.selectFrom(posting)
-                .where(findConditionEqual
-                        .and(idLessThanCursor));
+                .where(equalsToConditionByFields(posting, condition));
         // find 정렬방식, 범위 설정
+        SortScope scope = dto.getSortScope();
         if (scope.getOffset() != null)
             query.offset(scope.getOffset());
         if (scope.getLimit() != null)
@@ -117,30 +77,76 @@ public class PostingQDslRepositoryImpl implements PostingQDslRepositoryCustom {
     }
 
 
-    private BooleanExpression equalsToFindCondition(QPostingEntity posting,
-                                                    FindPostingsCondition findCondition) {
+    // BooleanExpression 생성 메소드들
+    private BooleanExpression equalsToConditionByFields(QPostingEntity posting,
+                                                        FindPostingsDto.ConditionByFields condition) {
 
         BooleanExpression findConditionEqual
-                = boardIdEq(posting, findCondition)
-                .and(authorUuidEq(posting, findCondition))
-                .and(softDeleteEq(posting, findCondition));
+                = Expressions.TRUE // cursorId가 null일때(= boardId로 검색X) NullPointException 방지
+                .and(idLessThanCursor(posting, condition))
+                .and(boardIdEq(posting, condition))
+                .and(authorUuidEq(posting, condition))
+                .and(pinEq(posting, condition))
+                .and(titleContains(posting, condition))
+                .and(contentContains(posting, condition))
+                .and(softDeleteEq(posting, condition));
+
         return findConditionEqual;
     }
 
+    private BooleanExpression idLessThanCursor(QPostingEntity posting,
+                                               FindPostingsDto.ConditionByFields condition) {
+
+        if (condition.getCursorId() == null) return null;
+
+        return posting.id.lt(condition.getCursorId());
+    }
+
+
+    private BooleanExpression contentContains(QPostingEntity posting,
+                                              FindPostingsDto.ConditionByFields condition) {
+
+        if (condition.getContentsContaining() == null) return null;
+
+        return posting.contents.contains(condition.getContentsContaining());
+    }
+
+    private BooleanExpression titleContains(QPostingEntity posting,
+                                            FindPostingsDto.ConditionByFields condition) {
+
+        if (condition.getTitleContaining() == null) return null;
+
+        return posting.title.contains(condition.getTitleContaining());
+    }
+
+    private BooleanExpression pinEq(QPostingEntity posting,
+                                    FindPostingsDto.ConditionByFields condition) {
+
+        if (condition.getPin() == null) return null;
+
+        return posting.pin.eq(condition.getPin());
+    }
+
     private BooleanExpression boardIdEq(QPostingEntity posting,
-                                        FindPostingsCondition condition) {
+                                        FindPostingsDto.ConditionByFields condition) {
+
+        if (condition.getBoardId() == null) return null;
 
         return posting.boardId.eq(condition.getBoardId());
     }
 
     private BooleanExpression authorUuidEq(QPostingEntity posting,
-                                           FindPostingsCondition condition) {
+                                           FindPostingsDto.ConditionByFields condition) {
+
+        if (condition.getAuthorUuid() == null) return null;
 
         return posting.authorUuid.eq(condition.getAuthorUuid());
     }
 
     private BooleanExpression softDeleteEq(QPostingEntity posting,
-                                           FindPostingsCondition condition) {
+                                           FindPostingsDto.ConditionByFields condition) {
+
+        if (condition.getSoftDelete() == null) return null;
 
         return posting.softDelete.eq(condition.getSoftDelete());
     }

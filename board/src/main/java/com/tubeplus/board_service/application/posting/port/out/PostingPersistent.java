@@ -1,6 +1,7 @@
 package com.tubeplus.board_service.application.posting.port.out;
 
 
+import com.querydsl.core.types.OrderSpecifier;
 import com.tubeplus.board_service.global.Exceptionable;
 import com.tubeplus.board_service.application.posting.domain.posting.Posting;
 import lombok.Builder;
@@ -8,9 +9,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.tubeplus.board_service.application.posting.port.in.PostingUseCase.*;
@@ -20,48 +21,97 @@ public interface PostingPersistent {
     Exceptionable<Optional<Posting>, Long> findPosting(long postingId);
 
 
-    @Data
-    @Builder
-    class FindPostingsCondition {
-        private final Long boardId;
-        private final String authorUuid;
-        private final Boolean softDelete;
+    Exceptionable<List<Posting>, FindPostingsDto> findPostings(FindPostingsDto dto);
 
-        public static FindPostingsCondition builtFrom(SearchPostingsInfo info) {
-            return FindPostingsCondition.builder()
-                    .boardId(info.getBoardId())
-                    .authorUuid(info.getAuthorUuid())
-                    .softDelete(info.getSoftDelete())
-                    .build();
+    Exceptionable<Long, FindPostingsDto.ConditionByFields> countPostings(FindPostingsDto.ConditionByFields conditionByFields);
+
+    @Data(staticConstructor = "of")
+    class FindPostingsDto {
+
+        private final ConditionByFields conditionByFields;
+        private final SortScope sortScope;
+
+
+        public static FindPostingsDto of(InfoToPagePostingData infoToPage) {
+            return FindPostingsDto.of
+                    (
+                            ConditionByFields.builtFrom(infoToPage),
+                            SortScope.of(infoToPage)
+                    );
         }
-    }
 
-    Exceptionable<Page<Posting>, PagePostingsDto> pagePostings(PagePostingsDto dto);
-
-    @Data
-    @Builder
-    class PagePostingsDto {
-        private final FindPostingsCondition findCondition;
-        private final PageRequest pageReq;
-
-        public static PagePostingsDto builtFrom(InfoToPagePostingData info) {
-            return PagePostingsDto.builder()
-                    .findCondition(FindPostingsCondition.builtFrom
-                            (info.getSearchInfo())
-                    )
-                    .pageReq(info.getPageReq())
-                    .build();
+        public static FindPostingsDto of(InfoToFeedPostingData infoToFeed) {
+            return FindPostingsDto.of
+                    (
+                            ConditionByFields.builtFrom(infoToFeed),
+                            SortScope.of(infoToFeed)
+                    );
         }
-    }
 
-    //todo 리턴값 수정
-    Exceptionable<Page<Posting>, PagePostingsDto> CursorPostings(CursorPostingsDto dto);
 
-    @Data
-    @Builder
-    class CursorPostingsDto {
-        private final FindPostingsCondition findCondition;
-        private final Long cursor;
+        @Data
+        @Builder
+        public static class ConditionByFields {
+            private final Long cursorId;
+            private final Long boardId;
+            private final String authorUuid;
+            private final Boolean pin;
+            private final String titleContaining;
+            private final String contentsContaining;
+            private final Boolean softDelete;
+
+            public static ConditionByFields builtFrom(InfoToPagePostingData infoToPage) {
+
+                SearchPostingsInfo searchInfo = infoToPage.getSearchInfo();
+
+                return ConditionByFields.builder()
+                        .boardId(searchInfo.getBoardId())
+                        .authorUuid(searchInfo.getAuthorUuid())
+                        .pin(searchInfo.getPin())
+                        .titleContaining(searchInfo.getTitleContaining())
+                        .contentsContaining(searchInfo.getContentsContaining())
+                        .softDelete(searchInfo.getSoftDelete())
+                        .build();
+            }
+
+            public static ConditionByFields builtFrom(InfoToFeedPostingData infoToFeed) {
+
+                SearchPostingsInfo searchInfo = infoToFeed.getSearchInfo();
+
+                return ConditionByFields.builder()
+                        .cursorId(infoToFeed.getFeedReq().getCursorId())
+                        .boardId(searchInfo.getBoardId())
+                        .authorUuid(searchInfo.getAuthorUuid())
+                        .pin(searchInfo.getPin())
+                        .titleContaining(searchInfo.getTitleContaining())
+                        .contentsContaining(searchInfo.getContentsContaining())
+                        .softDelete(searchInfo.getSoftDelete())
+                        .build();
+            }
+        }
+
+
+        @Data(staticConstructor = "of")
+        public static class SortScope {
+            private final Integer limit;
+            private final Long offset;
+            private final OrderSpecifier orderSpec;
+
+            public static SortScope of(InfoToPagePostingData pageInfo) {
+                PageRequest pageReq = pageInfo.getPageReq();
+                return SortScope.of(pageReq.getPageSize(), pageReq.getOffset(), null);
+            }
+
+            public static SortScope of(InfoToFeedPostingData feedInfo) {
+                FeedRequest feedReq = feedInfo.getFeedReq();
+                return SortScope.of(feedReq.getFeedSize(), null, null);
+            }
+
+            public static SortScope NotSpecified() {
+
+                return SortScope.of(0, 0L, null);
+            }
+        }
     }
 
 
