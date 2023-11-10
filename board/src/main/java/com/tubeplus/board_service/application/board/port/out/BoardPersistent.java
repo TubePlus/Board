@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 
-//todo of -> builtFrom 빌더 사용
 public interface BoardPersistent {
 
 

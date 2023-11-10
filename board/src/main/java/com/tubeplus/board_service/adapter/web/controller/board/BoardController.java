@@ -115,7 +115,7 @@ public class BoardController {
     }
 
     private boolean haveNoUpdate(VoBoardProperty updateReq) {
-        //todo Field.get하면 접근제어자 문제 발생 -> 생각해보니 getter사용하는 방향으로 수정하면 작동할지도?
+        //todo Field.get하면 접근제어자 문제 발생 -> 생각해보니 getter사용하는 방향으로 수정하면 작동할지도?, 그래도 안되면 reflection으로 접근제어자 무시하고 접근
 
 
         //한개의 field라도 들어온게 있다면 update가 있는걸로 간주, false 리턴

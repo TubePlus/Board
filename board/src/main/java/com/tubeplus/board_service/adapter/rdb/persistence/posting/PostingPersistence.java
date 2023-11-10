@@ -54,6 +54,15 @@ public class PostingPersistence implements PostingPersistent {
 
     @Override
     @Transactional(readOnly = true)
+    public boolean existNextPosting(FindPostingsDto findDto) {
+
+        return queryDslRepo.existNextPosting(findDto);
+
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
     public Exceptionable<Long, FindPostingsDto.ConditionByFields> countPostings(FindPostingsDto.ConditionByFields conditionByFields) {
 
         return Exceptionable.act(queryDslRepo::countPostingEntities, conditionByFields);
@@ -67,7 +76,7 @@ public class PostingPersistence implements PostingPersistent {
                 = (dto) -> {
 
             List<PostingEntity> foundPostingEntities
-                    = queryDslRepo.findPostingEntities(findDto);
+                    = queryDslRepo.findPostingEntities(dto);
 
             List<Posting> foundPostings
                     = foundPostingEntities.stream()

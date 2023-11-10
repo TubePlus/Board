@@ -8,6 +8,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
+import java.util.function.Function;
+
+import static java.util.stream.Collectors.toList;
 
 
 public interface PostingUseCase {
@@ -63,6 +66,14 @@ public interface PostingUseCase {
     class Feed<T> {
         private final List<T> data;
         private final Long lastCursoredId;
+        private final boolean hasNextFeed;
+
+        public final <U> Feed<U> map(Function<T, U> mapper) {
+
+            List<U> mappedData = data.stream().map(mapper).collect(toList());
+
+            return Feed.of(mappedData, lastCursoredId, hasNextFeed);
+        }
     }
 
     @Data(staticConstructor = "of")
