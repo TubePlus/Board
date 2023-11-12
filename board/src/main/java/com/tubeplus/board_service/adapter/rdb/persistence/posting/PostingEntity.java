@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 public class PostingEntity extends BaseEntity {//todo posting_seq 정체 찾아보기
     //todo 수정된 erd 반영하기
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(name = "author_uuid", nullable = false,length = 50)

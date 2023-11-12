@@ -26,6 +26,8 @@ public interface BoardUseCase {
 
 
     // Member only
+    List<Board> listCommuBoards(BoardListInfo boardListInfo);
+
     @Data
     @Builder
     class BoardListInfo {
@@ -36,26 +38,23 @@ public interface BoardUseCase {
         private final String nameToSearch;
     }
 
-    List<Board> listCommuBoards(BoardListInfo boardListInfo);
-
 
     Board findBoard(Long boardId);
 
+
+    void updateBoardProperty(Long boardId, BoardProperty property);
 
     @Data
     @Builder
     class BoardProperty {
 
         private final String boardName;
-
         private final BoardType boardType;
         private final String boardDescription;
         private final Boolean visible;
         private final LocalDateTime limitDateTime;
         private final Boolean erase;
     }
-
-    void updateBoardProperty(Long boardId, BoardProperty property);
 
 
     void completelyDeleteBoard(Long boardId);
