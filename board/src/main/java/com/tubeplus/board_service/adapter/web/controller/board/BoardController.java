@@ -31,8 +31,8 @@ public class BoardController {
     private final BoardUseCase boardService;
 
     @GetMapping("/test")
-    public ApiResponse<String> test() {
-        return ApiResponse.ofSuccess("test");
+    public String test() {
+        return "test";
     }
 
     @Operation(summary = "게시판 생성", description = "게시판 생성, 생성된 게시판 id 반환")
