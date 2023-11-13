@@ -28,6 +28,7 @@ import static com.tubeplus.board_service.application.posting.port.in.PostingUseC
 
 @Slf4j
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 
 @Validated
 @ApiTag(path = "/api/v1/postings", name = "Posting API")
