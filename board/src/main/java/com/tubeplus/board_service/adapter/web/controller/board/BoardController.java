@@ -26,7 +26,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 
-
 @ApiTag(path = "/api/v1/boards", name = "Board API", description = "게시판 CRUD API")
 public class BoardController {
 

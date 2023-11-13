@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 
 @Validated
 @ApiTag(path = "/api/v1/comments", name = "Posting Comment API")
