@@ -23,6 +23,10 @@ public class VoteController {
 
     private final VoteUseCase voteService;
 
+    @GetMapping("/test")
+    public ApiResponse<String> test() {
+        return ApiResponse.ofSuccess("test");
+    }
 
     @Operation(summary = "게시물 투표 api")
     @PostMapping()

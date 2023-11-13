@@ -26,6 +26,10 @@ public class CommentController {
 
     private final CommentUseCase commentService;
 
+    @GetMapping("/test")
+    public ApiResponse<String> test() {
+        return ApiResponse.ofSuccess("test");
+    }
 
     @Operation(summary = "댓글/대댓글 작성",
             description = "대댓글일경우 parentId를 입력, 원 댓글일 경우 parentId에 null")
