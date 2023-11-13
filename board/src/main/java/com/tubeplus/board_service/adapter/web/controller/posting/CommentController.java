@@ -27,8 +27,8 @@ public class CommentController {
     private final CommentUseCase commentService;
 
     @GetMapping("/test")
-    public ApiResponse<String> test() {
-        return ApiResponse.ofSuccess("test");
+    public String test() {
+        return "test";
     }
 
     @Operation(summary = "댓글/대댓글 작성",
