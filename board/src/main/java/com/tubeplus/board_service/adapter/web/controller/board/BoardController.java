@@ -25,7 +25,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 
-@ApiTag(path = "/api/v1/boards", name = "Board API", description = "게시판 CRUD API")
+@ApiTag(path = "/api/v1/boards-my-own-api-to-avoid-same", name = "Board API", description = "게시판 CRUD API")
 public class BoardController {
 
     private final BoardUseCase boardService;
