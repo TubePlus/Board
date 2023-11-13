@@ -66,56 +66,60 @@ public class PostingController {
                     @RequestParam(name = "content-containing", required = false) String contentContaining,
                     // 부가 조건 - 항상 필수 요청이 아닌 파라미터
                     @RequestParam(name = "pin", required = false) Boolean pin,
-                    @RequestParam(name = "deleted", required = false) Boolean softDeleted,
+                    @RequestParam(name = "deleted", required = false) Boolean deleted,
 
                     // 요청된 화면표시 타입 관련
                     @RequestParam("view-req-type") PostingsViewReqType viewReqType, //todo AllArgsConstructor 있는 클래스로 받아서 한번에 처리
                     // pagination 요청시
-                    @RequestParam(name = "previous-page-num", required = false) Integer pageIndex,
+                    @RequestParam(name = "page-index", required = false) Integer pageIndex,
                     @RequestParam(name = "page-size", required = false) Integer pageSize,
                     // feed(무한스크롤) 요청시
-                    @RequestParam(name = "cursor-id", required = false) Long cursorId
+                    @RequestParam(name = "cursor-id", required = false) @Min(1) Long cursorId,
+                    @RequestParam(name = "feed-size", required = false) Byte feedSize
             ) {
 
         // todo searchType enum 받아서 요청 타입별로 reqParam 유효성 조건점검 로직 깔끔하게 하기
+
+
+        SearchPostingsInfo searchInfo //todo request param을 객체로 받은 후, requestParam 객체를 이용해서 searchPostingInfo 객체 생성
+                = SearchPostingsInfo.builder().boardId(boardId).authorUuid(authorUuid).pin(pin).titleContaining(titleContaining).contentsContaining(contentContaining).softDelete(deleted).build();
 
         VoReadPostingSimpleData.Res responseVo;
 
         switch (viewReqType) {
 
-            case FEED -> {
-                Feed<PostingSimpleData> fedPostingData
-                        = postingService.feedPostingSimpleData(null); //todo null 없애기
+            case FEED -> responseVo = VoReadPostingSimpleData.Res.of(
+                    feedPostingData(searchInfo, FeedRequest.of(cursorId, feedSize)));
 
-                responseVo = VoReadPostingSimpleData.Res.of(fedPostingData);
-            }
+            case PAGE -> responseVo = VoReadPostingSimpleData.Res.of(
+                    pagePostingData(searchInfo, PageRequest.of(pageIndex, pageSize)));
 
-            case PAGE -> responseVo = controlToPagePostingData
-                    (boardId, authorUuid, titleContaining, contentContaining, pin, softDeleted, pageIndex, pageSize);
-
-
-            default -> throw new BusinessException(ErrorCode.BAD_REQUEST);
+            default -> throw new BusinessException(ErrorCode.BAD_REQUEST, "view-req-type이 잘못되었습니다.");
         }
 
         return ApiResponse.ofSuccess(responseVo);
     }
 
-    private VoReadPostingSimpleData.Res controlToPagePostingData(Long boardId, String authorUuid, String titleContaining, String contentContaining, Boolean pin, Boolean softDeleted, Integer pageIndex, Integer pageSize) {
+    private Feed<PostingSimpleData> feedPostingData(SearchPostingsInfo searchInfo, FeedRequest feedReq) {
 
-        //todo request param을 객체로 받은 후, requestParam 객체를 이용해서 searchPostingInfo 객체 생성
-        SearchPostingsInfo searchInfo
-                = SearchPostingsInfo.builder().boardId(boardId).authorUuid(authorUuid).pin(pin).titleContaining(titleContaining).contentsContaining(contentContaining).softDelete(softDeleted).build();
+        InfoToFeedPostingData infoToFeed
+                = InfoToFeedPostingData.of(searchInfo, feedReq);
 
-        PageRequest pageReq = PageRequest.of(pageIndex, pageSize);
+        Feed<PostingSimpleData> postingDataFeed;
+        postingDataFeed = postingService.feedPostingSimpleData(infoToFeed);
+
+        return postingDataFeed;
+    }
+
+    private Page<PostingSimpleData> pagePostingData(SearchPostingsInfo searchInfo, PageRequest pageReq) {
 
         InfoToPagePostingData infoToPage
                 = InfoToPagePostingData.of(searchInfo, pageReq);
 
-
         Page<PostingSimpleData> pagedPostingData
                 = postingService.pagePostingSimpleData(infoToPage);
 
-        return VoReadPostingSimpleData.Res.of(pagedPostingData);
+        return pagedPostingData;
     }
 
 

@@ -1,7 +1,6 @@
 package com.tubeplus.board_service.application.posting.port.out;
 
 
-import com.querydsl.core.types.OrderSpecifier;
 import com.tubeplus.board_service.global.Exceptionable;
 import com.tubeplus.board_service.application.posting.domain.posting.Posting;
 import lombok.Builder;
@@ -21,6 +20,8 @@ public interface PostingPersistent {
     Exceptionable<Optional<Posting>, Long> findPosting(long postingId);
 
 
+    boolean existNextPosting(FindPostingsDto dto);
+
     Exceptionable<List<Posting>, FindPostingsDto> findPostings(FindPostingsDto dto);
 
     Exceptionable<Long, FindPostingsDto.ConditionByFields> countPostings(FindPostingsDto.ConditionByFields conditionByFields);
@@ -29,14 +30,13 @@ public interface PostingPersistent {
     class FindPostingsDto {
 
         private final ConditionByFields conditionByFields;
-        private final SortScope sortScope;
-
+        private final SortedFindRange sortedRange;
 
         public static FindPostingsDto of(InfoToPagePostingData infoToPage) {
             return FindPostingsDto.of
                     (
                             ConditionByFields.builtFrom(infoToPage),
-                            SortScope.of(infoToPage)
+                            SortedFindRange.of(infoToPage)
                     );
         }
 
@@ -44,7 +44,7 @@ public interface PostingPersistent {
             return FindPostingsDto.of
                     (
                             ConditionByFields.builtFrom(infoToFeed),
-                            SortScope.of(infoToFeed)
+                            SortedFindRange.of(infoToFeed)
                     );
         }
 
@@ -52,7 +52,7 @@ public interface PostingPersistent {
         @Data
         @Builder
         public static class ConditionByFields {
-            private final Long cursorId;
+            private Long cursorId;
             private final Long boardId;
             private final String authorUuid;
             private final Boolean pin;
@@ -92,25 +92,43 @@ public interface PostingPersistent {
 
 
         @Data(staticConstructor = "of")
-        public static class SortScope {
+        public static class SortedFindRange {
+
             private final Integer limit;
             private final Long offset;
-            private final OrderSpecifier orderSpec;
+            private final SortBy sortBy;
 
-            public static SortScope of(InfoToPagePostingData pageInfo) {
+            @Data(staticConstructor = "of")
+            public static class SortBy {
+                public final PivotField pivotField;
+                private final boolean ascending;
+
+                public enum PivotField {
+                    ID,
+                    VOTE_COUNT;
+                }
+            }
+
+            public static SortedFindRange of(InfoToPagePostingData pageInfo) {
                 PageRequest pageReq = pageInfo.getPageReq();
-                return SortScope.of(pageReq.getPageSize(), pageReq.getOffset(), null);
+                return SortedFindRange.of(pageReq.getPageSize(), pageReq.getOffset(), null);
             }
 
-            public static SortScope of(InfoToFeedPostingData feedInfo) {
-                FeedRequest feedReq = feedInfo.getFeedReq();
-                return SortScope.of(feedReq.getFeedSize(), null, null);
+            public static SortedFindRange of(InfoToFeedPostingData feedInfo) {
+
+                Integer feedSize
+                        = feedInfo.getFeedReq().getFeedSize();
+                SortBy sortBy
+                        = SortBy.of(SortBy.PivotField.ID, false); //todo 프론트단에서 부터 받아오는 값으로 수정하기
+
+                return SortedFindRange.of(feedSize, null, sortBy);
             }
 
-            public static SortScope NotSpecified() {
+            public static SortedFindRange NotSpecified() {
 
-                return SortScope.of(0, 0L, null);
+                return SortedFindRange.of(0, 0L, null);
             }
+
         }
     }
 

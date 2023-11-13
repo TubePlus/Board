@@ -1,12 +1,14 @@
 package com.tubeplus.board_service.adapter.rdb.persistence.posting.dao;
 
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.ComparableExpressionBase;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tubeplus.board_service.adapter.rdb.persistence.posting.PostingEntity;
 import com.tubeplus.board_service.adapter.rdb.persistence.posting.QPostingEntity;
-import com.tubeplus.board_service.application.posting.port.out.PostingPersistent.FindPostingsDto.SortScope;
+import com.tubeplus.board_service.application.posting.port.out.PostingPersistent.FindPostingsDto.SortedFindRange;
 import com.tubeplus.board_service.global.Exceptionable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +48,28 @@ public class PostingQDslRepositoryImpl implements PostingQDslRepositoryCustom {
         return entitiesNum;
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public boolean existNextPosting(FindPostingsDto dto) {
+
+        QPostingEntity posting = new QPostingEntity("posting");
+
+
+        JPAQuery<Long> queryToCheckNext
+                = queryFactory.select(posting.id)
+                .from(posting)
+                .where(equalsToConditionByFields(
+                        posting, dto.getConditionByFields()));
+
+        writeSortScopeToQuery(dto, posting, queryToCheckNext);
+
+
+        Long nextPostingId
+                = Exceptionable.act(queryToCheckNext::fetchFirst)
+                .ifExceptioned.thenThrow(new RuntimeException("exist next posting query failed"));
+
+        return nextPostingId != null;
+    }
 
     @Override
     @Transactional(readOnly = true)
@@ -60,20 +84,49 @@ public class PostingQDslRepositoryImpl implements PostingQDslRepositoryCustom {
         JPAQuery<PostingEntity> query
                 = queryFactory.selectFrom(posting)
                 .where(equalsToConditionByFields(posting, condition));
-        // find 정렬방식, 범위 설정
-        SortScope scope = dto.getSortScope();
-        if (scope.getOffset() != null)
-            query.offset(scope.getOffset());
-        if (scope.getLimit() != null)
-            query.limit(scope.getLimit());
-        if (scope.getOrderSpec() != null)
-            query.orderBy(scope.getOrderSpec());
+
+        writeSortScopeToQuery(dto, posting, query);
 
 
         // query 실행 및 결과 반환
         List<PostingEntity> foundEntities = query.fetch();
 
         return foundEntities;
+    }
+
+    private void writeSortScopeToQuery(FindPostingsDto dto, QPostingEntity posting, JPAQuery query) {
+        SortedFindRange scope = dto.getSortedRange();
+        if (scope.getOffset() != null)
+            query.offset(scope.getOffset());
+        if (scope.getLimit() != null)
+            query.limit(scope.getLimit());
+        if (scope.getSortBy() != null) {//todo SortBy 사실은 List로 여러조건 한번에 가질 수 있어야함, 수정
+            SortedFindRange.SortBy sortBy = scope.getSortBy();
+
+            OrderSpecifier orderSpecifier
+                    = mapToOrderSpec(posting, sortBy);
+            query.orderBy(orderSpecifier);
+        }
+    }
+
+    private OrderSpecifier mapToOrderSpec(QPostingEntity posting, SortedFindRange.SortBy sortBy) {
+
+        ComparableExpressionBase qField;
+
+        switch (sortBy.getPivotField()) {
+
+            case ID -> qField = posting.id;
+
+            case VOTE_COUNT -> qField = posting.voteCount;
+
+            default -> throw new RuntimeException("unexpected sort pivot field");
+        }
+
+        OrderSpecifier orderSpecifier
+                = sortBy.isAscending()
+                ? qField.asc() : qField.desc();
+
+        return orderSpecifier;
     }
 
 

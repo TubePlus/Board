@@ -2,6 +2,7 @@ package com.tubeplus.board_service.adapter.rdb.persistence.posting.dao;
 
 
 import com.tubeplus.board_service.adapter.rdb.persistence.posting.PostingEntity;
+import com.tubeplus.board_service.application.posting.port.out.PostingPersistent;
 import com.tubeplus.board_service.application.posting.port.out.PostingPersistent.FindPostingsDto;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,4 +20,6 @@ public interface PostingQDslRepositoryCustom {
     List<PostingEntity> findPostingEntities(FindPostingsDto findDto);
 
 
+    @Transactional(readOnly = true)
+    boolean existNextPosting(FindPostingsDto findDto);
 }

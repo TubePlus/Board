@@ -6,7 +6,7 @@ public class BusinessException extends RuntimeException {
     //    private static final long serialVersionUID = -7099930022202674652L;	// No Usage
     private ErrorCode errorCode;
 
-    public BusinessException(String customDisplayMessage, final ErrorCode errorCode) {
+    public BusinessException(final ErrorCode errorCode, String customDisplayMessage) {
         super(customDisplayMessage);
         this.errorCode = errorCode;
     }
