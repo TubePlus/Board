@@ -33,10 +33,10 @@ public class PostingView {
     private final boolean withImage;
 
 
-    public static PostingView builtFrom(Posting posting,
-                                        String userUuid,
-                                        VotePersistent votePersistence,
-                                        CommentPersistent commentPersistence) {
+    public static PostingView madeFrom(Posting posting,
+                                       String userUuid,
+                                       VotePersistent votePersistence,
+                                       CommentPersistent commentPersistence) {
 
         FindVoteDto dto = FindVoteDto.of(posting.getId(), userUuid);
 

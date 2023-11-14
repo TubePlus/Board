@@ -42,7 +42,7 @@ public class PostingService implements PostingUseCase {
 
         //todo 읽음 집계처리 - 카프카
 
-        return PostingView.builtFrom(
+        return PostingView.madeFrom(
                 foundPosting, userUuid, votePersistence, commentPersistent
         );
     }
