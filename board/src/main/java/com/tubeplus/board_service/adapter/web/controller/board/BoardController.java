@@ -23,13 +23,20 @@ import java.util.List;
 
 
 @Slf4j
+@RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/v1/board-service/boards")
+@CrossOrigin(origins = "*") //todo: 임시설정
 
-@ApiTag(path = "/api/v1/boards", name = "Board API", description = "게시판 CRUD API")
+//@ApiTag(path = "/api/v1/boards-my-own-api-to-avoid-same", name = "Board API", description = "게시판 CRUD API")
 public class BoardController {
 
     private final BoardUseCase boardService;
 
+    @GetMapping("/test")
+    public String test() {
+        return "test";
+    }
 
     @Operation(summary = "게시판 생성", description = "게시판 생성, 생성된 게시판 id 반환")
     @PostMapping()

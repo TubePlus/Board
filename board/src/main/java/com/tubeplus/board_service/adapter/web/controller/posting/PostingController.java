@@ -25,14 +25,22 @@ import static com.tubeplus.board_service.application.posting.port.in.PostingUseC
 
 @Slf4j
 @RequiredArgsConstructor
+@RestController
+@RequestMapping("/api/v1/board-service/postings")
+@CrossOrigin(origins = "*") //todo: 임시설정
+
 
 @Validated
-@ApiTag(path = "/api/v1/postings", name = "Posting API")
+//@ApiTag(path = "/api/v1/postings", name = "Posting API")
 public class PostingController {
 
 
     private final PostingUseCase postingService;
 
+    @GetMapping("/test")
+    public String test() {
+        return "test";
+    }
 
     @Operation(summary = "게시물 작성", description = "작성된 게시물의 id 반환")
     @PostMapping()

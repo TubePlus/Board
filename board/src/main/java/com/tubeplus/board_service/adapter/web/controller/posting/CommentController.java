@@ -19,13 +19,20 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RequiredArgsConstructor
+@RestController
+@RequestMapping("/api/v1/board-service/comments")
+@CrossOrigin(origins = "*") //todo: 임시설정
 
 @Validated
-@ApiTag(path = "/api/v1/comments", name = "Posting Comment API")
+//@ApiTag(path = "/api/v1/comments", name = "Posting Comment API")
 public class CommentController {
 
     private final CommentUseCase commentService;
 
+    @GetMapping("/test")
+    public String test() {
+        return "test";
+    }
 
     @Operation(summary = "댓글/대댓글 작성",
             description = "대댓글일경우 parentId를 입력, 원 댓글일 경우 parentId에 null")

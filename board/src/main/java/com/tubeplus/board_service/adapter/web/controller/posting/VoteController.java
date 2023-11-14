@@ -11,21 +11,25 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 
 @Slf4j
 @RequiredArgsConstructor
+@RestController
+@RequestMapping("/api/v1/board-service/votes")
+@CrossOrigin(origins = "*") //todo: 임시설정
 
 @Validated
-@ApiTag(path = "/api/v1/votes", name = "Posting vote API")
+//@ApiTag(path = "/api/v1/votes", name = "Posting vote API")
 public class VoteController {
 
     private final VoteUseCase voteService;
 
+    @GetMapping("/test")
+    public ApiResponse<String> test() {
+        return ApiResponse.ofSuccess("test");
+    }
 
     @Operation(summary = "게시물 투표 api")
     @PostMapping()
