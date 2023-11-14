@@ -19,9 +19,11 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RequiredArgsConstructor
+@RestController
+@RequestMapping("/api/v1/board-service/comments")
 
 @Validated
-@ApiTag(path = "/api/v1/comments", name = "Posting Comment API")
+//@ApiTag(path = "/api/v1/comments", name = "Posting Comment API")
 public class CommentController {
 
     private final CommentUseCase commentService;

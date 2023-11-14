@@ -16,9 +16,11 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RequiredArgsConstructor
+@RestController
+@RequestMapping("/api/v1/board-service/votes")
 
 @Validated
-@ApiTag(path = "/api/v1/votes", name = "Posting vote API")
+//@ApiTag(path = "/api/v1/votes", name = "Posting vote API")
 public class VoteController {
 
     private final VoteUseCase voteService;

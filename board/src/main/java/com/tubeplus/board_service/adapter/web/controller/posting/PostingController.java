@@ -28,9 +28,11 @@ import static com.tubeplus.board_service.application.posting.port.in.PostingUseC
 
 @Slf4j
 @RequiredArgsConstructor
+@RestController
+@RequestMapping("/api/v1/board-service/postings")
 
 @Validated
-@ApiTag(path = "/api/v1/postings", name = "Posting API")
+//@ApiTag(path = "/api/v1/postings", name = "Posting API")
 public class PostingController {
 
 

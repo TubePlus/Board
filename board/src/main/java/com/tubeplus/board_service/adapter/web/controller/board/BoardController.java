@@ -23,8 +23,10 @@ import java.util.List;
 
 
 @Slf4j
+@RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/boards-my-own-api-to-avoid-same")
+@RequestMapping("/api/v1/board-service/boards")
+
 //@ApiTag(path = "/api/v1/boards-my-own-api-to-avoid-same", name = "Board API", description = "게시판 CRUD API")
 public class BoardController {
 
