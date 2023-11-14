@@ -3,6 +3,7 @@ package com.tubeplus.board_service.adapter.rdb.persistence.board;
 import com.tubeplus.board_service.adapter.rdb.persistence.board.dao.BoardJpaDataRepository;
 import com.tubeplus.board_service.adapter.rdb.persistence.board.dao.BoardQDslRepositoryCustom;
 import com.tubeplus.board_service.application.board.domain.Board;
+import com.tubeplus.board_service.application.board.port.in.BoardUseCase.BoardProperty.TimeLimitBoardProperty;
 import com.tubeplus.board_service.application.board.port.out.BoardPersistent;
 import com.tubeplus.board_service.adapter.web.error.BusinessException;
 import com.tubeplus.board_service.adapter.web.error.ErrorCode;
@@ -27,16 +28,13 @@ public class BoardPersistence implements BoardPersistent {
     @Override
     public Exceptionable<Board, SaveDto> saveBoard(SaveDto saveDto) {
 
-        Function<SaveDto, Board> saveBoardByDto =
-                dto -> {
-                    BoardEntity boardEntity
-                            = BoardEntity.builtFrom(dto);
+        Function<SaveDto, Board> saveBoardByDto = dto -> {
+            BoardEntity boardEntity = BoardEntity.builtFrom(dto);
 
-                    BoardEntity savedEntity
-                            = jpaDataRepo.save(boardEntity);
+            BoardEntity savedEntity = jpaDataRepo.save(boardEntity);
 
-                    return savedEntity.buildDomain();
-                };
+            return savedEntity.buildDomain();
+        };
 
         return new Exceptionable<>(saveBoardByDto, saveDto);
     }
@@ -45,14 +43,11 @@ public class BoardPersistence implements BoardPersistent {
     @Override
     public Exceptionable<Board, Long> findBoard(Long boardId) {
 
-        Function<Long, Board> findBoardById =
-                id -> {
-                    BoardEntity foundEntity
-                            = jpaDataRepo.findById(id)
-                            .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_RESOURCE));
+        Function<Long, Board> findBoardById = id -> {
+            BoardEntity foundEntity = jpaDataRepo.findById(id).orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_RESOURCE));
 
-                    return foundEntity.buildDomain();
-                };
+            return foundEntity.buildDomain();
+        };
 
         return new Exceptionable<>(findBoardById, boardId);
     }
@@ -60,18 +55,13 @@ public class BoardPersistence implements BoardPersistent {
     @Override
     public Exceptionable<List<Board>, ListFindDto> findBoardList(ListFindDto listFindDto) {
 
-        Function<ListFindDto, List<Board>> findBoardList =
-                dto -> {
-                    List<BoardEntity> foundBoardEntities
-                            = queryDslRepo.findBoards(dto);
+        Function<ListFindDto, List<Board>> findBoardList = dto -> {
+            List<BoardEntity> foundBoardEntities = queryDslRepo.findBoards(dto);
 
-                    List<Board> foundBoards
-                            = foundBoardEntities.stream()
-                            .map(BoardEntity::buildDomain)
-                            .collect(Collectors.toList());
+            List<Board> foundBoards = foundBoardEntities.stream().map(BoardEntity::buildDomain).collect(Collectors.toList());
 
-                    return foundBoards;
-                };
+            return foundBoards;
+        };
 
         return new Exceptionable<>(findBoardList, listFindDto);
     }
@@ -80,11 +70,10 @@ public class BoardPersistence implements BoardPersistent {
     @Override
     public Exceptionable<Boolean, Long> completelyDeleteBoard(Long boardId) {
 
-        Function<Long, Boolean> deleteBoardById =
-                id -> {
-                    jpaDataRepo.deleteById(boardId);
-                    return true;
-                };
+        Function<Long, Boolean> deleteBoardById = id -> {
+            jpaDataRepo.deleteById(boardId);
+            return true;
+        };
 
         return new Exceptionable<>(deleteBoardById, boardId);
 
@@ -93,13 +82,36 @@ public class BoardPersistence implements BoardPersistent {
 
     @Override
     public Exceptionable<Boolean, Long> softDeleteBoard(Long boardId) {
-        return new Exceptionable<>(queryDslRepo::softDeleteBoard, boardId);
+        return Exceptionable.act(queryDslRepo::softDeleteBoard, boardId);
     }
 
 
     @Override
-    public Exceptionable<Boolean, UpdateCommonPropertyDto> updateBoard(UpdateCommonPropertyDto dto) {
+    public Exceptionable<Boolean, UpdateCommonPropertyDto> updateCommonProperty(UpdateCommonPropertyDto dto) {
         return Exceptionable.act(queryDslRepo::updateBoard, dto);
+    }
+
+    @Override
+    public Exceptionable<Boolean, UpdateTimeLimitPropertyDto> updateTimeLimitProperty(UpdateTimeLimitPropertyDto updateTimeLimitdto) {
+
+        return Exceptionable.act(dto ->
+        {
+            BoardEntity updateTarget
+                    = jpaDataRepo.findById(dto.getBoardId())
+                    .orElseThrow(() -> new BusinessException(ErrorCode.FIND_ENTITY_FAILED));
+
+            TimeLimitBoardProperty timeLimitProperty = dto.getTimeLimitProperty();
+
+            updateTarget.setLimitDateTime(timeLimitProperty.getLimitDateTime());
+
+            BoardEntity updatedEntity = jpaDataRepo.save(updateTarget);
+
+            return updatedEntity.getLimitDateTime().equals(
+                    timeLimitProperty.getLimitDateTime()
+            );
+
+        }, updateTimeLimitdto);
+
     }
 
 

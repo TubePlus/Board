@@ -1,6 +1,5 @@
 package com.tubeplus.board_service.adapter.web.controller.board;
 
-import com.tubeplus.board_service.adapter.web.controller.board.vo.VoBoardProperty;
 import com.tubeplus.board_service.adapter.web.error.BusinessException;
 import com.tubeplus.board_service.adapter.web.error.ErrorCode;
 import com.tubeplus.board_service.application.board.domain.Board;
@@ -10,6 +9,8 @@ import com.tubeplus.board_service.adapter.web.common.ApiResponse;
 import com.tubeplus.board_service.adapter.web.controller.board.vo.BoardSearchType;
 
 import com.tubeplus.board_service.application.board.port.in.BoardUseCase.BoardProperty;
+import com.tubeplus.board_service.application.board.port.in.BoardUseCase.BoardProperty.BoardCommonProperty;
+import com.tubeplus.board_service.application.board.port.in.BoardUseCase.MakeBoardForm;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -43,7 +44,7 @@ public class BoardController {
             (
                     @Valid @RequestBody ReqMakeBoardBody reqBody
             ) {
-        BoardUseCase.MakeBoardForm form = reqBody.buildForm();
+        MakeBoardForm form = reqBody.buildForm();
         log.info(form.toString());
 
         Board postedBoard = boardService.makeBoard(form);
@@ -68,7 +69,7 @@ public class BoardController {
                 = BoardUseCase.BoardListInfo.builder()
                 .communityId(communityId)
                 .visible(searchType.getVisible())
-                .erase(searchType.getErase())
+                .softDelete(searchType.getErase())
                 .nameToSearch(nameToSearch)
                 .build();
         log.info(findInfo.toString());
@@ -83,7 +84,7 @@ public class BoardController {
 
     @Operation(summary = "게시판 속성 조회", description = "특정 게시판 속성을 id로 조회, 게시판 설정페이지 표시에 사용")
     @GetMapping("/{id}")
-    public ApiResponse<VoBoardProperty> readBoardProperty
+    public ApiResponse<BoardProperty> readBoardProperty
             (
                     @PathVariable("id") Long boardId
             ) {
@@ -92,8 +93,8 @@ public class BoardController {
         Board foundBoard
                 = boardService.findBoard(boardId);
 
-        VoBoardProperty boardProperty
-                = VoBoardProperty.of(foundBoard);
+        BoardProperty boardProperty
+                = BoardProperty.of(foundBoard);
 
         return ApiResponse.ofSuccess(boardProperty);
     }
@@ -104,18 +105,13 @@ public class BoardController {
     public ApiResponse updateBoardCommonProperty
             (
                     @PathVariable("boardId") Long boardId,
-                    @RequestBody VoBoardProperty.Common updateReqBody
+                    @RequestBody BoardCommonProperty updateReqBody
             ) {
         log.info(boardId.toString());
-//        if (haveNoUpdate(updateReqBody)) {//todo 디버깅
-//            throw new BusinessException(ErrorCode.BAD_REQUEST);
-//        }
 
-        BoardProperty.Common toUpdate
-                = updateReqBody.buildDomain();
-
-        boardService.updateBoardCommonProperty(boardId, toUpdate);
-
+        boardService.updateBoardProperty(
+                boardId, BoardProperty.of(updateReqBody, null)
+        );
 
         return ApiResponse.ofSuccess(null);
     }

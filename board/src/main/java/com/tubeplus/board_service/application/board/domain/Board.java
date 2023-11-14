@@ -17,7 +17,7 @@ public class Board {
     private BoardType boardType;
     private String boardDescription;
     private boolean visible;
-    private LocalDateTime limitDateTime;
-    private boolean softDeleted;
+    private boolean softDelete;
 
+    private LocalDateTime limitDateTime;
 }

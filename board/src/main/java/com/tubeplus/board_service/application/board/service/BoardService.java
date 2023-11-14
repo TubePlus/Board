@@ -2,11 +2,14 @@ package com.tubeplus.board_service.application.board.service;
 
 import com.tubeplus.board_service.application.board.domain.Board;
 import com.tubeplus.board_service.application.board.port.in.BoardUseCase;
+import com.tubeplus.board_service.application.board.port.in.BoardUseCase.BoardProperty.TimeLimitBoardProperty;
 import com.tubeplus.board_service.application.board.port.out.BoardPersistent;
 
 import com.tubeplus.board_service.adapter.web.error.BusinessException;
 import com.tubeplus.board_service.adapter.web.error.ErrorCode;
 import com.tubeplus.board_service.application.board.port.out.BoardPersistent.UpdateCommonPropertyDto;
+import com.tubeplus.board_service.application.board.port.out.BoardPersistent.UpdateTimeLimitPropertyDto;
+import com.tubeplus.board_service.global.Exceptionable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -62,16 +65,35 @@ public class BoardService implements BoardUseCase {
     }
 
     @Override
-    public void updateBoardCommonProperty(Long boardId, BoardProperty.Common property) {
+    public void updateBoardProperty(Long boardId, BoardProperty updateInfo) {
 
-        UpdateCommonPropertyDto updateDto
-                = UpdateCommonPropertyDto.builtFrom(boardId, property);
+        Boolean updated = true;
 
-        Boolean isUpdated
-                = boardPersistence.updateBoard(updateDto)
-                .ifExceptioned.thenThrow(ErrorCode.UPDATE_ENTITY_FAILED);
+        if (updateInfo.getCommonProperty() != null) {
 
-        if (!isUpdated)
+            UpdateCommonPropertyDto dto
+                    = UpdateCommonPropertyDto.builtFrom(boardId, updateInfo.getCommonProperty());
+
+            Boolean commonPropertyUpdated
+                    = boardPersistence.updateCommonProperty(dto)
+                    .ifExceptioned.thenThrow(ErrorCode.UPDATE_ENTITY_FAILED);
+
+            updated &= commonPropertyUpdated;
+        }
+
+        if (updateInfo.getTimeLimitProperty() != null) {
+
+            UpdateTimeLimitPropertyDto dto
+                    = UpdateTimeLimitPropertyDto.of(boardId, updateInfo.getTimeLimitProperty());
+
+            Boolean timeLimitPropertyUpdated
+                    = boardPersistence.updateTimeLimitProperty(dto)
+                    .ifExceptioned.thenThrow(ErrorCode.UPDATE_ENTITY_FAILED);
+
+            updated &= timeLimitPropertyUpdated;
+        }
+
+        if (!updated)
             throw new BusinessException(ErrorCode.UPDATE_ENTITY_FAILED);
     }
 

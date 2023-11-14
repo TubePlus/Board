@@ -5,7 +5,6 @@ import com.tubeplus.board_service.application.posting.port.in.PostingUseCase;
 import com.tubeplus.board_service.application.posting.port.in.PostingUseCase.Feed;
 import com.tubeplus.board_service.application.posting.port.in.PostingUseCase.PostingSimpleData;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.domain.Page;
 
 import java.util.function.Predicate;
@@ -39,7 +38,7 @@ public enum PostingsViewTypeReq {
     public abstract VoReadPostingSimpleData.Res driveService(PostingUseCase postingService, VoReadPostingSimpleData.Req reqParam);
 
 
-    public static class PostingViewReqConverter implements Converter<String, PostingsViewTypeReq> {
+    public static class Converter implements org.springframework.core.convert.converter.Converter<String, PostingsViewTypeReq> {
 
         @Override
         public PostingsViewTypeReq convert(String name) {

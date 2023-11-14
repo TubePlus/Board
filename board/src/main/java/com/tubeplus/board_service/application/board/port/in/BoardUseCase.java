@@ -34,7 +34,7 @@ public interface BoardUseCase {
 
         private final Long communityId;
         private final Boolean visible;
-        private final Boolean erase;
+        private final Boolean softDelete;
         private final String nameToSearch;
     }
 
@@ -42,22 +42,45 @@ public interface BoardUseCase {
     Board findBoard(Long boardId);
 
 
-    void updateBoardCommonProperty(Long boardId, BoardProperty.Common commonProperty);
+    void updateBoardProperty(Long boardId, BoardProperty updateInfo);
 
     @Data(staticConstructor = "of")
-    class BoardProperty {
+    class BoardProperty { //todo Board도메인과 합칠것
 
-        private final Common common;
-        private final LocalDateTime limitDateTime;
+        private final BoardCommonProperty commonProperty;
+        private final TimeLimitBoardProperty timeLimitProperty;
+
+        public static BoardProperty of(Board board) {
+            return BoardProperty.of(
+                    BoardCommonProperty.builtFrom(board),
+                    TimeLimitBoardProperty.of(board.getLimitDateTime())
+            );
+        }
+
 
         @Data
         @Builder
-        public static class Common {
+        public static class BoardCommonProperty {
             private final String boardName;
             private final BoardType boardType;
             private final String boardDescription;
             private final Boolean visible;
             private final Boolean softDelete;
+
+            public static BoardCommonProperty builtFrom(Board board) {
+                return BoardCommonProperty.builder()
+                        .boardName(board.getBoardName())
+                        .boardType(board.getBoardType())
+                        .boardDescription(board.getBoardDescription())
+                        .visible(board.isVisible())
+                        .softDelete(board.isSoftDelete())
+                        .build();
+            }
+        }
+
+        @Data(staticConstructor = "of")
+        public static class TimeLimitBoardProperty {
+            private final LocalDateTime limitDateTime;
         }
     }
 
