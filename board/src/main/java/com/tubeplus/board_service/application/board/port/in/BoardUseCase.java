@@ -42,18 +42,23 @@ public interface BoardUseCase {
     Board findBoard(Long boardId);
 
 
-    void updateBoardProperty(Long boardId, BoardProperty property);
+    void updateBoardCommonProperty(Long boardId, BoardProperty.Common commonProperty);
 
-    @Data
-    @Builder
+    @Data(staticConstructor = "of")
     class BoardProperty {
 
-        private final String boardName;
-        private final BoardType boardType;
-        private final String boardDescription;
-        private final Boolean visible;
+        private final Common common;
         private final LocalDateTime limitDateTime;
-        private final Boolean erase;
+
+        @Data
+        @Builder
+        public static class Common {
+            private final String boardName;
+            private final BoardType boardType;
+            private final String boardDescription;
+            private final Boolean visible;
+            private final Boolean softDelete;
+        }
     }
 
 

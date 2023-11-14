@@ -98,8 +98,8 @@ public class BoardPersistence implements BoardPersistent {
 
 
     @Override
-    public Exceptionable<Boolean, UpdateDto> updateBoard(UpdateDto dto) {
-        return new Exceptionable<>(queryDslRepo::updateBoard, dto);
+    public Exceptionable<Boolean, UpdateCommonPropertyDto> updateBoard(UpdateCommonPropertyDto dto) {
+        return Exceptionable.act(queryDslRepo::updateBoard, dto);
     }
 
 

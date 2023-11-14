@@ -80,6 +80,7 @@ public class VoReadPostingSimpleData {
 
     }
 
+
     @Value
     @Slf4j
     public static class Res {

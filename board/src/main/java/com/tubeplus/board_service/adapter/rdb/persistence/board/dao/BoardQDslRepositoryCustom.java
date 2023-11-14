@@ -9,7 +9,7 @@ public interface BoardQDslRepositoryCustom {
 
     List<BoardEntity> findBoards(BoardPersistent.ListFindDto findDto);
 
-    Boolean updateBoard(BoardPersistent.UpdateDto dto);
+    Boolean updateBoard(BoardPersistent.UpdateCommonPropertyDto dto);
 
     boolean softDeleteBoard(Long boardId);
 }

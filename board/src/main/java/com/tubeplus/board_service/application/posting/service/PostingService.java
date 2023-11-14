@@ -84,14 +84,14 @@ public class PostingService implements PostingUseCase {
     @Override
     public Feed<PostingSimpleData> feedPostingSimpleData(InfoToFeedPostingData infoToFeed) {
 
-        FindPostingsDto findDto;
-        findDto = FindPostingsDto.of(infoToFeed);
+        FindPostingsDto findDto
+                = FindPostingsDto.of(infoToFeed);
 
-
+//       /**/
         List<PostingSimpleData> postingDataToFeed;
 
-        List<Posting> foundPostingsForFeed;
-        foundPostingsForFeed = postingPersistence.findPostings(findDto)
+        List<Posting> foundPostingsForFeed
+                = postingPersistence.findPostings(findDto)
                 .ifExceptioned.thenThrow(ErrorCode.FIND_ENTITY_FAILED);
 
         if (foundPostingsForFeed.isEmpty())
@@ -100,9 +100,9 @@ public class PostingService implements PostingUseCase {
         postingDataToFeed = foundPostingsForFeed.stream().map(PostingSimpleData::builtFrom)
                 .collect(Collectors.toList());
 
-
-        Long lastCursoredId;
-        lastCursoredId = foundPostingsForFeed.get(foundPostingsForFeed.size() - 1).getId();
+//        /**/
+        Long lastCursoredId
+                = foundPostingsForFeed.get(foundPostingsForFeed.size() - 1).getId();
 
 
         boolean hasNextFeed;

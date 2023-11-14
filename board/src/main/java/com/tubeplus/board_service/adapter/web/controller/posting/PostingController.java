@@ -1,7 +1,6 @@
 package com.tubeplus.board_service.adapter.web.controller.posting;
 
 import com.tubeplus.board_service.adapter.web.common.ApiResponse;
-import com.tubeplus.board_service.adapter.web.common.ApiTag;
 import com.tubeplus.board_service.adapter.web.controller.posting.vo.VoReadPostingSimpleData;
 import com.tubeplus.board_service.adapter.web.controller.posting.vo.posting.ReqUpdatePinStateBody;
 import com.tubeplus.board_service.adapter.web.controller.posting.vo.posting.*;
@@ -62,16 +61,20 @@ public class PostingController {
     @GetMapping()
     public ApiResponse<VoReadPostingSimpleData.Res> readPostingSimpleData
             (
-                    @RequestParam PostingsSearchTypeReq searchTypeRequest,
-                    @RequestParam PostingsViewTypeReq viewTypeRequest,
+                    @RequestParam @NotBlank String searchType,
+                    @RequestParam @NotBlank String viewType,
                     VoReadPostingSimpleData.Req reqParam
             ) {
+        //todo webConfigurer formatter 고장나서 일단 수동 변환
+        PostingsSearchTypeReq searchTypeReq = PostingsSearchTypeReq.valueOf(searchType);
+        PostingsViewTypeReq viewTypeReq = PostingsViewTypeReq.valueOf(viewType);
 
-        if (searchTypeRequest.notPossibleWith(reqParam))
+        if (searchTypeReq.checkBadRequest.test(reqParam)
+                || viewTypeReq.checkBadRequest.test(reqParam))
             throw new BusinessException(ErrorCode.BAD_REQUEST, "Invalid request param for search-req-type");
 
         VoReadPostingSimpleData.Res responseVo
-                = viewTypeRequest.driveService(postingService, reqParam);
+                = viewTypeReq.driveService(postingService, reqParam);
 
         return ApiResponse.ofSuccess(responseVo);
     }

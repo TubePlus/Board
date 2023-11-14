@@ -8,6 +8,7 @@ import com.tubeplus.board_service.adapter.rdb.persistence.board.QBoardEntity;
 import com.tubeplus.board_service.application.board.port.out.BoardPersistent;
 import com.tubeplus.board_service.adapter.rdb.persistence.board.BoardEntity;
 import com.tubeplus.board_service.application.board.port.out.BoardPersistent.ListFindDto;
+import com.tubeplus.board_service.application.board.port.out.BoardPersistent.UpdateCommonPropertyDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.Modifying;
@@ -62,7 +63,7 @@ public class BoardQDslRepositoryImpl implements BoardQDslRepositoryCustom {
     @Transactional
     //todo 엔티티메니저.flush,clear로 수정후 테스트, 좀 더 알아보고 쓸데없이 작업 두번세번 안하게 리팩토링
     @Modifying
-    public Boolean updateBoard(BoardPersistent.UpdateDto dto) {
+    public Boolean updateBoard(UpdateCommonPropertyDto dto) {
 
         QBoardEntity board
                 = QBoardEntity.boardEntity;
@@ -78,7 +79,7 @@ public class BoardQDslRepositoryImpl implements BoardQDslRepositoryCustom {
     }
 
     private void writeUpdatesToQuery(JPAUpdateClause updateQuery,
-                                     BoardPersistent.UpdateDto dto,
+                                     UpdateCommonPropertyDto dto,
                                      QBoardEntity board) {
 
         if (dto.getBoardName() != null) {
@@ -96,8 +97,8 @@ public class BoardQDslRepositoryImpl implements BoardQDslRepositoryCustom {
         if (dto.getLimitDateTime() != null) {
             updateQuery.set(board.limitDateTime, dto.getLimitDateTime());
         }
-        if (dto.getErase() != null) {
-            updateQuery.set(board.softDelete, dto.getErase());
+        if (dto.getSoftDelete() != null) {
+            updateQuery.set(board.softDelete, dto.getSoftDelete());
         }
 
     }
@@ -118,9 +119,10 @@ public class BoardQDslRepositoryImpl implements BoardQDslRepositoryCustom {
 
         return executeResult != 0;
     }
+}
 
 //    public void updateClauseSetter(JPAUpdateClause updateQuery,
-//                                   BoardPersistent.UpdateDto dto,
+//                                   BoardPersistent.UpdateCommonPropertyDto dto,
 //                                   QBoardEntity board) {
 //
 //        Class<BoardEntity> qEntityClazz = BoardEntity.class;
@@ -158,4 +160,3 @@ public class BoardQDslRepositoryImpl implements BoardQDslRepositoryCustom {
 //            updateQuery.set(board.boardName, dto.getBoardName());
 //    }
 
-}

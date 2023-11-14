@@ -76,12 +76,12 @@ public interface BoardPersistent {
     Exceptionable<Board, Long> findBoard(Long boardId);
 
 
-    Exceptionable<Boolean, UpdateDto> updateBoard(UpdateDto dto);
+    Exceptionable<Boolean, UpdateCommonPropertyDto> updateBoard(UpdateCommonPropertyDto dto);
 
     @Data
     @Slf4j
     @Builder
-    class UpdateDto {
+    class UpdateCommonPropertyDto {
 
         private final Long id;
         private final String boardName;
@@ -89,19 +89,18 @@ public interface BoardPersistent {
         private final String boardDescription;
         private final Boolean visible;
         private final LocalDateTime limitDateTime;
-        private final Boolean erase;
+        private final Boolean softDelete;
 
-        public static UpdateDto builtFrom(Long boardId, BoardUseCase.BoardProperty p) {
+        public static UpdateCommonPropertyDto builtFrom(Long boardId, BoardUseCase.BoardProperty.Common p) {
             log.info(p.toString());
 
-            UpdateDto dto = UpdateDto.builder()
+            UpdateCommonPropertyDto dto = UpdateCommonPropertyDto.builder()
                     .id(boardId)
                     .boardName(p.getBoardName())
                     .boardType(p.getBoardType())
                     .boardDescription(p.getBoardDescription())
                     .visible(p.getVisible())
-                    .limitDateTime(p.getLimitDateTime())
-                    .erase(p.getErase())
+                    .softDelete(p.getSoftDelete())
                     .build();
             log.info(dto.toString());
 

@@ -11,20 +11,20 @@ import java.util.function.Predicate;
 @AllArgsConstructor
 public enum PostingsSearchTypeReq {
 
-    ALL(reqParam -> true),//todo admin 권한 조회관련 프론트와 상의
-    BOARD_ID(reqParam -> reqParam.getBoardId() != null),
-    AUTHOR_UUID(reqParam -> reqParam.getAuthorUuid() != null),
-    TITLE(reqParam -> reqParam.getTitleContaining() != null),
-    DELETED(reqParam -> reqParam.getDeleted() != null);
+    ALL_FOR_ADMIN(reqParam -> true),//todo admin 권한 조회관련 프론트와 상의
+    BOARD_ID(reqParam -> reqParam.getBoardId() == null
+            || reqParam.getBoardId() < 1),
+    AUTHOR_UUID(reqParam -> reqParam.getAuthorUuid() == null
+            || reqParam.getAuthorUuid().isBlank()),
+    TITLE_SEARCH(reqParam -> reqParam.getTitleContaining() == null
+            || reqParam.getTitleContaining().isBlank()),
+    BY_DELETE_STATE(reqParam -> reqParam.getDeleted() == null);
 
 
-    private final Predicate<VoReadPostingSimpleData.Req> isBadRequest;
+    public final Predicate<VoReadPostingSimpleData.Req> checkBadRequest;
 
-    public final boolean notPossibleWith(VoReadPostingSimpleData.Req reqParam) {
-        return isBadRequest.test(reqParam);
-    }
 
-    public static class ReqConverter implements Converter<String, PostingsSearchTypeReq> {
+    public static class PostingSearchTypeReqConverter implements Converter<String, PostingsSearchTypeReq> {
 
         @Override
         public PostingsSearchTypeReq convert(String name) {

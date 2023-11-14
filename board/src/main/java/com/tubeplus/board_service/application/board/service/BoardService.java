@@ -6,6 +6,7 @@ import com.tubeplus.board_service.application.board.port.out.BoardPersistent;
 
 import com.tubeplus.board_service.adapter.web.error.BusinessException;
 import com.tubeplus.board_service.adapter.web.error.ErrorCode;
+import com.tubeplus.board_service.application.board.port.out.BoardPersistent.UpdateCommonPropertyDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -61,10 +62,10 @@ public class BoardService implements BoardUseCase {
     }
 
     @Override
-    public void updateBoardProperty(Long boardId, BoardProperty property) {
+    public void updateBoardCommonProperty(Long boardId, BoardProperty.Common property) {
 
-        BoardPersistent.UpdateDto updateDto
-                = BoardPersistent.UpdateDto.builtFrom(boardId, property);
+        UpdateCommonPropertyDto updateDto
+                = UpdateCommonPropertyDto.builtFrom(boardId, property);
 
         Boolean isUpdated
                 = boardPersistence.updateBoard(updateDto)

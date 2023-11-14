@@ -7,9 +7,9 @@ import com.tubeplus.board_service.application.board.domain.Board;
 import com.tubeplus.board_service.application.board.port.in.BoardUseCase;
 import com.tubeplus.board_service.adapter.web.controller.board.vo.ReqMakeBoardBody;
 import com.tubeplus.board_service.adapter.web.common.ApiResponse;
-import com.tubeplus.board_service.adapter.web.common.ApiTag;
 import com.tubeplus.board_service.adapter.web.controller.board.vo.BoardSearchType;
 
+import com.tubeplus.board_service.application.board.port.in.BoardUseCase.BoardProperty;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -18,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import java.lang.reflect.Field;
 import java.util.List;
 
 
@@ -83,10 +82,10 @@ public class BoardController {
 
 
     @Operation(summary = "게시판 속성 조회", description = "특정 게시판 속성을 id로 조회, 게시판 설정페이지 표시에 사용")
-    @GetMapping("/{boardId}")
+    @GetMapping("/{id}")
     public ApiResponse<VoBoardProperty> readBoardProperty
             (
-                    @PathVariable("boardId") Long boardId
+                    @PathVariable("id") Long boardId
             ) {
         log.info(boardId.toString());
 
@@ -94,57 +93,57 @@ public class BoardController {
                 = boardService.findBoard(boardId);
 
         VoBoardProperty boardProperty
-                = VoBoardProperty.builtFrom(foundBoard);
+                = VoBoardProperty.of(foundBoard);
 
         return ApiResponse.ofSuccess(boardProperty);
     }
 
 
-    @Operation(summary = "게시판 속성 변경", description = "특정 게시판 속성을 변경")
+    @Operation(summary = "게시판 공통 속성 변경")
     @PutMapping("/{boardId}")
-    public ApiResponse updateBoardProperty
+    public ApiResponse updateBoardCommonProperty
             (
                     @PathVariable("boardId") Long boardId,
-                    @RequestBody VoBoardProperty updateReqBody
+                    @RequestBody VoBoardProperty.Common updateReqBody
             ) {
         log.info(boardId.toString());
 //        if (haveNoUpdate(updateReqBody)) {//todo 디버깅
 //            throw new BusinessException(ErrorCode.BAD_REQUEST);
 //        }
 
-        BoardUseCase.BoardProperty toUpdate
-                = updateReqBody.buildBoardProperty();
+        BoardProperty.Common toUpdate
+                = updateReqBody.buildDomain();
 
-        boardService.updateBoardProperty(boardId, toUpdate);
+        boardService.updateBoardCommonProperty(boardId, toUpdate);
 
 
         return ApiResponse.ofSuccess(null);
     }
 
-    private boolean haveNoUpdate(VoBoardProperty updateReq) {
-        //todo Field.get하면 접근제어자 문제 발생 -> 생각해보니 getter사용하는 방향으로 수정하면 작동할지도?, 그래도 안되면 reflection으로 접근제어자 무시하고 접근
-
-
-        //한개의 field라도 들어온게 있다면 update가 있는걸로 간주, false 리턴
-        for (Field updateField : updateReq.getClass().getFields()) {
-            Object fieldInstance = null;
-            try {
-                fieldInstance = updateField.get(updateReq);
-            } catch (NullPointerException e) {
-                log.error("bi");
-            } catch (Exception e) {
-                log.error("hi");
-            }
-
-            if (fieldInstance != null) {
-                log.error("asdlkfjasdlk");
-                return false;
-            }
-
-        }
-
-        return true;
-    }
+//    private boolean haveNoUpdate(VoBoardProperty updateReq) {
+//        //todo Field.get하면 접근제어자 문제 발생 -> 생각해보니 getter사용하는 방향으로 수정하면 작동할지도?, 그래도 안되면 reflection으로 접근제어자 무시하고 접근
+//
+//
+//        //한개의 field라도 들어온게 있다면 update가 있는걸로 간주, false 리턴
+//        for (Field updateField : updateReq.getClass().getFields()) {
+//            Object fieldInstance = null;
+//            try {
+//                fieldInstance = updateField.get(updateReq);
+//            } catch (NullPointerException e) {
+//                log.error("bi");
+//            } catch (Exception e) {
+//                log.error("hi");
+//            }
+//
+//            if (fieldInstance != null) {
+//                log.error("asdlkfjasdlk");
+//                return false;
+//            }
+//
+//        }
+//
+//        return true;
+//    }
 
 
     @Operation(summary = "게시판 삭제", description = "특정 id의 게시판을 soft delete 처리")
