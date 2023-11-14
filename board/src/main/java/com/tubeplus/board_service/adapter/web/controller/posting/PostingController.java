@@ -30,6 +30,8 @@ import static com.tubeplus.board_service.application.posting.port.in.PostingUseC
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/board-service/postings")
+@CrossOrigin(origins = "*") //todo: 임시설정
+
 
 @Validated
 //@ApiTag(path = "/api/v1/postings", name = "Posting API")

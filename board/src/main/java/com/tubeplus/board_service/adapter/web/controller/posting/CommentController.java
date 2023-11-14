@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/board-service/comments")
+@CrossOrigin(origins = "*") //todo: 임시설정
 
 @Validated
 //@ApiTag(path = "/api/v1/comments", name = "Posting Comment API")

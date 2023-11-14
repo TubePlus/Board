@@ -26,6 +26,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/board-service/boards")
+@CrossOrigin(origins = "*") //todo: 임시설정
 
 //@ApiTag(path = "/api/v1/boards-my-own-api-to-avoid-same", name = "Board API", description = "게시판 CRUD API")
 public class BoardController {
