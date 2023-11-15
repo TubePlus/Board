@@ -2,14 +2,13 @@ package com.tubeplus.board_service.application.board.service;
 
 import com.tubeplus.board_service.application.board.domain.Board;
 import com.tubeplus.board_service.application.board.port.in.BoardUseCase;
-import com.tubeplus.board_service.application.board.port.in.BoardUseCase.BoardProperty.TimeLimitBoardProperty;
-import com.tubeplus.board_service.application.board.port.out.BoardPersistent;
+import com.tubeplus.board_service.application.board.port.out.BoardPersistable;
 
 import com.tubeplus.board_service.adapter.web.error.BusinessException;
 import com.tubeplus.board_service.adapter.web.error.ErrorCode;
-import com.tubeplus.board_service.application.board.port.out.BoardPersistent.UpdateCommonPropertyDto;
-import com.tubeplus.board_service.application.board.port.out.BoardPersistent.UpdateTimeLimitPropertyDto;
-import com.tubeplus.board_service.global.Exceptionable;
+import com.tubeplus.board_service.application.board.port.out.BoardPersistable.SaveBoardDto;
+import com.tubeplus.board_service.application.board.port.out.BoardPersistable.UpdateCommonPropertyDto;
+import com.tubeplus.board_service.application.board.port.out.BoardPersistable.UpdateTimeLimitPropertyDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,15 +23,16 @@ public class BoardService implements BoardUseCase {
 
     //member variables
 
-    private final BoardPersistent boardPersistence;
+    private final BoardPersistable boardPersistence;
 
     @Override
     public Board makeBoard(MakeBoardForm formToMake) {
 
-        BoardPersistent.SaveDto saveDto
-                = BoardPersistent.SaveDto.of(formToMake);
+        SaveBoardDto saveDto
+                = SaveBoardDto.of(formToMake);
 
-        Board madeBoard = boardPersistence.saveBoard(saveDto)
+        Board madeBoard
+                = boardPersistence.saveBoard(saveDto)
                 .ifExceptioned.thenThrow(ErrorCode.SAVE_ENTITY_FAILED);
 
         return madeBoard;
@@ -41,11 +41,11 @@ public class BoardService implements BoardUseCase {
     @Override
     public List<Board> listCommuBoards(BoardListInfo findInfo) {
 
-        BoardPersistent.ListFindDto listFindDto
-                = BoardPersistent.ListFindDto.of(findInfo);
+        BoardPersistable.FindBoardListDto findDto
+                = BoardPersistable.FindBoardListDto.of(findInfo);
 
         List<Board> foundBoards
-                = boardPersistence.findBoardList(listFindDto)
+                = boardPersistence.findBoardList(findDto)
                 .ifExceptioned.thenThrow(ErrorCode.FIND_ENTITY_FAILED);
 
         if (foundBoards.isEmpty())

@@ -3,14 +3,14 @@ package com.tubeplus.board_service.adapter.rdb.persistence.posting;
 import com.tubeplus.board_service.global.Exceptionable;
 import com.tubeplus.board_service.application.posting.domain.vote.Vote;
 import com.tubeplus.board_service.application.posting.domain.vote.VoteType;
-import com.tubeplus.board_service.application.posting.port.out.VotePersistent;
+import com.tubeplus.board_service.application.posting.port.out.VotePersistable;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
 
 @Component("votePersistence")
-public class VotePersistence implements VotePersistent {
+public class VotePersistence implements VotePersistable {
 
     @Override
     public Exceptionable

@@ -44,6 +44,7 @@ public class BoardController {
             (
                     @Valid @RequestBody ReqMakeBoardBody reqBody
             ) {
+
         MakeBoardForm form = reqBody.buildForm();
         log.info(form.toString());
 
@@ -61,8 +62,9 @@ public class BoardController {
             (
                     @RequestParam("community-id") Long communityId,
                     @RequestParam("board-search-type") BoardSearchType searchType,
-                    @RequestParam(value = "board-name", required = false) String nameToSearch
+                    @RequestParam(name = "board-name", required = false) String nameToSearch
             ) {
+
         log.info(communityId.toString());
 
         BoardUseCase.BoardListInfo findInfo

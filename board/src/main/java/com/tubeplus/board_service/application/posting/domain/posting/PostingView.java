@@ -2,12 +2,10 @@ package com.tubeplus.board_service.application.posting.domain.posting;
 
 
 import com.tubeplus.board_service.adapter.web.error.ErrorCode;
-import com.tubeplus.board_service.application.posting.port.out.CommentPersistent;
-import com.tubeplus.board_service.application.posting.port.out.VotePersistent;
-import com.tubeplus.board_service.application.posting.port.out.VotePersistent.FindVoteDto;
+import com.tubeplus.board_service.application.posting.port.out.CommentPersistable;
+import com.tubeplus.board_service.application.posting.port.out.VotePersistable;
+import com.tubeplus.board_service.application.posting.port.out.VotePersistable.FindVoteDto;
 import com.tubeplus.board_service.application.posting.domain.vote.Vote;
-import com.tubeplus.board_service.application.posting.service.CommentService;
-import com.tubeplus.board_service.application.posting.service.VoteService;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -35,8 +33,8 @@ public class PostingView {
 
     public static PostingView madeFrom(Posting posting,
                                        String userUuid,
-                                       VotePersistent votePersistence,
-                                       CommentPersistent commentPersistence) {
+                                       VotePersistable votePersistence,
+                                       CommentPersistable commentPersistence) {
 
         FindVoteDto dto = FindVoteDto.of(posting.getId(), userUuid);
 

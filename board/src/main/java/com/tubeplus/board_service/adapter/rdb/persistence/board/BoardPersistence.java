@@ -4,7 +4,7 @@ import com.tubeplus.board_service.adapter.rdb.persistence.board.dao.BoardJpaData
 import com.tubeplus.board_service.adapter.rdb.persistence.board.dao.BoardQDslRepositoryCustom;
 import com.tubeplus.board_service.application.board.domain.Board;
 import com.tubeplus.board_service.application.board.port.in.BoardUseCase.BoardProperty.TimeLimitBoardProperty;
-import com.tubeplus.board_service.application.board.port.out.BoardPersistent;
+import com.tubeplus.board_service.application.board.port.out.BoardPersistable;
 import com.tubeplus.board_service.adapter.web.error.BusinessException;
 import com.tubeplus.board_service.adapter.web.error.ErrorCode;
 import com.tubeplus.board_service.global.Exceptionable;
@@ -20,15 +20,16 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 @Component("boardPersistence")
-public class BoardPersistence implements BoardPersistent {
+public class BoardPersistence implements BoardPersistable {
 
     private final BoardJpaDataRepository jpaDataRepo;
     private final BoardQDslRepositoryCustom queryDslRepo;
 
     @Override
-    public Exceptionable<Board, SaveDto> saveBoard(SaveDto saveDto) {
+    public Exceptionable<Board, SaveBoardDto> saveBoard(SaveBoardDto saveDto) {
 
-        Function<SaveDto, Board> saveBoardByDto = dto -> {
+        Function<SaveBoardDto, Board> saveBoardByDto = dto -> {
+
             BoardEntity boardEntity = BoardEntity.builtFrom(dto);
 
             BoardEntity savedEntity = jpaDataRepo.save(boardEntity);
@@ -36,7 +37,7 @@ public class BoardPersistence implements BoardPersistent {
             return savedEntity.buildDomain();
         };
 
-        return new Exceptionable<>(saveBoardByDto, saveDto);
+        return Exceptionable.act(saveBoardByDto, saveDto);
     }
 
 
@@ -44,7 +45,10 @@ public class BoardPersistence implements BoardPersistent {
     public Exceptionable<Board, Long> findBoard(Long boardId) {
 
         Function<Long, Board> findBoardById = id -> {
-            BoardEntity foundEntity = jpaDataRepo.findById(id).orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_RESOURCE));
+
+            BoardEntity foundEntity
+                    = jpaDataRepo.findById(id)
+                    .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_RESOURCE));
 
             return foundEntity.buildDomain();
         };
@@ -53,9 +57,9 @@ public class BoardPersistence implements BoardPersistent {
     }
 
     @Override
-    public Exceptionable<List<Board>, ListFindDto> findBoardList(ListFindDto listFindDto) {
+    public Exceptionable<List<Board>, FindBoardListDto> findBoardList(FindBoardListDto findDto) {
 
-        Function<ListFindDto, List<Board>> findBoardList = dto -> {
+        Function<FindBoardListDto, List<Board>> findBoardList = dto -> {
             List<BoardEntity> foundBoardEntities = queryDslRepo.findBoards(dto);
 
             List<Board> foundBoards = foundBoardEntities.stream().map(BoardEntity::buildDomain).collect(Collectors.toList());
@@ -63,7 +67,7 @@ public class BoardPersistence implements BoardPersistent {
             return foundBoards;
         };
 
-        return new Exceptionable<>(findBoardList, listFindDto);
+        return new Exceptionable<>(findBoardList, findDto);
     }
 
 
@@ -75,8 +79,7 @@ public class BoardPersistence implements BoardPersistent {
             return true;
         };
 
-        return new Exceptionable<>(deleteBoardById, boardId);
-
+        return Exceptionable.act(deleteBoardById, boardId);
     }
 
 
@@ -92,9 +95,9 @@ public class BoardPersistence implements BoardPersistent {
     }
 
     @Override
-    public Exceptionable<Boolean, UpdateTimeLimitPropertyDto> updateTimeLimitProperty(UpdateTimeLimitPropertyDto updateTimeLimitdto) {
-
-        return Exceptionable.act(dto ->
+    public Exceptionable<Boolean, UpdateTimeLimitPropertyDto> updateTimeLimitProperty(UpdateTimeLimitPropertyDto updateTimeLimitDto) {
+        Function<UpdateTimeLimitPropertyDto, Boolean>
+                updateTimeLimitProperty = dto ->
         {
             BoardEntity updateTarget
                     = jpaDataRepo.findById(dto.getBoardId())
@@ -109,8 +112,9 @@ public class BoardPersistence implements BoardPersistent {
             return updatedEntity.getLimitDateTime().equals(
                     timeLimitProperty.getLimitDateTime()
             );
+        };
 
-        }, updateTimeLimitdto);
+        return Exceptionable.act(updateTimeLimitProperty, updateTimeLimitDto);
 
     }
 

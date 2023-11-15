@@ -8,7 +8,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tubeplus.board_service.adapter.rdb.persistence.posting.PostingEntity;
 import com.tubeplus.board_service.adapter.rdb.persistence.posting.QPostingEntity;
-import com.tubeplus.board_service.application.posting.port.out.PostingPersistent.FindPostingsDto.SortedFindRange;
+import com.tubeplus.board_service.application.posting.port.out.PostingPersistable.FindPostingsDto.SortedFindRange;
 import com.tubeplus.board_service.global.Exceptionable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.tubeplus.board_service.application.posting.port.out.PostingPersistent.*;
+import static com.tubeplus.board_service.application.posting.port.out.PostingPersistable.*;
 
 
 @Slf4j

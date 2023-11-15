@@ -4,7 +4,7 @@ import com.tubeplus.board_service.adapter.rdb.persistence.posting.dao.PostingJpa
 import com.tubeplus.board_service.adapter.rdb.persistence.posting.dao.PostingQDslRepositoryCustom;
 import com.tubeplus.board_service.global.Exceptionable;
 import com.tubeplus.board_service.application.posting.domain.posting.Posting;
-import com.tubeplus.board_service.application.posting.port.out.PostingPersistent;
+import com.tubeplus.board_service.application.posting.port.out.PostingPersistable;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 @Component("postingPersistence")
-public class PostingPersistence implements PostingPersistent {
+public class PostingPersistence implements PostingPersistable {
 
     private final PostingJpaDataRepository jpaDataRepo;
     private final PostingQDslRepositoryCustom queryDslRepo;

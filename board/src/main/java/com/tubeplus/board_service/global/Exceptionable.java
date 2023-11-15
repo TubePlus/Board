@@ -36,20 +36,12 @@ public class Exceptionable<RETURN, PARAM> {
         return new Exceptionable<>(function, parameter);
     }
 
-    // class for terminate methods
+
+    // class for execute function
     public class Executor {
 
         public RETURN thenThrow(ErrorCode errorCode) {
-
-            try {
-                RETURN result = exceptionableTask.apply(parameter);
-                return result;
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                log.info(e.getMessage());
-                throw new BusinessException(errorCode);
-            }
+            return thenThrow(new BusinessException(errorCode));
         }
 
         public RETURN thenThrow(RuntimeException runtimeException) {

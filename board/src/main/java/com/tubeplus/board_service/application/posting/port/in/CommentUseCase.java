@@ -4,6 +4,8 @@ import com.tubeplus.board_service.application.posting.domain.comment.Comment;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
+
 public interface CommentUseCase {
 
     Long writeComment(PostCommentForm form);
@@ -18,13 +20,12 @@ public interface CommentUseCase {
     }
 
 
-    Comment.CommentViewInfo readComment(ReadCommentDto dto);
+    List<Comment> readComments(ReadCommentsInfo readInfo);
 
-    @Data
-    @Builder
-    class ReadCommentDto {
+    @Data(staticConstructor = "of")
+    class ReadCommentsInfo {
         private final long postingId;
-        private final Long parentId;
+        private final Long parentCommentId;
     }
 
 

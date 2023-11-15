@@ -8,7 +8,7 @@ import com.tubeplus.board_service.application.posting.domain.comment.Comment;
 import com.tubeplus.board_service.application.posting.domain.comment.Comment.CommentViewInfo;
 import com.tubeplus.board_service.application.posting.port.in.CommentUseCase;
 import com.tubeplus.board_service.application.posting.port.in.CommentUseCase.PostCommentForm;
-import com.tubeplus.board_service.application.posting.port.in.CommentUseCase.ReadCommentDto;
+import com.tubeplus.board_service.application.posting.port.in.CommentUseCase.ReadCommentsInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -16,6 +16,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -29,10 +31,12 @@ public class CommentController {
 
     private final CommentUseCase commentService;
 
+
     @GetMapping("/test")
     public String test() {
         return "test";
     }
+
 
     @Operation(summary = "댓글/대댓글 작성"
             , description = "대댓글일경우 parentId를 입력, 원 댓글일 경우 parentId에 null")
@@ -56,7 +60,7 @@ public class CommentController {
     @Operation(summary = "댓글/대댓글 조회",
             description = "대댓글일 경우 parentId를 입력, 원 댓글일 경우 parentId에 null")
     @GetMapping()
-    public ApiResponse<CommentViewInfo> readComment
+    public ApiResponse<List<Comment>> readComments
             (
                     @RequestParam("posting_id") @Min(1)
                     long postingId,
@@ -64,17 +68,13 @@ public class CommentController {
                     Long parentId
             ) {
 
-        ReadCommentDto dto
-                = ReadCommentDto
-                .builder()
-                .postingId(postingId)
-                .parentId(parentId)
-                .build();
+        ReadCommentsInfo readInfo
+                = ReadCommentsInfo.of(postingId, parentId);
 
-        CommentViewInfo viewInfo
-                = commentService.readComment(dto);
+        List<Comment> comments
+                = commentService.readComments(readInfo);
 
-        return ApiResponse.ofSuccess(viewInfo);
+        return ApiResponse.ofSuccess(comments);
     }
 
 

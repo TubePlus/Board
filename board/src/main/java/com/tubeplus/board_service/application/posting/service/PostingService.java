@@ -5,9 +5,9 @@ import com.tubeplus.board_service.adapter.web.error.ErrorCode;
 import com.tubeplus.board_service.application.posting.domain.posting.Posting;
 import com.tubeplus.board_service.application.posting.domain.posting.PostingView;
 import com.tubeplus.board_service.application.posting.port.in.PostingUseCase;
-import com.tubeplus.board_service.application.posting.port.out.CommentPersistent;
-import com.tubeplus.board_service.application.posting.port.out.PostingPersistent;
-import com.tubeplus.board_service.application.posting.port.out.VotePersistent;
+import com.tubeplus.board_service.application.posting.port.out.CommentPersistable;
+import com.tubeplus.board_service.application.posting.port.out.PostingPersistable;
+import com.tubeplus.board_service.application.posting.port.out.VotePersistable;
 import com.tubeplus.board_service.global.Exceptionable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +20,7 @@ import java.util.Optional;
 import java.util.function.LongSupplier;
 import java.util.stream.Collectors;
 
-import static com.tubeplus.board_service.application.posting.port.out.PostingPersistent.*;
+import static com.tubeplus.board_service.application.posting.port.out.PostingPersistable.*;
 
 
 @Slf4j
@@ -29,9 +29,9 @@ import static com.tubeplus.board_service.application.posting.port.out.PostingPer
 @Service("Posting service")
 public class PostingService implements PostingUseCase {
 
-    private final PostingPersistent postingPersistence;
-    private final VotePersistent votePersistence;
-    private final CommentPersistent commentPersistent;
+    private final PostingPersistable postingPersistence;
+    private final VotePersistable votePersistence;
+    private final CommentPersistable commentPersistence;
 
 
     @Override
@@ -43,7 +43,7 @@ public class PostingService implements PostingUseCase {
         //todo 읽음 집계처리 - 카프카
 
         return PostingView.madeFrom(
-                foundPosting, userUuid, votePersistence, commentPersistent
+                foundPosting, userUuid, votePersistence, commentPersistence
         );
     }
 

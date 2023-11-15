@@ -2,6 +2,7 @@ package com.tubeplus.board_service.adapter.web.controller.board.vo;
 
 import com.tubeplus.board_service.application.board.domain.BoardType;
 import com.tubeplus.board_service.application.board.port.in.BoardUseCase;
+import com.tubeplus.board_service.application.board.port.in.BoardUseCase.MakeBoardForm;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -31,11 +32,11 @@ public class ReqMakeBoardBody {
     private LocalDateTime limitDateTime;
 
 
-    public BoardUseCase.MakeBoardForm buildForm() {
+    public MakeBoardForm buildForm() {
         log.info(this.toString());
 
-        BoardUseCase.MakeBoardForm form
-                = BoardUseCase.MakeBoardForm.builder().
+        MakeBoardForm form
+                = MakeBoardForm.builder().
                 communityId(communityId).
                 boardName(boardName).
                 boardType(boardType).

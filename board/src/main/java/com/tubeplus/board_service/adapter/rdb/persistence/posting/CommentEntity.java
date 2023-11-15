@@ -1,11 +1,11 @@
 package com.tubeplus.board_service.adapter.rdb.persistence.posting;
 
 import com.tubeplus.board_service.adapter.rdb.config.BaseEntity;
-import com.tubeplus.board_service.application.posting.port.out.CommentPersistent.SaveCommentDto;
+import com.tubeplus.board_service.application.posting.domain.comment.Comment;
+import com.tubeplus.board_service.application.posting.domain.comment.Comment.CommentViewInfo;
+import com.tubeplus.board_service.application.posting.port.out.CommentPersistable.SaveCommentDto;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.List;
 
 
 //todo @JpaEntity(tableName="")으로 합치기
@@ -51,6 +51,19 @@ public class CommentEntity extends BaseEntity {
 
         return builder.build();
 
+    }
+
+    public Comment toDomain() {
+
+        return Comment.of(
+                id,
+                CommentViewInfo.builder()
+                        .postingId(postingId)
+                        .parentId(parentComment == null ? null : parentComment.id)
+                        .contents(contents)
+                        .commenterUuid(commenterUuid)
+                        .build()
+        );
     }
 
 

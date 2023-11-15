@@ -15,7 +15,7 @@ import java.util.Optional;
 
 import static com.tubeplus.board_service.application.posting.port.in.PostingUseCase.*;
 
-public interface PostingPersistent {
+public interface PostingPersistable {
 
     Exceptionable<Optional<Posting>, Long> findPosting(long postingId);
 
