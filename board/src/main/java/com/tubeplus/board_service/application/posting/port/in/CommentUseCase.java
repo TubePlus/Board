@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface CommentUseCase {
 
-    Long writeComment(PostCommentForm form);
+    Comment writeComment(PostCommentForm form);
 
     @Data
     @Builder

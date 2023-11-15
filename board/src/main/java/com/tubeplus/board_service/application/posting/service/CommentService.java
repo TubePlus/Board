@@ -22,16 +22,16 @@ public class CommentService implements CommentUseCase {
     private final CommentPersistable commentPersistence;
 
     @Override
-    public final Long writeComment(PostCommentForm form) {
+    public final Comment writeComment(PostCommentForm form) {
 
         SaveCommentDto dto
                 = SaveCommentDto.builtFrom(form);
 
-        Long savedCommentId
+        Comment savedComment
                 = commentPersistence.saveComment(dto)
                 .ifExceptioned.thenThrow(ErrorCode.SAVE_ENTITY_FAILED);
 
-        return savedCommentId;
+        return savedComment;
     }
 
     @Override

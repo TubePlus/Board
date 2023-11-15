@@ -23,9 +23,10 @@ public class CommentPersistence implements CommentPersistable {
     private final CommentJpaDataRepository jpaDataRepo;
 
     @Override
-    public Exceptionable<Long, SaveCommentDto> saveComment(SaveCommentDto saveCommentDto) {
+    public Exceptionable<Comment, SaveCommentDto> saveComment(SaveCommentDto saveCommentDto) {
 
-        Function<SaveCommentDto, Long> saveComment = dto -> {
+        Function<SaveCommentDto, Comment> saveComment
+                = dto -> {
 
             CommentEntity parentComment = null;
             if (dto.getParentId() != null)
@@ -37,7 +38,7 @@ public class CommentPersistence implements CommentPersistable {
             CommentEntity savedEntity
                     = jpaDataRepo.save(entityToSave);
 
-            return savedEntity.getId();
+            return savedEntity.toDomain();
         };
 
 
