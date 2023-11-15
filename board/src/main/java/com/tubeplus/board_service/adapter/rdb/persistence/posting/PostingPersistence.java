@@ -20,8 +20,8 @@ import java.util.stream.Collectors;
 
 @SuppressWarnings("ConstantConditions")
 @Slf4j
-@Component
 @RequiredArgsConstructor
+@Component("postingPersistence")
 public class PostingPersistence implements PostingPersistent {
 
     private final PostingJpaDataRepository jpaDataRepo;

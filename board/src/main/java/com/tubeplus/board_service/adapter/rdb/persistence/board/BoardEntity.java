@@ -12,6 +12,8 @@ import java.time.LocalDateTime;
 
 
 @Table(name = "board")
+@Getter
+@Setter
 @Entity
 @Builder
 @NoArgsConstructor
@@ -65,7 +67,7 @@ public class BoardEntity extends BaseEntity {
                 boardDescription(boardDescription).
                 visible(visible).
                 limitDateTime(limitDateTime).
-                softDeleted(softDelete).
+                softDelete(softDelete).
                 build();
     }
 

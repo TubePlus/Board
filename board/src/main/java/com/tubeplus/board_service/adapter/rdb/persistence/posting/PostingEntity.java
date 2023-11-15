@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class PostingEntity extends BaseEntity {//todo posting_seq 정체 찾아보기
+public class PostingEntity extends BaseEntity {
     //todo 수정된 erd 반영하기
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,6 +42,7 @@ public class PostingEntity extends BaseEntity {//todo posting_seq 정체 찾아�
     @Column(name = "soft_delete", nullable = false)
     private boolean softDelete;
 
+    //todo vote, comment와 one to many 관계로 매핑하기
 
     public Posting buildDomain() {//todo 수정
 

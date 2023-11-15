@@ -94,9 +94,6 @@ public class BoardQDslRepositoryImpl implements BoardQDslRepositoryCustom {
         if (dto.getVisible() != null) {
             updateQuery.set(board.visible, dto.getVisible());
         }
-        if (dto.getLimitDateTime() != null) {
-            updateQuery.set(board.limitDateTime, dto.getLimitDateTime());
-        }
         if (dto.getSoftDelete() != null) {
             updateQuery.set(board.softDelete, dto.getSoftDelete());
         }

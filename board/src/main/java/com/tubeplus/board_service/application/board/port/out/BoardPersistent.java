@@ -3,6 +3,7 @@ package com.tubeplus.board_service.application.board.port.out;
 import com.tubeplus.board_service.application.board.domain.Board;
 import com.tubeplus.board_service.application.board.domain.BoardType;
 import com.tubeplus.board_service.application.board.port.in.BoardUseCase;
+import com.tubeplus.board_service.application.board.port.in.BoardUseCase.BoardProperty.TimeLimitBoardProperty;
 import com.tubeplus.board_service.global.Exceptionable;
 import lombok.Builder;
 import lombok.Data;
@@ -16,6 +17,7 @@ public interface BoardPersistent {
 
 
     Exceptionable<Board, SaveDto> saveBoard(SaveDto dto);
+
 
     @Data
     @Slf4j
@@ -63,7 +65,7 @@ public interface BoardPersistent {
             ListFindDto findListDto = new ListFindDto(
                     findInfo.getCommunityId(),
                     findInfo.getVisible(),
-                    findInfo.getErase(),
+                    findInfo.getSoftDelete(),
                     findInfo.getNameToSearch()
             );
             log.info(findInfo.toString());
@@ -76,7 +78,7 @@ public interface BoardPersistent {
     Exceptionable<Board, Long> findBoard(Long boardId);
 
 
-    Exceptionable<Boolean, UpdateCommonPropertyDto> updateBoard(UpdateCommonPropertyDto dto);
+    Exceptionable<Boolean, UpdateCommonPropertyDto> updateCommonProperty(UpdateCommonPropertyDto dto);
 
     @Data
     @Slf4j
@@ -88,10 +90,9 @@ public interface BoardPersistent {
         private final BoardType boardType;
         private final String boardDescription;
         private final Boolean visible;
-        private final LocalDateTime limitDateTime;
         private final Boolean softDelete;
 
-        public static UpdateCommonPropertyDto builtFrom(Long boardId, BoardUseCase.BoardProperty.Common p) {
+        public static UpdateCommonPropertyDto builtFrom(Long boardId, BoardUseCase.BoardProperty.BoardCommonProperty p) {
             log.info(p.toString());
 
             UpdateCommonPropertyDto dto = UpdateCommonPropertyDto.builder()
@@ -106,7 +107,15 @@ public interface BoardPersistent {
 
             return dto;
         }
+    }
 
+
+    Exceptionable<Boolean, UpdateTimeLimitPropertyDto> updateTimeLimitProperty(UpdateTimeLimitPropertyDto dto);
+
+    @Data(staticConstructor = "of")
+    class UpdateTimeLimitPropertyDto {
+        private final Long boardId;
+        private final TimeLimitBoardProperty timeLimitProperty;
     }
 
 

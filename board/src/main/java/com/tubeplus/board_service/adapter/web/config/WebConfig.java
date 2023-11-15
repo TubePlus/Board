@@ -29,8 +29,8 @@ public class WebConfig implements WebMvcConfigurer {
 
     protected void addPostingFormatters(FormatterRegistry registry) {
 
-        registry.addConverter(new PostingsViewTypeReq.PostingViewReqConverter());
-        registry.addConverter(new PostingsSearchTypeReq.PostingSearchTypeReqConverter());
+        registry.addConverter(new PostingsViewTypeReq.Converter());
+        registry.addConverter(new PostingsSearchTypeReq.Converter());
 
         log.info("added posting related formatters");
     }
