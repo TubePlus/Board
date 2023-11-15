@@ -5,10 +5,9 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.impl.JPAUpdateClause;
 import com.tubeplus.board_service.adapter.rdb.persistence.board.QBoardEntity;
-import com.tubeplus.board_service.application.board.port.out.BoardPersistent;
 import com.tubeplus.board_service.adapter.rdb.persistence.board.BoardEntity;
-import com.tubeplus.board_service.application.board.port.out.BoardPersistent.ListFindDto;
-import com.tubeplus.board_service.application.board.port.out.BoardPersistent.UpdateCommonPropertyDto;
+import com.tubeplus.board_service.application.board.port.out.BoardPersistable.FindBoardListDto;
+import com.tubeplus.board_service.application.board.port.out.BoardPersistable.UpdateCommonPropertyDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.Modifying;
@@ -30,7 +29,7 @@ public class BoardQDslRepositoryImpl implements BoardQDslRepositoryCustom {
 
 
     @Override
-    public List<BoardEntity> findBoards(ListFindDto dto) {
+    public List<BoardEntity> findBoards(FindBoardListDto dto) {
 
         QBoardEntity board
                 = QBoardEntity.boardEntity;
@@ -119,7 +118,7 @@ public class BoardQDslRepositoryImpl implements BoardQDslRepositoryCustom {
 }
 
 //    public void updateClauseSetter(JPAUpdateClause updateQuery,
-//                                   BoardPersistent.UpdateCommonPropertyDto dto,
+//                                   BoardPersistable.UpdateCommonPropertyDto dto,
 //                                   QBoardEntity board) {
 //
 //        Class<BoardEntity> qEntityClazz = BoardEntity.class;

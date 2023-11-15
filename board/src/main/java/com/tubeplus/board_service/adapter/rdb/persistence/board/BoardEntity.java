@@ -3,8 +3,9 @@ package com.tubeplus.board_service.adapter.rdb.persistence.board;
 
 import com.tubeplus.board_service.application.board.domain.Board;
 import com.tubeplus.board_service.application.board.domain.BoardType;
-import com.tubeplus.board_service.application.board.port.out.BoardPersistent;
+import com.tubeplus.board_service.application.board.port.out.BoardPersistable;
 import com.tubeplus.board_service.adapter.rdb.config.BaseEntity;
+import com.tubeplus.board_service.application.board.port.out.BoardPersistable.SaveBoardDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -46,7 +47,7 @@ public class BoardEntity extends BaseEntity {
     private boolean softDelete;
 
 
-    public static BoardEntity builtFrom(BoardPersistent.SaveDto saveDto) {
+    public static BoardEntity builtFrom(SaveBoardDto saveDto) {
         return BoardEntity.builder()
                 .communityId(saveDto.getCommunityId())
                 .boardName(saveDto.getBoardName())

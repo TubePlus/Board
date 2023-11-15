@@ -8,7 +8,7 @@ import lombok.Data;
 import java.util.Optional;
 
 
-public interface VotePersistent {
+public interface VotePersistable {
 
     Exceptionable<Optional<Vote>, FindVoteDto> findVote(FindVoteDto dto);
 

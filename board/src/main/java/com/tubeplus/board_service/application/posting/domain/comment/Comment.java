@@ -9,6 +9,7 @@ import lombok.Data;
 public class Comment {
 
     private final Long id;
+    private final CommentViewInfo viewInfo;
 
     @Data
     @Builder
@@ -17,7 +18,6 @@ public class Comment {
         private final Long postingId;
         private final Long parentId;
         private final String contents;
-        private final Long childCount;
         private final String commenterUuid;
 
     }

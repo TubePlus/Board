@@ -13,16 +13,16 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 
-public interface BoardPersistent {
+public interface BoardPersistable {
 
 
-    Exceptionable<Board, SaveDto> saveBoard(SaveDto dto);
+    Exceptionable<Board, SaveBoardDto> saveBoard(SaveBoardDto dto);
 
 
     @Data
     @Slf4j
     @Builder
-    class SaveDto {
+    class SaveBoardDto {
         private final Long communityId;
         private final String boardName;
         private final BoardType boardType;
@@ -30,10 +30,10 @@ public interface BoardPersistent {
         private final boolean visible;
         private final LocalDateTime limitDateTime;
 
-        public static SaveDto of(BoardUseCase.MakeBoardForm form) {
+        public static SaveBoardDto of(BoardUseCase.MakeBoardForm form) {
             log.info(form.toString());
 
-            SaveDto saveDto = new SaveDto(
+            SaveBoardDto saveDto = new SaveBoardDto(
                     form.getCommunityId(),
                     form.getBoardName(),
                     form.getBoardType(),
@@ -48,21 +48,21 @@ public interface BoardPersistent {
     }
 
 
-    Exceptionable<List<Board>, ListFindDto> findBoardList(ListFindDto Dto);
+    Exceptionable<List<Board>, FindBoardListDto> findBoardList(FindBoardListDto Dto);
 
     @Data
     @Slf4j
     @Builder
-    class ListFindDto {
+    class FindBoardListDto {
         private final Long communityId;
         private final Boolean visible;
         private final Boolean softDelete;
         private final String nameToSearch;
 
-        public static ListFindDto of(BoardUseCase.BoardListInfo findInfo) {
+        public static FindBoardListDto of(BoardUseCase.BoardListInfo findInfo) {
             log.info(findInfo.toString());
 
-            ListFindDto findListDto = new ListFindDto(
+            FindBoardListDto findListDto = new FindBoardListDto(
                     findInfo.getCommunityId(),
                     findInfo.getVisible(),
                     findInfo.getSoftDelete(),
