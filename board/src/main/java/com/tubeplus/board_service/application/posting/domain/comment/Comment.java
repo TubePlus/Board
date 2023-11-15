@@ -5,8 +5,20 @@ import lombok.Builder;
 import lombok.Data;
 
 
-@Data
-@Builder
+@Data(staticConstructor = "of")
 public class Comment {
 
+    private final Long id;
+
+    @Data
+    @Builder
+    public static class CommentViewInfo {
+
+        private final Long postingId;
+        private final Long parentId;
+        private final String contents;
+        private final Long childCount;
+        private final String commenterUuid;
+
+    }
 }

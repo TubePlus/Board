@@ -27,7 +27,7 @@ public class ReqPostCommentBody {
     private String contents;
 
 
-    public PostCommentForm buildForm() {
+    public PostCommentForm buildCommentForm() {
 
         return PostCommentForm
                 .builder()

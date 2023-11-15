@@ -18,8 +18,8 @@ import java.util.stream.Collectors;
 
 
 @Slf4j
-@Component
 @RequiredArgsConstructor
+@Component("boardPersistence")
 public class BoardPersistence implements BoardPersistent {
 
     private final BoardJpaDataRepository jpaDataRepo;

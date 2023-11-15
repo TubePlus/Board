@@ -2,10 +2,10 @@ package com.tubeplus.board_service.adapter.web.controller.posting;
 
 
 import com.tubeplus.board_service.adapter.web.common.ApiResponse;
-import com.tubeplus.board_service.adapter.web.common.ApiTag;
 import com.tubeplus.board_service.adapter.web.controller.posting.vo.comment.ReqModifyCommentBody;
 import com.tubeplus.board_service.adapter.web.controller.posting.vo.comment.ReqPostCommentBody;
-import com.tubeplus.board_service.application.posting.domain.comment.CommentViewInfo;
+import com.tubeplus.board_service.application.posting.domain.comment.Comment;
+import com.tubeplus.board_service.application.posting.domain.comment.Comment.CommentViewInfo;
 import com.tubeplus.board_service.application.posting.port.in.CommentUseCase;
 import com.tubeplus.board_service.application.posting.port.in.CommentUseCase.PostCommentForm;
 import com.tubeplus.board_service.application.posting.port.in.CommentUseCase.ReadCommentDto;
@@ -34,20 +34,19 @@ public class CommentController {
         return "test";
     }
 
-    @Operation(summary = "댓글/대댓글 작성",
-            description = "대댓글일경우 parentId를 입력, 원 댓글일 경우 parentId에 null")
+    @Operation(summary = "댓글/대댓글 작성"
+            , description = "대댓글일경우 parentId를 입력, 원 댓글일 경우 parentId에 null")
     @PostMapping()
     public ApiResponse<Long> postComment
             (
                     @Valid @RequestBody
-                            ReqPostCommentBody reqBody
+                    ReqPostCommentBody reqBody
             ) {
 
-
         PostCommentForm form
-                = reqBody.buildForm();
+                = reqBody.buildCommentForm();
 
-        long postedCommentId
+        Long postedCommentId
                 = commentService.writeComment(form);
 
         return ApiResponse.ofSuccess(postedCommentId);
@@ -55,14 +54,14 @@ public class CommentController {
 
 
     @Operation(summary = "댓글/대댓글 조회",
-            description = "대댓글일경우 parentId를 입력, 원 댓글일 경우 parentId에 null")
+            description = "대댓글일 경우 parentId를 입력, 원 댓글일 경우 parentId에 null")
     @GetMapping()
     public ApiResponse<CommentViewInfo> readComment
             (
                     @RequestParam("posting_id") @Min(1)
-                            long postingId,
-                    @RequestParam(value = "parent_id", required = false) @Min(1)
-                            Long parentId
+                    long postingId,
+                    @RequestParam(name = "parent_id", required = false) @Min(1)
+                    Long parentId
             ) {
 
         ReadCommentDto dto
@@ -81,15 +80,15 @@ public class CommentController {
 
     @Operation(summary = "댓글/대댓글 수정")
     @PutMapping("/{commentId}")
-    public ApiResponse<CommentViewInfo> modifyComment
+    public ApiResponse<Comment.CommentViewInfo> modifyComment
             (
                     @PathVariable("commentId") @Min(1)
-                            long commentId,
+                    long commentId,
                     @Valid @RequestBody
-                            ReqModifyCommentBody reqBody
+                    ReqModifyCommentBody reqBody
             ) {
 
-        CommentViewInfo viewInfo
+        Comment.CommentViewInfo viewInfo
                 = commentService.modifyComment
                 (commentId, reqBody.getContents());
 
@@ -102,7 +101,7 @@ public class CommentController {
     public ApiResponse deleteComment
             (
                     @PathVariable("commentId") @Min(1)
-                            long idToDelete
+                    long idToDelete
             ) {
 
         commentService.deleteComment(idToDelete);

@@ -47,7 +47,6 @@ public class VoteController {
         return ApiResponse.ofSuccess(voteCount);
     }
 
-
     @Operation(summary = "게시물 투표 수정 api")
     @PutMapping("/{voteId}")
     public ApiResponse<Long> modifyVote
