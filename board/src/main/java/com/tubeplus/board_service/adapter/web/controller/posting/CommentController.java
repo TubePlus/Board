@@ -41,7 +41,7 @@ public class CommentController {
     @Operation(summary = "댓글/대댓글 작성"
             , description = "대댓글일경우 parentId를 입력, 원 댓글일 경우 parentId에 null")
     @PostMapping()
-    public ApiResponse<Long> postComment
+    public ApiResponse<Comment> postComment
             (
                     @Valid @RequestBody
                     ReqPostCommentBody reqBody
@@ -50,10 +50,10 @@ public class CommentController {
         PostCommentForm form
                 = reqBody.buildCommentForm();
 
-        Long postedCommentId
+        Comment postedComment
                 = commentService.writeComment(form);
 
-        return ApiResponse.ofSuccess(postedCommentId);
+        return ApiResponse.ofSuccess(postedComment);
     }
 
 

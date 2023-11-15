@@ -13,7 +13,7 @@ import java.util.List;
 public interface CommentPersistable {
 
 
-    Exceptionable<Long, SaveCommentDto> saveComment(SaveCommentDto dto);
+    Exceptionable<Comment, SaveCommentDto> saveComment(SaveCommentDto dto);
 
     @Data
     @Builder
