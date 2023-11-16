@@ -2,6 +2,8 @@ package com.tubeplus.board_service.adapter.rdb.persistence.posting;
 
 import com.tubeplus.board_service.adapter.rdb.config.BaseEntity;
 import com.tubeplus.board_service.application.posting.domain.posting.Posting;
+import com.tubeplus.board_service.application.posting.port.out.PostingPersistable;
+import com.tubeplus.board_service.application.posting.port.out.PostingPersistable.SavePostingDto;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 @Table(name = "posting")
 @Builder
 @Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
@@ -20,7 +23,7 @@ public class PostingEntity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "author_uuid", nullable = false,length = 50)
+    @Column(name = "author_uuid", nullable = false, length = 50)
     private String authorUuid;
 
     @Column(name = "vote_count", nullable = false)
@@ -41,6 +44,23 @@ public class PostingEntity extends BaseEntity {
 
     @Column(name = "soft_delete", nullable = false)
     private boolean softDelete;
+
+    @Column(name = "with_image", nullable = false)
+    private boolean withImage;
+
+    public static PostingEntity builtFrom(SavePostingDto dto) {
+
+        return PostingEntity.builder()
+                .authorUuid(dto.getAuthorUuid())
+                .voteCount(0)
+                .boardId(dto.getBoardId())
+                .pin(false)
+                .contents(dto.getContents())
+                .title(dto.getTitle())
+                .softDelete(false)
+                .withImage(dto.isWithImage())//
+                .build();
+    }
 
     //todo vote, comment와 one to many 관계로 매핑하기
 

@@ -26,6 +26,8 @@ public class ReqMakePostingBody {
     @NotEmpty
     private final String contents;
 
+    private final boolean withImage;
+
 
     public MakePostingForm buildForm() {
         return MakePostingForm
@@ -34,6 +36,7 @@ public class ReqMakePostingBody {
                 .authorUuid(authorUuid)
                 .title(title)
                 .contents(contents)
+                .withImage(withImage)
                 .build();
     }
 }
