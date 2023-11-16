@@ -39,6 +39,7 @@ public interface PostingPersistable {
                     .authorUuid(form.getAuthorUuid())
                     .title(form.getTitle())
                     .contents(form.getContents())
+                    .withImage(form.isWithImage())
                     .build();
         }
     }
