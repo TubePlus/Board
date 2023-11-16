@@ -24,7 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 
 @Validated
-@ApiTag(path = "/api/v1/comments", name = "Posting Comment API")
+@ApiTag(path = "/api/v1/board-service/comments", name = "Posting Comment API")
 public class CommentController {
 
     private final CommentUseCase commentService;

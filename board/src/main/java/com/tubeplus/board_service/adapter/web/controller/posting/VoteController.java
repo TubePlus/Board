@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 
 @Validated
-@ApiTag(path = "/api/v1/votes", name = "Posting vote API")
+@ApiTag(path = "/api/v1/board-service/votes", name = "Posting vote API")
 public class VoteController {
 
     private final VoteUseCase voteService;

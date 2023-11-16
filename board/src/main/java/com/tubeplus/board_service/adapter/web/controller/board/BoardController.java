@@ -28,7 +28,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 
-@ApiTag(path = "/api/v1/boards", name = "Board API")
+@ApiTag(path = "/api/v1/board-service/boards", name = "Board API")
 public class BoardController {
 
     private final BoardUseCase boardService;
