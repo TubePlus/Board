@@ -31,9 +31,11 @@ public class BoardPersistence implements BoardPersistable {
 
         Function<SaveBoardDto, Board> saveBoardByDto = dto -> {
 
-            BoardEntity boardEntity = BoardEntity.builtFrom(dto);
+            BoardEntity boardEntity
+                    = BoardEntity.builtFrom(dto);
 
-            BoardEntity savedEntity = jpaDataRepo.save(boardEntity);
+            BoardEntity savedEntity
+                    = jpaDataRepo.save(boardEntity);
 
             return savedEntity.buildDomain();
         };
@@ -93,38 +95,6 @@ public class BoardPersistence implements BoardPersistable {
     @Override
     public Exceptionable<Boolean, UpdateCommonPropertyDto> updateCommonProperty(UpdateCommonPropertyDto updateCommonPropertyDto) {
         return Exceptionable.act(queryDslRepo::updateCommonProperty, updateCommonPropertyDto);
-//
-//        return Exceptionable.act(dto -> {
-//
-//            /**/
-//            BoardEntity updateTarget
-//                    = jpaDataRepo.findById(dto.getId())
-//                    .orElseThrow(() -> new BusinessException(ErrorCode.FIND_ENTITY_FAILED, "Not found resource. id: " + dto.getId()));
-//
-//            BoardEntityBuilder builder
-//                    = updateTarget.toBuilder();
-//            if (dto.getBoardName() != null)
-//                builder.boardName(dto.getBoardName());
-//            if (dto.getBoardType() != null)
-//                builder.boardType(dto.getBoardType());
-//            if (dto.getBoardDescription() != null)
-//                builder.boardDescription(dto.getBoardDescription());
-//            if (dto.getVisible() != null)
-//                builder.visible(dto.getVisible());
-//            if (dto.getSoftDelete() != null)
-//                builder.softDelete(dto.getSoftDelete());
-//
-//            updateTarget = builder.build();
-//
-//
-//            /**/
-//            BoardEntity updatedEntity
-//                    = jpaDataRepo.save(updateTarget);
-//
-//            return updateTarget.equals(updatedEntity);
-//
-//        }, updateCommonPropertyDto);
-
     }
 
     @Override

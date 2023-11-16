@@ -12,7 +12,7 @@ public interface PostingQDslRepositoryCustom {
 
 
     @Transactional(readOnly = true)
-    Long countPostingEntities(FindPostingsDto.ConditionByFields whereCondition);
+    Long countPostingEntities(FindPostingsDto.FindConditionByFields whereCondition);
 
 
     @Transactional(readOnly = true)

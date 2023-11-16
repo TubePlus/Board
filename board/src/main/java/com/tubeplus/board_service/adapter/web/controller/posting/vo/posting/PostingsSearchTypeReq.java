@@ -20,7 +20,8 @@ public enum PostingsSearchTypeReq {
     TITLE_SEARCH(reqParam
             -> reqParam.getTitleContaining() == null
             || reqParam.getTitleContaining().isBlank()),
-    BY_DELETE_STATE(reqParam -> reqParam.getDeleted() == null);
+    BY_DELETE_STATE(reqParam
+            -> reqParam.getDeleted() == null);
 
 
     public final Predicate<VoReadPostingSimpleData.Req> checkBadRequest;

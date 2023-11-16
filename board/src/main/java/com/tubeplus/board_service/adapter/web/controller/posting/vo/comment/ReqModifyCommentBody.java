@@ -9,5 +9,5 @@ import lombok.Data;
 public class ReqModifyCommentBody {
 
     @NotBlank
-    private final String contents;
+    private String content;
 }

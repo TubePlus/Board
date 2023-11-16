@@ -60,20 +60,22 @@ public class PostingController {
     @GetMapping()
     public ApiResponse<VoReadPostingSimpleData.Res> readPostingSimpleData
             (
-                    @RequestParam @NotBlank String searchType,
-                    @RequestParam @NotBlank String viewType,
+                    @RequestParam("search-type-req") @NotBlank String searchTypeReq,
+                    @RequestParam("view-type-req") @NotBlank String viewTypeReq,
                     VoReadPostingSimpleData.Req reqParam
             ) {
-        //todo webConfigurer formatter 고장나서 일단 수동 변환
-        PostingsSearchTypeReq searchTypeReq = PostingsSearchTypeReq.valueOf(searchType);
-        PostingsViewTypeReq viewTypeReq = PostingsViewTypeReq.valueOf(viewType);
+        //todo webConfigurer formatter 고장나서 일단 수동 변환, 고치기
+        PostingsSearchTypeReq searchType
+                = PostingsSearchTypeReq.valueOf(searchTypeReq);
+        PostingsViewTypeReq viewType
+                = PostingsViewTypeReq.valueOf(viewTypeReq);
 
-        if (searchTypeReq.checkBadRequest.test(reqParam)
-                || viewTypeReq.checkBadRequest.test(reqParam))
-            throw new BusinessException(ErrorCode.BAD_REQUEST, "Invalid request param for search-req-type");
+        if (searchType.checkBadRequest.test(reqParam)
+                || viewType.checkBadRequest.test(reqParam))
+            throw new BusinessException(ErrorCode.BAD_REQUEST);
 
         VoReadPostingSimpleData.Res responseVo
-                = viewTypeReq.driveService(postingService, reqParam);
+                = viewType.driveService(postingService, reqParam);
 
         return ApiResponse.ofSuccess(responseVo);
     }

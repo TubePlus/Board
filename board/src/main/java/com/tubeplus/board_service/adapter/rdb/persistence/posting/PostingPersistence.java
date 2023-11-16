@@ -80,9 +80,9 @@ public class PostingPersistence implements PostingPersistable {
 
     @Override
     @Transactional(readOnly = true)
-    public Exceptionable<Long, FindPostingsDto.ConditionByFields> countPostings(FindPostingsDto.ConditionByFields conditionByFields) {
+    public Exceptionable<Long, FindPostingsDto.FindConditionByFields> countPostings(FindPostingsDto.FindConditionByFields findConditionByFields) {
 
-        return Exceptionable.act(queryDslRepo::countPostingEntities, conditionByFields);
+        return Exceptionable.act(queryDslRepo::countPostingEntities, findConditionByFields);
     }
 
     @Override
