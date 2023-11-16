@@ -27,6 +27,7 @@ import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 
 @ApiTag(path = "/api/v1/board-service/boards", name = "Board API")
 public class BoardController {
@@ -122,11 +123,18 @@ public class BoardController {
     public ApiResponse updateTimeLimitProperty
             (
                     @PathVariable("id") Long boardId,
-                    @Valid @RequestBody ReqUpdateTimeLimitPropertyBody updateReqBody
+                    @RequestBody ReqUpdateTimeLimitPropertyBody updateReqBody
             ) {
 
+        if (updateReqBody.getLimitDateTime() == null)
+            throw new BusinessException(ErrorCode.BAD_REQUEST);
+
+        TimeLimitBoardProperty timeLimitProperty
+                = updateReqBody.toDomain();
+
         boardService.updateBoardProperty(
-                boardId, BoardProperty.of(null, updateReqBody.toDomain())
+                boardId,
+                BoardProperty.of(null, timeLimitProperty)
         );
 
         return ApiResponse.ofSuccess(null);

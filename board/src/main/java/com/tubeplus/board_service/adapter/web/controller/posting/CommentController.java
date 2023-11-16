@@ -22,6 +22,7 @@ import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 
 @Validated
 @ApiTag(path = "/api/v1/board-service/comments", name = "Posting Comment API")
