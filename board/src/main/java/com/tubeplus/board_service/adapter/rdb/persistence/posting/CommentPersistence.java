@@ -2,6 +2,7 @@ package com.tubeplus.board_service.adapter.rdb.persistence.posting;
 
 import com.tubeplus.board_service.adapter.rdb.persistence.posting.dao.CommentJpaDataRepository;
 import com.tubeplus.board_service.application.posting.domain.comment.Comment;
+import com.tubeplus.board_service.application.posting.domain.comment.Comment.CommentViewInfo;
 import com.tubeplus.board_service.application.posting.port.out.CommentPersistable;
 import com.tubeplus.board_service.global.Exceptionable;
 import lombok.RequiredArgsConstructor;
@@ -9,10 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
-
-import static java.util.stream.Collectors.toList;
 
 
 @Slf4j
@@ -83,16 +80,42 @@ public class CommentPersistence implements CommentPersistable {
         }, findDto);
     }
 
+    @Override
+    public Exceptionable<Comment, UpdateCommentDto> updateComment(UpdateCommentDto updateDto) {
+
+        return Exceptionable.act(dto -> {
+
+            CommentEntity entityToUpdate
+                    = jpaDataRepo.findById(dto.getIdToModify())
+                    .orElseThrow(() -> new RuntimeException("comment is not found."));
+
+            entityToUpdate.setContent(dto.getContent());
+
+            CommentEntity updatedEntity
+                    = jpaDataRepo.save(entityToUpdate);
+
+            return entityToDomain(updatedEntity);
+
+        }, updateDto);
+    }
+
 
     protected Comment entityToDomain(CommentEntity entity) {
 
         return Comment.of(
                 entity.getId(),
-                Comment.CommentViewInfo.builder()
-                        .postingId(entity.getPostingId())
-                        .parentId(entity.getParentComment() == null ? null : entity.getParentComment().getId())
-                        .hasChild(entity.getParentComment() == null && jpaDataRepo.findFirstByParentComment(entity).isPresent())
-                        .contents(entity.getContents())
+                entity.getPostingId(),
+                CommentViewInfo.builder()
+                        .parentId(
+                                entity.getParentComment() == null
+                                        ? null
+                                        : entity.getParentComment().getId()
+                        )
+                        .hasChild(
+                                entity.getParentComment() == null
+                                        && jpaDataRepo.findFirstByParentComment(entity).isPresent()
+                        )
+                        .content(entity.getContent())
                         .commenterUuid(entity.getCommenterUuid())
                         .build()
         );

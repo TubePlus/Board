@@ -79,7 +79,7 @@ public class CommentController {
 
     @Operation(summary = "댓글/대댓글 수정")
     @PutMapping("/{commentId}")
-    public ApiResponse<Comment.CommentViewInfo> modifyComment
+    public ApiResponse<CommentViewInfo> modifyComment
             (
                     @PathVariable("commentId") @Min(1)
                     long commentId,
@@ -88,14 +88,13 @@ public class CommentController {
             ) {
 
         Comment.CommentViewInfo viewInfo
-                = commentService.modifyComment
-                (commentId, reqBody.getContents());
+                = commentService.modifyComment(commentId, reqBody.getContent());
 
         return ApiResponse.ofSuccess(viewInfo);
     }
 
 
-    @Operation(summary = "댓글/대댓글 삭제", description = "대댓글있을경우 cascade 삭제")
+    @Operation(summary = "댓글/대댓글 삭제", description = "대댓글 있을 경우 cascade 삭제")
     @DeleteMapping("/{commentId}")
     public ApiResponse deleteComment
             (

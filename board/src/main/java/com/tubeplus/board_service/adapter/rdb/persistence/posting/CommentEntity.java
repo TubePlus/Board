@@ -23,8 +23,9 @@ public class CommentEntity extends BaseEntity {
     @Column(name = "posting_id", nullable = false)
     private long postingId;
 
-    @Column(name = "contents", nullable = false, columnDefinition = "TEXT")
-    private String contents;
+    @Setter
+    @Column(name = "content", nullable = false, columnDefinition = "TEXT")
+    private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id", referencedColumnName = "id", nullable = true)
@@ -39,7 +40,7 @@ public class CommentEntity extends BaseEntity {
         CommentEntityBuilder builder
                 = CommentEntity.builder()
                 .postingId(dto.getPostingId())
-                .contents(dto.getContents())
+                .content(dto.getContents())
                 .parentComment(parentComment)
                 .commenterUuid(dto.getCommenterUuid());
 

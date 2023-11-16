@@ -1,6 +1,5 @@
 package com.tubeplus.board_service.application.posting.port.in;
 
-import com.tubeplus.board_service.adapter.web.controller.posting.vo.VoReadPostingSimpleData;
 import com.tubeplus.board_service.application.posting.domain.posting.Posting;
 import com.tubeplus.board_service.application.posting.domain.posting.PostingView;
 import lombok.Builder;
@@ -41,16 +40,16 @@ public interface PostingUseCase {
         }
     }
 
+
     @Data
     @Builder
     class SearchPostingsInfo {
         private final Long boardId;
         private final String authorUuid;
         private final String titleContaining;
-        private final String contentsContaining;
+        private final String contentContaining;
         private final Boolean pin;
         private final Boolean softDelete;
-
     }
 
     Page<PostingSimpleData> pagePostingSimpleData(InfoToPagePostingData info);
@@ -60,7 +59,6 @@ public interface PostingUseCase {
         private final SearchPostingsInfo searchInfo;
         private final PageRequest pageReq;
     }
-
 
     Feed<PostingSimpleData> feedPostingSimpleData(InfoToFeedPostingData info);
 

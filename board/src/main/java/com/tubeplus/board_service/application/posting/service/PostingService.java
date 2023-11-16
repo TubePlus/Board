@@ -65,7 +65,7 @@ public class PostingService implements PostingUseCase {
 
         //count 쿼리 최적화 위한 함수형 변수
         LongSupplier countPostingsFunction
-                = () -> postingPersistence.countPostings(dto.getConditionByFields())
+                = () -> postingPersistence.countPostings(dto.getFindConditionByFields())
                 .ifExceptioned.thenThrow(ErrorCode.COUNT_ENTITY_FAILED);
 
 
@@ -87,7 +87,7 @@ public class PostingService implements PostingUseCase {
         FindPostingsDto findDto
                 = FindPostingsDto.of(infoToFeed);
 
-//       /**/
+        /**/
         List<PostingSimpleData> postingDataToFeed;
 
         List<Posting> foundPostingsForFeed
@@ -97,23 +97,27 @@ public class PostingService implements PostingUseCase {
         if (foundPostingsForFeed.isEmpty())
             throw new BusinessException(ErrorCode.NOT_FOUND_RESOURCE, "No postings to feed condition found.");
 
-        postingDataToFeed = foundPostingsForFeed.stream().map(PostingSimpleData::builtFrom)
+        postingDataToFeed
+                = foundPostingsForFeed
+                .stream().map(PostingSimpleData::builtFrom)
                 .collect(Collectors.toList());
 
-//        /**/
+        /**/
         Long lastCursoredId
                 = foundPostingsForFeed.get(foundPostingsForFeed.size() - 1).getId();
 
 
+        /**/
         boolean hasNextFeed;
 
-        findDto.getConditionByFields().setCursorId(lastCursoredId);
+        findDto.getFindConditionByFields().setCursorId(lastCursoredId);
 
         hasNextFeed = Exceptionable.act(postingPersistence::existNextPosting, findDto)
                 .ifExceptioned.thenThrow(new BusinessException(
                         ErrorCode.FIND_ENTITY_FAILED, "Failed to check if there is next posting to feed."));
 
 
+        /**/
         return Feed.of(postingDataToFeed, lastCursoredId, hasNextFeed);
     }
 

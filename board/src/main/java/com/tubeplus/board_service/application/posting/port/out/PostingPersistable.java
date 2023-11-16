@@ -1,6 +1,7 @@
 package com.tubeplus.board_service.application.posting.port.out;
 
 
+import com.tubeplus.board_service.application.posting.port.out.PostingPersistable.FindPostingsDto.SortedFindRange.SortBy.PivotField;
 import com.tubeplus.board_service.global.Exceptionable;
 import com.tubeplus.board_service.application.posting.domain.posting.Posting;
 import lombok.Builder;
@@ -47,24 +48,24 @@ public interface PostingPersistable {
 
     Exceptionable<List<Posting>, FindPostingsDto> findPostings(FindPostingsDto dto);
 
-    Exceptionable<Long, FindPostingsDto.ConditionByFields> countPostings(FindPostingsDto.ConditionByFields conditionByFields);
+    Exceptionable<Long, FindPostingsDto.FindConditionByFields> countPostings(FindPostingsDto.FindConditionByFields findConditionByFields);
 
     @Data(staticConstructor = "of")
     class FindPostingsDto {
 
-        private final ConditionByFields conditionByFields;
+        private final FindConditionByFields findConditionByFields;
         private final SortedFindRange sortedRange;
 
         public static FindPostingsDto of(InfoToPagePostingData infoToPage) {
             return FindPostingsDto.of(
-                    ConditionByFields.builtFrom(infoToPage),
+                    FindConditionByFields.builtFrom(infoToPage),
                     SortedFindRange.of(infoToPage)
             );
         }
 
         public static FindPostingsDto of(InfoToFeedPostingData infoToFeed) {
             return FindPostingsDto.of(
-                    ConditionByFields.builtFrom(infoToFeed),
+                    FindConditionByFields.builtFrom(infoToFeed),
                     SortedFindRange.of(infoToFeed)
             );
         }
@@ -72,7 +73,7 @@ public interface PostingPersistable {
 
         @Data
         @Builder
-        public static class ConditionByFields {
+        public static class FindConditionByFields {
             private Long cursorId;
             private final Long boardId;
             private final String authorUuid;
@@ -81,31 +82,31 @@ public interface PostingPersistable {
             private final String contentsContaining;
             private final Boolean softDelete;
 
-            public static ConditionByFields builtFrom(InfoToPagePostingData infoToPage) {
+            public static FindConditionByFields builtFrom(InfoToPagePostingData infoToPage) {
 
                 SearchPostingsInfo searchInfo = infoToPage.getSearchInfo();
 
-                return ConditionByFields.builder()
+                return FindConditionByFields.builder()
                         .boardId(searchInfo.getBoardId())
                         .authorUuid(searchInfo.getAuthorUuid())
                         .pin(searchInfo.getPin())
                         .titleContaining(searchInfo.getTitleContaining())
-                        .contentsContaining(searchInfo.getContentsContaining())
+                        .contentsContaining(searchInfo.getContentContaining())
                         .softDelete(searchInfo.getSoftDelete())
                         .build();
             }
 
-            public static ConditionByFields builtFrom(InfoToFeedPostingData infoToFeed) {
+            public static FindConditionByFields builtFrom(InfoToFeedPostingData infoToFeed) {
 
                 SearchPostingsInfo searchInfo = infoToFeed.getSearchInfo();
 
-                return ConditionByFields.builder()
+                return FindConditionByFields.builder()
                         .cursorId(infoToFeed.getFeedReq().getCursorId())
                         .boardId(searchInfo.getBoardId())
                         .authorUuid(searchInfo.getAuthorUuid())
                         .pin(searchInfo.getPin())
                         .titleContaining(searchInfo.getTitleContaining())
-                        .contentsContaining(searchInfo.getContentsContaining())
+                        .contentsContaining(searchInfo.getContentContaining())
                         .softDelete(searchInfo.getSoftDelete())
                         .build();
             }
@@ -132,7 +133,11 @@ public interface PostingPersistable {
 
             public static SortedFindRange of(InfoToPagePostingData pageInfo) {
                 PageRequest pageReq = pageInfo.getPageReq();
-                return SortedFindRange.of(pageReq.getPageSize(), pageReq.getOffset(), null);
+                return SortedFindRange.of(
+                        pageReq.getPageSize(),
+                        pageReq.getOffset(),
+                        SortBy.of(PivotField.ID, false)
+                );
             }
 
             public static SortedFindRange of(InfoToFeedPostingData feedInfo) {
@@ -140,7 +145,7 @@ public interface PostingPersistable {
                 Integer feedSize
                         = feedInfo.getFeedReq().getFeedSize();
                 SortBy sortBy
-                        = SortBy.of(SortBy.PivotField.ID, false); //todo 프론트단에서 받아오는 정렬정보 여기 넣기
+                        = SortBy.of(PivotField.ID, false); //todo 프론트단에서 받아오는 정렬정보 여기 넣기
 
                 return SortedFindRange.of(feedSize, null, sortBy);
             }

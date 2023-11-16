@@ -8,6 +8,7 @@ import com.tubeplus.board_service.application.posting.port.in.CommentUseCase;
 import com.tubeplus.board_service.application.posting.port.out.CommentPersistable;
 import com.tubeplus.board_service.application.posting.port.out.CommentPersistable.FindCommentDto;
 import com.tubeplus.board_service.application.posting.port.out.CommentPersistable.SaveCommentDto;
+import com.tubeplus.board_service.application.posting.port.out.CommentPersistable.UpdateCommentDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -54,7 +55,14 @@ public class CommentService implements CommentUseCase {
 
     @Override
     public CommentViewInfo modifyComment(Long idToModify, String contents) {
-        return null;
+
+        UpdateCommentDto dto = UpdateCommentDto.of(idToModify, contents);
+
+        Comment modifiedComment
+                = commentPersistence.updateComment(dto)
+                .ifExceptioned.thenThrow(ErrorCode.UPDATE_ENTITY_FAILED);
+
+        return modifiedComment.getViewInfo();
     }
 
     @Override

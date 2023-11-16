@@ -15,6 +15,7 @@ public interface CommentPersistable {
 
     Exceptionable<Comment, SaveCommentDto> saveComment(SaveCommentDto dto);
 
+
     @Data
     @Builder
     class SaveCommentDto {
@@ -58,4 +59,12 @@ public interface CommentPersistable {
 
     }
 
+
+    Exceptionable<Comment, UpdateCommentDto> updateComment(UpdateCommentDto dto);
+
+    @Data(staticConstructor = "of")
+    class UpdateCommentDto {
+        private final Long idToModify;
+        private final String content;
+    }
 }

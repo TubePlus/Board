@@ -63,7 +63,7 @@ public class VoReadPostingSimpleData {
                     .boardId(boardId)
                     .authorUuid(authorUuid)
                     .titleContaining(titleContaining)
-                    .contentsContaining(contentsContaining)
+                    .contentContaining(contentsContaining)
                     .pin(pin)
                     .softDelete(deleted)
                     .build();
