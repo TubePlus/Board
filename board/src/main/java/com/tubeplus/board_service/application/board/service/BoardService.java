@@ -1,5 +1,6 @@
 package com.tubeplus.board_service.application.board.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tubeplus.board_service.application.board.domain.Board;
 import com.tubeplus.board_service.application.board.port.in.BoardUseCase;
 import com.tubeplus.board_service.application.board.port.out.BoardPersistable;
@@ -40,9 +41,14 @@ public class BoardService implements BoardUseCase {
                 = boardPersistence.saveBoard(saveDto)
                 .ifExceptioned.thenThrow(ErrorCode.SAVE_ENTITY_FAILED);
 
-        // todo : kafka producer(board->community) madeBoard.getCommunityId(), boardType : boardCreate
-        kafkaProducer.sendMessage(boardCreateTopic, "test_message");
-
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonInString = "";
+        try {
+            jsonInString = objectMapper.writeValueAsString(madeBoard);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        kafkaProducer.sendMessage(boardCreateTopic, jsonInString);
         return madeBoard;
     }
 

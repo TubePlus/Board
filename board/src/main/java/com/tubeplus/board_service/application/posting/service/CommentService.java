@@ -32,7 +32,7 @@ public class CommentService implements CommentUseCase {
                 .ifExceptioned.thenThrow(ErrorCode.SAVE_ENTITY_FAILED);
 
         // todo : 내 댓글에 대댓글 짜이면 알람 보내기 -> etc parentdId 의 commetUuid를 확인해서 알람 commentAlarm
-        // todo : postingId를 통해서 boardId를 알아내고 -> boardId로 communityId를 알아내서 creatorRanking 토픽
+        // todo : postingId를 통해서 boardId를 알아내고 -> boardId로 communityId를 알아내서 addComment 토픽
 
         return savedComment;
     }
