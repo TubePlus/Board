@@ -23,13 +23,13 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
     topic1:
-      name: boardCreate
+      name: "boardCreate"
     topic2:
-      name: commentAlarm
+      name: "commentAlarm"
     topic3:
-      name: creatorRanking
+      name: "creatorRanking"
     topic4:
-      name: log
+      name: "log"
 
   profiles:
     active: local
