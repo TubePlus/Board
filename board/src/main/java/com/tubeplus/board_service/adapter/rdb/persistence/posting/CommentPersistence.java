@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.toList;
@@ -25,8 +26,7 @@ public class CommentPersistence implements CommentPersistable {
     @Override
     public Exceptionable<Comment, SaveCommentDto> saveComment(SaveCommentDto saveCommentDto) {
 
-        Function<SaveCommentDto, Comment> saveComment
-                = dto -> {
+        return Exceptionable.act(dto -> {
 
             CommentEntity parentComment = null;
             if (dto.getParentId() != null)
@@ -38,11 +38,10 @@ public class CommentPersistence implements CommentPersistable {
             CommentEntity savedEntity
                     = jpaDataRepo.save(entityToSave);
 
-            return savedEntity.toDomain();
-        };
+            return entityToDomain(savedEntity);
 
+        }, saveCommentDto);
 
-        return Exceptionable.act(saveComment, saveCommentDto);
     }
 
     protected final CommentEntity getValidParent(Long parentId, long postingId) {
@@ -61,18 +60,42 @@ public class CommentPersistence implements CommentPersistable {
     @Override
     public Exceptionable<List<Comment>, FindCommentDto> findComments(FindCommentDto findDto) {
 
-        return Exceptionable.act(
-                dto -> {
-                    CommentEntity parentComment
-                            = dto.isFindingChildren()
+        return Exceptionable.act(dto -> {
+
+            CommentEntity parentComment
+                    =
+                    dto.isFindingChildren()
                             ? getValidParent(dto.getParentId(), dto.getPostingId())
                             : null;
 
-                    return jpaDataRepo.findByPostingIdAndParentComment
-                                    (dto.getPostingId(), parentComment)
-                            .stream().map(CommentEntity::toDomain).toList();
-                }
-                , findDto);
+            List<CommentEntity> foundEntities
+                    = jpaDataRepo.findByPostingIdAndParentComment(
+                    dto.getPostingId(), parentComment);
+
+            List<Comment> foundComments
+                    = foundEntities
+                    .stream()
+                    .map(this::entityToDomain)
+                    .toList();
+
+            return foundComments;
+
+        }, findDto);
+    }
+
+
+    protected Comment entityToDomain(CommentEntity entity) {
+
+        return Comment.of(
+                entity.getId(),
+                Comment.CommentViewInfo.builder()
+                        .postingId(entity.getPostingId())
+                        .parentId(entity.getParentComment() == null ? null : entity.getParentComment().getId())
+                        .hasChild(entity.getParentComment() == null && jpaDataRepo.findFirstByParentComment(entity).isPresent())
+                        .contents(entity.getContents())
+                        .commenterUuid(entity.getCommenterUuid())
+                        .build()
+        );
     }
 
 
