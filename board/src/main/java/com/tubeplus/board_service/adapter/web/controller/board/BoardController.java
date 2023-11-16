@@ -28,7 +28,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 
-@ApiTag(path = "/api/v1/boards-my-own-api-to-avoid-same", name = "Board API")
+@ApiTag(path = "/api/v1/boards", name = "Board API")
 public class BoardController {
 
     private final BoardUseCase boardService;
@@ -54,7 +54,6 @@ public class BoardController {
         return ApiResponse.ofSuccess(postedBoardId);
 
     }
-
 
     @Operation(summary = "게시판 목록 조회", description = "community_id, status로 게시판 목록 조회")
     @GetMapping()
