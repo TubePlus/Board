@@ -21,6 +21,19 @@ public class CommentPersistence implements CommentPersistable {
     private final CommentJpaDataRepository jpaDataRepo;
 
     @Override
+    public Exceptionable<Boolean, Long> deleteComment(Long idToDelete) {
+
+        return Exceptionable.act(id -> {
+
+            jpaDataRepo.deleteById(id);
+
+            return jpaDataRepo.findById(id).isEmpty();
+
+        }, idToDelete);
+
+    }
+
+    @Override
     public Exceptionable<Comment, SaveCommentDto> saveComment(SaveCommentDto saveCommentDto) {
 
         return Exceptionable.act(dto -> {
