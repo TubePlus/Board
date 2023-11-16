@@ -3,6 +3,8 @@ package com.tubeplus.board_service.application.board.port.out;
 import com.tubeplus.board_service.application.board.domain.Board;
 import com.tubeplus.board_service.application.board.domain.BoardType;
 import com.tubeplus.board_service.application.board.port.in.BoardUseCase;
+import com.tubeplus.board_service.application.board.port.in.BoardUseCase.BoardProperty;
+import com.tubeplus.board_service.application.board.port.in.BoardUseCase.BoardProperty.BoardCommonProperty;
 import com.tubeplus.board_service.application.board.port.in.BoardUseCase.BoardProperty.TimeLimitBoardProperty;
 import com.tubeplus.board_service.global.Exceptionable;
 import lombok.Builder;
@@ -92,7 +94,7 @@ public interface BoardPersistable {
         private final Boolean visible;
         private final Boolean softDelete;
 
-        public static UpdateCommonPropertyDto builtFrom(Long boardId, BoardUseCase.BoardProperty.BoardCommonProperty p) {
+        public static UpdateCommonPropertyDto builtFrom(Long boardId, BoardCommonProperty p) {
             log.info(p.toString());
 
             UpdateCommonPropertyDto dto = UpdateCommonPropertyDto.builder()

@@ -59,10 +59,9 @@ public class BoardQDslRepositoryImpl implements BoardQDslRepositoryCustom {
     }
 
     @Override
-    @Transactional
     //todo 엔티티메니저.flush,clear로 수정후 테스트, 좀 더 알아보고 쓸데없이 작업 두번세번 안하게 리팩토링
-    @Modifying
-    public Boolean updateBoard(UpdateCommonPropertyDto dto) {
+    @Transactional
+    public Boolean updateCommonProperty(UpdateCommonPropertyDto dto) {
 
         QBoardEntity board
                 = QBoardEntity.boardEntity;
@@ -73,8 +72,9 @@ public class BoardQDslRepositoryImpl implements BoardQDslRepositoryCustom {
 
         writeUpdatesToQuery(updateQuery, dto, board);
 
-
-        return updateQuery.execute() != 0;
+        long execute = updateQuery.execute();
+        log.info("execute" + execute);
+        return execute != 0;
     }
 
     private void writeUpdatesToQuery(JPAUpdateClause updateQuery,

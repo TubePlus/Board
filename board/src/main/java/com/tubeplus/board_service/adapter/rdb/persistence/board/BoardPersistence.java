@@ -1,5 +1,6 @@
 package com.tubeplus.board_service.adapter.rdb.persistence.board;
 
+import com.tubeplus.board_service.adapter.rdb.persistence.board.BoardEntity.BoardEntityBuilder;
 import com.tubeplus.board_service.adapter.rdb.persistence.board.dao.BoardJpaDataRepository;
 import com.tubeplus.board_service.adapter.rdb.persistence.board.dao.BoardQDslRepositoryCustom;
 import com.tubeplus.board_service.application.board.domain.Board;
@@ -90,31 +91,62 @@ public class BoardPersistence implements BoardPersistable {
 
 
     @Override
-    public Exceptionable<Boolean, UpdateCommonPropertyDto> updateCommonProperty(UpdateCommonPropertyDto dto) {
-        return Exceptionable.act(queryDslRepo::updateBoard, dto);
+    public Exceptionable<Boolean, UpdateCommonPropertyDto> updateCommonProperty(UpdateCommonPropertyDto updateCommonPropertyDto) {
+        return Exceptionable.act(queryDslRepo::updateCommonProperty, updateCommonPropertyDto);
+//
+//        return Exceptionable.act(dto -> {
+//
+//            /**/
+//            BoardEntity updateTarget
+//                    = jpaDataRepo.findById(dto.getId())
+//                    .orElseThrow(() -> new BusinessException(ErrorCode.FIND_ENTITY_FAILED, "Not found resource. id: " + dto.getId()));
+//
+//            BoardEntityBuilder builder
+//                    = updateTarget.toBuilder();
+//            if (dto.getBoardName() != null)
+//                builder.boardName(dto.getBoardName());
+//            if (dto.getBoardType() != null)
+//                builder.boardType(dto.getBoardType());
+//            if (dto.getBoardDescription() != null)
+//                builder.boardDescription(dto.getBoardDescription());
+//            if (dto.getVisible() != null)
+//                builder.visible(dto.getVisible());
+//            if (dto.getSoftDelete() != null)
+//                builder.softDelete(dto.getSoftDelete());
+//
+//            updateTarget = builder.build();
+//
+//
+//            /**/
+//            BoardEntity updatedEntity
+//                    = jpaDataRepo.save(updateTarget);
+//
+//            return updateTarget.equals(updatedEntity);
+//
+//        }, updateCommonPropertyDto);
+
     }
 
     @Override
     public Exceptionable<Boolean, UpdateTimeLimitPropertyDto> updateTimeLimitProperty(UpdateTimeLimitPropertyDto updateTimeLimitDto) {
-        Function<UpdateTimeLimitPropertyDto, Boolean>
-                updateTimeLimitProperty = dto ->
-        {
+
+        return Exceptionable.act(dto -> {
+
             BoardEntity updateTarget
                     = jpaDataRepo.findById(dto.getBoardId())
                     .orElseThrow(() -> new BusinessException(ErrorCode.FIND_ENTITY_FAILED));
 
-            TimeLimitBoardProperty timeLimitProperty = dto.getTimeLimitProperty();
+            TimeLimitBoardProperty timeLimitProperty
+                    = dto.getTimeLimitProperty();
 
             updateTarget.setLimitDateTime(timeLimitProperty.getLimitDateTime());
 
-            BoardEntity updatedEntity = jpaDataRepo.save(updateTarget);
+            BoardEntity updatedEntity
+                    = jpaDataRepo.save(updateTarget);
 
-            return updatedEntity.getLimitDateTime().equals(
-                    timeLimitProperty.getLimitDateTime()
-            );
-        };
+            return updatedEntity.equals(updateTarget);
 
-        return Exceptionable.act(updateTimeLimitProperty, updateTimeLimitDto);
+        }, updateTimeLimitDto);
 
     }
 

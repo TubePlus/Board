@@ -16,7 +16,7 @@ public class PostingVo {
     private final boolean pin;
     private final String contents;
     private final String title;
-    private final boolean erase;
+    private final boolean softDelete;
 
 
     public static PostingVo builtFrom(Posting posting) {
@@ -29,7 +29,7 @@ public class PostingVo {
                 .pin(posting.isPin())
                 .contents(posting.getContents())
                 .title(posting.getTitle())
-                .erase(posting.isSoftDelete())
+                .softDelete(posting.isSoftDelete())
                 .build();
     }
 

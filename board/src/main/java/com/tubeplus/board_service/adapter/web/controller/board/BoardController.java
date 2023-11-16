@@ -1,5 +1,6 @@
 package com.tubeplus.board_service.adapter.web.controller.board;
 
+import com.tubeplus.board_service.adapter.web.controller.board.vo.ReqUpdateTimeLimitPropertyBody;
 import com.tubeplus.board_service.adapter.web.error.BusinessException;
 import com.tubeplus.board_service.adapter.web.error.ErrorCode;
 import com.tubeplus.board_service.application.board.domain.Board;
@@ -10,6 +11,7 @@ import com.tubeplus.board_service.adapter.web.controller.board.vo.BoardSearchTyp
 
 import com.tubeplus.board_service.application.board.port.in.BoardUseCase.BoardProperty;
 import com.tubeplus.board_service.application.board.port.in.BoardUseCase.BoardProperty.BoardCommonProperty;
+import com.tubeplus.board_service.application.board.port.in.BoardUseCase.BoardProperty.TimeLimitBoardProperty;
 import com.tubeplus.board_service.application.board.port.in.BoardUseCase.MakeBoardForm;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -103,7 +105,7 @@ public class BoardController {
 
 
     @Operation(summary = "게시판 공통 속성 변경")
-    @PutMapping("/{boardId}")
+    @PutMapping("/{boardId}/common-property")
     public ApiResponse updateBoardCommonProperty
             (
                     @PathVariable("boardId") Long boardId,
@@ -117,6 +119,42 @@ public class BoardController {
 
         return ApiResponse.ofSuccess(null);
     }
+
+    @Operation(summary = "시간 제한 게시판 속성 변경")
+    @PutMapping("/{id}/time-limit-property")
+    public ApiResponse updateTimeLimitProperty
+            (
+                    @PathVariable("id") Long boardId,
+                    @RequestBody ReqUpdateTimeLimitPropertyBody updateReqBody
+            ) {
+        log.info(boardId.toString());
+
+        boardService.updateBoardProperty(
+                boardId, BoardProperty.of(null, updateReqBody.toDomain())
+        );
+
+        return ApiResponse.ofSuccess(null);
+    }
+
+
+    @Operation(summary = "게시판 삭제", description = "특정 id의 게시판을 soft delete 처리")
+    @DeleteMapping("/{boardId}")
+    public ApiResponse deleteBoard
+            (
+                    @Valid @PathVariable("boardId")
+                    @NotNull @Min(1) Long boardId
+            ) {
+        if (boardId == null || boardId < 1)
+            throw new BusinessException(ErrorCode.BAD_REQUEST);
+
+
+        boardService.softlyDeleteBoard(boardId);
+
+        return ApiResponse.ofSuccess(null);
+    }
+
+}
+
 
 //    private boolean haveNoUpdate(VoBoardProperty updateReq) {
 //        //todo Field.get하면 접근제어자 문제 발생 -> 생각해보니 getter사용하는 방향으로 수정하면 작동할지도?, 그래도 안되면 reflection으로 접근제어자 무시하고 접근
@@ -142,24 +180,4 @@ public class BoardController {
 //
 //        return true;
 //    }
-
-
-    @Operation(summary = "게시판 삭제", description = "특정 id의 게시판을 soft delete 처리")
-    @DeleteMapping("/{boardId}")
-    public ApiResponse deleteBoard
-            (
-                    @Valid @PathVariable("boardId")
-                    @NotNull @Min(1) Long boardId
-            ) {
-        if (boardId == null || boardId < 1)
-            throw new BusinessException(ErrorCode.BAD_REQUEST);
-
-
-        boardService.softlyDeleteBoard(boardId);
-
-        return ApiResponse.ofSuccess(null);
-    }
-
-}
-
 

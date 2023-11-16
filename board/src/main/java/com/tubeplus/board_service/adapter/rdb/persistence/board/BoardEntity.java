@@ -1,22 +1,23 @@
 package com.tubeplus.board_service.adapter.rdb.persistence.board;
 
 
+import com.tubeplus.board_service.adapter.rdb.config.BaseEntity;
 import com.tubeplus.board_service.application.board.domain.Board;
 import com.tubeplus.board_service.application.board.domain.BoardType;
-import com.tubeplus.board_service.application.board.port.out.BoardPersistable;
-import com.tubeplus.board_service.adapter.rdb.config.BaseEntity;
 import com.tubeplus.board_service.application.board.port.out.BoardPersistable.SaveBoardDto;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.proxy.HibernateProxy;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 
 @Table(name = "board")
 @Getter
 @Setter
 @Entity
-@Builder
+@Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
 public class BoardEntity extends BaseEntity {
@@ -73,4 +74,23 @@ public class BoardEntity extends BaseEntity {
     }
 
 
+    @Override
+    public boolean equals(Object obj) {
+
+        if (this == obj) return true;
+
+        if (obj instanceof BoardEntity that) {
+            return Objects.equals(this.id, that.id)
+                    && Objects.equals(this.communityId, that.communityId)
+                    && Objects.equals(this.boardName, that.boardName)
+                    && Objects.equals(this.boardType, that.boardType)
+                    && Objects.equals(this.boardDescription, that.boardDescription)
+                    && Objects.equals(this.visible, that.visible)
+                    && Objects.equals(this.limitDateTime, that.limitDateTime)
+                    && Objects.equals(this.softDelete, that.softDelete);
+        } else
+            return false;
+
+
+    }
 }

@@ -41,6 +41,7 @@ public class PostingController {
         return "test";
     }
 
+
     @Operation(summary = "게시물 작성", description = "작성된 게시물의 id 반환")
     @PostMapping()
     public ApiResponse<Long> makePosting
