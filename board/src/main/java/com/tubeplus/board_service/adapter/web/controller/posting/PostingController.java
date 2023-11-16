@@ -49,10 +49,10 @@ public class PostingController {
 
         MakePostingForm form = reqBody.buildForm();
 
-        Long postedBoardId
+        Long madeBoardId
                 = postingService.makePosting(form);
 
-        return ApiResponse.ofSuccess(postedBoardId);
+        return ApiResponse.ofSuccess(madeBoardId);
     }
 
 

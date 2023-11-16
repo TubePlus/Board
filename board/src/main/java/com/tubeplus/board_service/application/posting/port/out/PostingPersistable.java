@@ -1,6 +1,8 @@
 package com.tubeplus.board_service.application.posting.port.out;
 
 
+import com.tubeplus.board_service.application.board.port.out.BoardPersistable;
+import com.tubeplus.board_service.application.board.port.out.BoardPersistable.SaveBoardDto;
 import com.tubeplus.board_service.global.Exceptionable;
 import com.tubeplus.board_service.application.posting.domain.posting.Posting;
 import lombok.Builder;
@@ -20,6 +22,28 @@ public interface PostingPersistable {
     Exceptionable<Optional<Posting>, Long> findPosting(long postingId);
 
 
+    Exceptionable<Long, SavePostingDto> savePosting(SavePostingDto dto);
+
+    @Data
+    @Builder
+    class SavePostingDto {
+        private final Long boardId;
+        private final String authorUuid;
+        private final String title;
+        private final String contents;
+        public final boolean withImage;
+
+        public static SavePostingDto builtFrom(MakePostingForm form) {
+            return SavePostingDto.builder()
+                    .boardId(form.getBoardId())
+                    .authorUuid(form.getAuthorUuid())
+                    .title(form.getTitle())
+                    .contents(form.getContents())
+                    .build();
+        }
+    }
+
+
     boolean existNextPosting(FindPostingsDto dto);
 
     Exceptionable<List<Posting>, FindPostingsDto> findPostings(FindPostingsDto dto);
@@ -33,19 +57,17 @@ public interface PostingPersistable {
         private final SortedFindRange sortedRange;
 
         public static FindPostingsDto of(InfoToPagePostingData infoToPage) {
-            return FindPostingsDto.of
-                    (
-                            ConditionByFields.builtFrom(infoToPage),
-                            SortedFindRange.of(infoToPage)
-                    );
+            return FindPostingsDto.of(
+                    ConditionByFields.builtFrom(infoToPage),
+                    SortedFindRange.of(infoToPage)
+            );
         }
 
         public static FindPostingsDto of(InfoToFeedPostingData infoToFeed) {
-            return FindPostingsDto.of
-                    (
-                            ConditionByFields.builtFrom(infoToFeed),
-                            SortedFindRange.of(infoToFeed)
-                    );
+            return FindPostingsDto.of(
+                    ConditionByFields.builtFrom(infoToFeed),
+                    SortedFindRange.of(infoToFeed)
+            );
         }
 
 

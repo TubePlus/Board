@@ -121,7 +121,14 @@ public class PostingService implements PostingUseCase {
     // Create
     @Override
     public Long makePosting(MakePostingForm form) {
-        return null;
+
+        SavePostingDto dto = SavePostingDto.builtFrom(form);
+
+        Long madePostingId
+                = postingPersistence.savePosting(dto)
+                .ifExceptioned.thenThrow(ErrorCode.SAVE_ENTITY_FAILED);
+
+        return madePostingId;
     }
 
 

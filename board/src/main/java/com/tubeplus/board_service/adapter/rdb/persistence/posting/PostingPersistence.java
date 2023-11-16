@@ -51,6 +51,24 @@ public class PostingPersistence implements PostingPersistable {
         return new Exceptionable<>(findPostingById, postingId);
     }
 
+    @Override
+    public Exceptionable<Long, SavePostingDto> savePosting(SavePostingDto savePostingDto) {
+
+        return Exceptionable.act(dto -> {
+
+            PostingEntity postingEntity
+                    = PostingEntity.builtFrom(dto);
+
+            PostingEntity savedEntity
+                    = jpaDataRepo.save(postingEntity);
+
+            return savedEntity.getId();
+
+
+        }, savePostingDto);
+
+    }
+
 
     @Override
     @Transactional(readOnly = true)
