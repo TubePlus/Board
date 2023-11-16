@@ -3,6 +3,7 @@ package com.tubeplus.board_service.global.kafka;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.AdminClientConfig;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +23,14 @@ import java.util.Map;
 public class KafkaProducerConfig {
     @Value(" ${spring.kafka.producer.bootstrap-servers}")
     private String bootstrapServers;
+    @Value(" ${spring.kafka.topic1.name}")
+    private String topic1;
+    @Value(" ${spring.kafka.topic2.name}")
+    private String topic2;
+    @Value(" ${spring.kafka.topic3.name}")
+    private String topic3;
+    @Value(" ${spring.kafka.topic4.name}")
+    private String topic4;
 
     @Bean
     public KafkaAdmin kafkaAdmin() {
@@ -40,6 +49,22 @@ public class KafkaProducerConfig {
 //        config.put("sasl.jaas.config","org.apache.kafka.common.security.plain.PlainLoginModule required username=\"tubeplus\" password=\"tube12!\";");
         config.put(ProducerConfig.ACKS_CONFIG, "all");
         return new DefaultKafkaProducerFactory<>(config);
+    }
+    @Bean
+    public NewTopic Topic1() {
+        return new NewTopic(topic1, 1, (short) 1);
+    }
+    @Bean
+    public NewTopic Topic2() {
+        return new NewTopic(topic2, 1, (short) 1);
+    }
+    @Bean
+    public NewTopic Topic3() {
+        return new NewTopic(topic3, 1, (short) 1);
+    }
+    @Bean
+    public NewTopic Topic4() {
+        return new NewTopic(topic4, 1, (short) 1);
     }
 
     @Bean

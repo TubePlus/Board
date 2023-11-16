@@ -40,9 +40,8 @@ public class BoardService implements BoardUseCase {
                 = boardPersistence.saveBoard(saveDto)
                 .ifExceptioned.thenThrow(ErrorCode.SAVE_ENTITY_FAILED);
 
-        // todo : kafka producer(board->community) madeBoard.getCommunityId() : boardCreate
-        System.out.println("pipeline test : BoardCreate 1단계");
-        kafkaProducer.sendMessage(boardCreateTopic, madeBoard.getCommunityId().toString());
+        // todo : kafka producer(board->community) madeBoard.getCommunityId(), boardType : boardCreate
+        kafkaProducer.sendMessage(boardCreateTopic, "test_message");
 
         return madeBoard;
     }
