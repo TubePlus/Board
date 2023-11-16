@@ -68,6 +68,12 @@ public class CommentService implements CommentUseCase {
     @Override
     public void deleteComment(long idToDelete) {
 
+        Boolean deleted
+                = commentPersistence.deleteComment(idToDelete)
+                .ifExceptioned.thenThrow(ErrorCode.DELETE_ENTITY_FAILED);
+
+        if (!deleted)
+            throw new BusinessException(ErrorCode.DELETE_ENTITY_FAILED);
     }
 
 }

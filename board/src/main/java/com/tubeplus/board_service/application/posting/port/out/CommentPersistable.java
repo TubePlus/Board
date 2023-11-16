@@ -13,8 +13,9 @@ import java.util.List;
 public interface CommentPersistable {
 
 
-    Exceptionable<Comment, SaveCommentDto> saveComment(SaveCommentDto dto);
+    Exceptionable<Boolean, Long> deleteComment(Long idToDelete);
 
+    Exceptionable<Comment, SaveCommentDto> saveComment(SaveCommentDto dto);
 
     @Data
     @Builder
