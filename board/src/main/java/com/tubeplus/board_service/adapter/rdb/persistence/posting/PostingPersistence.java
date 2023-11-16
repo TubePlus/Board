@@ -30,7 +30,6 @@ public class PostingPersistence implements PostingPersistable {
     private final EntityManager em;
     private final ModelMapper modelMapper;
 
-    //todo 그냥 리턴하고 서비스 로직에서 Exceptionable.act로 감싸서 처리하는게 더 좋을듯
 
     @Override
     @Transactional(readOnly = true)

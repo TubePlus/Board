@@ -1,4 +1,4 @@
-package com.tubeplus.board_service.adapter.rdb.config;
+package com.tubeplus.board_service.adapter.rdb.common;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;

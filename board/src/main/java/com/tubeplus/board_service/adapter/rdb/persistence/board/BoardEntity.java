@@ -1,13 +1,12 @@
 package com.tubeplus.board_service.adapter.rdb.persistence.board;
 
 
-import com.tubeplus.board_service.adapter.rdb.config.BaseEntity;
+import com.tubeplus.board_service.adapter.rdb.common.BaseEntity;
 import com.tubeplus.board_service.application.board.domain.Board;
 import com.tubeplus.board_service.application.board.domain.BoardType;
 import com.tubeplus.board_service.application.board.port.out.BoardPersistable.SaveBoardDto;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.proxy.HibernateProxy;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
