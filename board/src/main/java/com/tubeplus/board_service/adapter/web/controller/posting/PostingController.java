@@ -1,6 +1,7 @@
 package com.tubeplus.board_service.adapter.web.controller.posting;
 
 import com.tubeplus.board_service.adapter.web.common.ApiResponse;
+import com.tubeplus.board_service.adapter.web.common.ApiTag;
 import com.tubeplus.board_service.adapter.web.controller.posting.vo.VoReadPostingSimpleData;
 import com.tubeplus.board_service.adapter.web.controller.posting.vo.posting.ReqUpdatePinStateBody;
 import com.tubeplus.board_service.adapter.web.controller.posting.vo.posting.*;
@@ -24,13 +25,9 @@ import static com.tubeplus.board_service.application.posting.port.in.PostingUseC
 
 @Slf4j
 @RequiredArgsConstructor
-@RestController
-@RequestMapping("/api/v1/board-service/postings")
-@CrossOrigin(origins = "*") //todo: 임시설정
-
 
 @Validated
-//@ApiTag(path = "/api/v1/postings", name = "Posting API")
+@ApiTag(path = "/api/v1/postings", name = "Posting API")
 public class PostingController {
 
 

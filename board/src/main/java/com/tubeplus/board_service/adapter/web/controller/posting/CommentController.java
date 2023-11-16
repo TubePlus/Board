@@ -2,6 +2,7 @@ package com.tubeplus.board_service.adapter.web.controller.posting;
 
 
 import com.tubeplus.board_service.adapter.web.common.ApiResponse;
+import com.tubeplus.board_service.adapter.web.common.ApiTag;
 import com.tubeplus.board_service.adapter.web.controller.posting.vo.comment.ReqModifyCommentBody;
 import com.tubeplus.board_service.adapter.web.controller.posting.vo.comment.ReqPostCommentBody;
 import com.tubeplus.board_service.application.posting.domain.comment.Comment;
@@ -21,12 +22,9 @@ import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
-@RestController
-@RequestMapping("/api/v1/board-service/comments")
-@CrossOrigin(origins = "*") //todo: 임시설정
 
 @Validated
-//@ApiTag(path = "/api/v1/comments", name = "Posting Comment API")
+@ApiTag(path = "/api/v1/comments", name = "Posting Comment API")
 public class CommentController {
 
     private final CommentUseCase commentService;

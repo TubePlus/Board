@@ -1,5 +1,6 @@
 package com.tubeplus.board_service.adapter.web.controller.board;
 
+import com.tubeplus.board_service.adapter.web.common.ApiTag;
 import com.tubeplus.board_service.adapter.web.controller.board.vo.ReqUpdateTimeLimitPropertyBody;
 import com.tubeplus.board_service.adapter.web.error.BusinessException;
 import com.tubeplus.board_service.adapter.web.error.ErrorCode;
@@ -25,12 +26,9 @@ import java.util.List;
 
 
 @Slf4j
-@RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/board-service/boards")
-@CrossOrigin(origins = "*") //todo: 임시설정
 
-//@ApiTag(path = "/api/v1/boards-my-own-api-to-avoid-same", name = "Board API", description = "게시판 CRUD API")
+@ApiTag(path = "/api/v1/boards-my-own-api-to-avoid-same", name = "Board API")
 public class BoardController {
 
     private final BoardUseCase boardService;
@@ -125,9 +123,8 @@ public class BoardController {
     public ApiResponse updateTimeLimitProperty
             (
                     @PathVariable("id") Long boardId,
-                    @RequestBody ReqUpdateTimeLimitPropertyBody updateReqBody
+                    @Valid @RequestBody ReqUpdateTimeLimitPropertyBody updateReqBody
             ) {
-        log.info(boardId.toString());
 
         boardService.updateBoardProperty(
                 boardId, BoardProperty.of(null, updateReqBody.toDomain())
