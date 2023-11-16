@@ -14,6 +14,7 @@ public class KafkaProducer {
     public void sendMessage(String kafkaTopic, String message){
         System.out.println("kafka message send:" + message);
         try{
+            kafkaTopic = kafkaTopic.trim();
             kafkaTemplate.send(kafkaTopic, message);
         } catch (Exception e) {
             e.printStackTrace();
