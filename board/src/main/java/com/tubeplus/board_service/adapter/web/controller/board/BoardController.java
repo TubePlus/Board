@@ -52,9 +52,10 @@ public class BoardController {
         Board postedBoard = boardService.makeBoard(form);
 
         Long postedBoardId = postedBoard.getId();
-        return ApiResponse.ofSuccess(postedBoardId);
 
+        return ApiResponse.ofSuccess(postedBoardId);
     }
+
 
     @Operation(summary = "게시판 목록 조회", description = "community_id, status로 게시판 목록 조회")
     @GetMapping()
@@ -118,6 +119,7 @@ public class BoardController {
         return ApiResponse.ofSuccess(null);
     }
 
+
     @Operation(summary = "시간 제한 게시판 속성 변경")
     @PutMapping("/{id}/time-limit-property")
     public ApiResponse updateTimeLimitProperty
@@ -135,6 +137,22 @@ public class BoardController {
         boardService.updateBoardProperty(
                 boardId,
                 BoardProperty.of(null, timeLimitProperty)
+        );
+
+        return ApiResponse.ofSuccess(null);
+    }
+
+
+    @Operation(summary = "시간 제한 속성 제거")
+    @DeleteMapping("/{id}/time-limit-property")
+    public ApiResponse deleteTimeLimitProperty
+            (
+                    @PathVariable("id") Long boardId
+            ) {
+
+        boardService.updateBoardProperty(
+                boardId,
+                BoardProperty.of(null, TimeLimitBoardProperty.of(null))
         );
 
         return ApiResponse.ofSuccess(null);

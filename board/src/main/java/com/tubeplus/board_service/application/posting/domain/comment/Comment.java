@@ -17,6 +17,7 @@ public class Comment {
 
         private final Long postingId;
         private final Long parentId;
+        private final boolean hasChild;
         private final String contents;
         private final String commenterUuid;
 

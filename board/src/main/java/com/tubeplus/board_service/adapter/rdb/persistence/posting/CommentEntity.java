@@ -1,6 +1,7 @@
 package com.tubeplus.board_service.adapter.rdb.persistence.posting;
 
 import com.tubeplus.board_service.adapter.rdb.config.BaseEntity;
+import com.tubeplus.board_service.adapter.rdb.persistence.posting.dao.CommentJpaDataRepository;
 import com.tubeplus.board_service.application.posting.domain.comment.Comment;
 import com.tubeplus.board_service.application.posting.domain.comment.Comment.CommentViewInfo;
 import com.tubeplus.board_service.application.posting.port.out.CommentPersistable.SaveCommentDto;
@@ -53,18 +54,19 @@ public class CommentEntity extends BaseEntity {
 
     }
 
-    public Comment toDomain() {
+//    public Comment toDomain(CommentJpaDataRepository jpaDataRepo) {
 
-        return Comment.of(
-                id,
-                CommentViewInfo.builder()
-                        .postingId(postingId)
-                        .parentId(parentComment == null ? null : parentComment.id)
-                        .contents(contents)
-                        .commenterUuid(commenterUuid)
-                        .build()
-        );
-    }
+//        return Comment.of(
+//                id,
+//                CommentViewInfo.builder()
+//                        .postingId(postingId)
+//                        .parentId(parentComment == null ? null : parentComment.id)
+//                        .hasChild(parentComment != null && )
+//                        .contents(contents)
+//                        .commenterUuid(commenterUuid)
+//                        .build()
+//        );
+//    }
 
 
 }

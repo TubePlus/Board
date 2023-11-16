@@ -1,6 +1,7 @@
 package com.tubeplus.board_service.application.posting.port.in;
 
 import com.tubeplus.board_service.application.posting.domain.comment.Comment;
+import com.tubeplus.board_service.application.posting.domain.comment.Comment.CommentViewInfo;
 import lombok.Builder;
 import lombok.Data;
 
@@ -29,8 +30,7 @@ public interface CommentUseCase {
     }
 
 
-
-    Comment.CommentViewInfo modifyComment(Long idToModify, String contents);
+    CommentViewInfo modifyComment(Long idToModify, String contents);
 
 
     void deleteComment(long idToDelete);
