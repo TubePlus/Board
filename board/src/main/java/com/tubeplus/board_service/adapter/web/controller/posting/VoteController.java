@@ -45,8 +45,9 @@ public class VoteController {
         return ApiResponse.ofSuccess(voteCount);
     }
 
+
     @Operation(summary = "게시물 투표 수정 api")
-    @PutMapping("/{voteId}")
+    @PutMapping("/{vote-id}")
     public ApiResponse<Long> modifyVote
             (
                     @Valid @RequestBody VoPostingVote voVote
@@ -63,7 +64,7 @@ public class VoteController {
 
 
     @Operation(summary = "게시물 투표 취소 api")
-    @DeleteMapping("/{voteId}")
+    @DeleteMapping("/{vote-id}")
     public ApiResponse<Long> cancelVote() {
 
         long voteCount

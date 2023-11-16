@@ -61,9 +61,9 @@ public class CommentController {
     @GetMapping()
     public ApiResponse<List<Comment>> readComments
             (
-                    @RequestParam("posting_id") @Min(1)
+                    @RequestParam("posting-id") @Min(1)
                     long postingId,
-                    @RequestParam(name = "parent_id", required = false) @Min(1)
+                    @RequestParam(name = "parent-id", required = false) @Min(1)
                     Long parentId
             ) {
 
