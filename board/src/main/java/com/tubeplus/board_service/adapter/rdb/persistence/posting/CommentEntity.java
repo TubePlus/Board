@@ -1,24 +1,17 @@
 package com.tubeplus.board_service.adapter.rdb.persistence.posting;
 
-import com.tubeplus.board_service.adapter.rdb.config.BaseEntity;
-import com.tubeplus.board_service.adapter.rdb.persistence.posting.dao.CommentJpaDataRepository;
-import com.tubeplus.board_service.application.posting.domain.comment.Comment;
-import com.tubeplus.board_service.application.posting.domain.comment.Comment.CommentViewInfo;
+import com.tubeplus.board_service.adapter.rdb.common.BaseEntity;
 import com.tubeplus.board_service.application.posting.port.out.CommentPersistable.SaveCommentDto;
 import jakarta.persistence.*;
 import lombok.*;
 
 
-//todo @JpaEntity(tableName="")으로 합치기
-
 
 @Entity
 @Table(name = "comment")
 
-//todo @LombokEntityBoilerplate 로 합치기
 @Getter
-@Builder
-@Setter
+@Builder(toBuilder = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class CommentEntity extends BaseEntity {

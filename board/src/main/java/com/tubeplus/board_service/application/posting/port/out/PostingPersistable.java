@@ -1,8 +1,6 @@
 package com.tubeplus.board_service.application.posting.port.out;
 
 
-import com.tubeplus.board_service.application.board.port.out.BoardPersistable;
-import com.tubeplus.board_service.application.board.port.out.BoardPersistable.SaveBoardDto;
 import com.tubeplus.board_service.global.Exceptionable;
 import com.tubeplus.board_service.application.posting.domain.posting.Posting;
 import lombok.Builder;
@@ -128,7 +126,7 @@ public interface PostingPersistable {
 
                 public enum PivotField {
                     ID,
-                    VOTE_COUNT;
+                    VOTE_COUNT
                 }
             }
 
@@ -142,7 +140,7 @@ public interface PostingPersistable {
                 Integer feedSize
                         = feedInfo.getFeedReq().getFeedSize();
                 SortBy sortBy
-                        = SortBy.of(SortBy.PivotField.ID, false); //todo 프론트단에서 부터 받아오는 값으로 수정하기
+                        = SortBy.of(SortBy.PivotField.ID, false); //todo 프론트단에서 받아오는 정렬정보 여기 넣기
 
                 return SortedFindRange.of(feedSize, null, sortBy);
             }
