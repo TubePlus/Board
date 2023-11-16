@@ -9,8 +9,10 @@ import com.tubeplus.board_service.adapter.web.error.ErrorCode;
 import com.tubeplus.board_service.application.board.port.out.BoardPersistable.SaveBoardDto;
 import com.tubeplus.board_service.application.board.port.out.BoardPersistable.UpdateCommonPropertyDto;
 import com.tubeplus.board_service.application.board.port.out.BoardPersistable.UpdateTimeLimitPropertyDto;
+import com.tubeplus.board_service.global.kafka.KafkaProducer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,8 +24,11 @@ import java.util.List;
 public class BoardService implements BoardUseCase {
 
     //member variables
-
     private final BoardPersistable boardPersistence;
+    private final KafkaProducer kafkaProducer;
+
+    @Value(" ${spring.kafka.topic1.name}")
+    private String boardCreateTopic;
 
     @Override
     public Board makeBoard(MakeBoardForm formToMake) {
@@ -34,6 +39,10 @@ public class BoardService implements BoardUseCase {
         Board madeBoard
                 = boardPersistence.saveBoard(saveDto)
                 .ifExceptioned.thenThrow(ErrorCode.SAVE_ENTITY_FAILED);
+
+        // todo : kafka producer(board->community) madeBoard.getCommunityId() : boardCreate
+        System.out.println("pipeline test : BoardCreate 1단계");
+        kafkaProducer.sendMessage(boardCreateTopic, madeBoard.getCommunityId().toString());
 
         return madeBoard;
     }

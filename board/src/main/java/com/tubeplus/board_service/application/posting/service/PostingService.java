@@ -40,7 +40,7 @@ public class PostingService implements PostingUseCase {
         Posting foundPosting
                 = this.getPosting(postingId);
 
-        //todo 읽음 집계처리 - 카프카
+        //todo 읽음 집계처리 - 카프카(log) - foundPosting.getBoardId()
 
         return PostingView.madeFrom(
                 foundPosting, userUuid, votePersistence, commentPersistence
