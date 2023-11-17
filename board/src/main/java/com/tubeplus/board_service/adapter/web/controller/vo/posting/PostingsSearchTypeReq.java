@@ -1,7 +1,6 @@
-package com.tubeplus.board_service.adapter.web.controller.posting.vo.posting;
+package com.tubeplus.board_service.adapter.web.controller.vo.posting;
 
 
-import com.tubeplus.board_service.adapter.web.controller.posting.vo.VoReadPostingSimpleData;
 import lombok.AllArgsConstructor;
 
 import java.util.function.Predicate;

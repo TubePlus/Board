@@ -1,4 +1,4 @@
-package com.tubeplus.board_service.adapter.web.controller.posting.vo.vote;
+package com.tubeplus.board_service.adapter.web.controller.vo.vote;
 
 
 import com.tubeplus.board_service.application.posting.domain.vote.Vote;

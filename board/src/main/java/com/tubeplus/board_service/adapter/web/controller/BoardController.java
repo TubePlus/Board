@@ -1,14 +1,14 @@
-package com.tubeplus.board_service.adapter.web.controller.board;
+package com.tubeplus.board_service.adapter.web.controller;
 
 import com.tubeplus.board_service.adapter.web.common.ApiTag;
-import com.tubeplus.board_service.adapter.web.controller.board.vo.ReqUpdateTimeLimitPropertyBody;
+import com.tubeplus.board_service.adapter.web.controller.vo.board.ReqUpdateTimeLimitPropertyBody;
 import com.tubeplus.board_service.adapter.web.error.BusinessException;
 import com.tubeplus.board_service.adapter.web.error.ErrorCode;
 import com.tubeplus.board_service.application.board.domain.Board;
 import com.tubeplus.board_service.application.board.port.in.BoardUseCase;
-import com.tubeplus.board_service.adapter.web.controller.board.vo.ReqMakeBoardBody;
+import com.tubeplus.board_service.adapter.web.controller.vo.board.ReqMakeBoardBody;
 import com.tubeplus.board_service.adapter.web.common.ApiResponse;
-import com.tubeplus.board_service.adapter.web.controller.board.vo.BoardSearchType;
+import com.tubeplus.board_service.adapter.web.controller.vo.board.BoardSearchType;
 
 import com.tubeplus.board_service.application.board.port.in.BoardUseCase.BoardProperty;
 import com.tubeplus.board_service.application.board.port.in.BoardUseCase.BoardProperty.BoardCommonProperty;

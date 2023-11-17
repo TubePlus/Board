@@ -1,4 +1,4 @@
-package com.tubeplus.board_service.adapter.web.controller.posting.vo.comment;
+package com.tubeplus.board_service.adapter.web.controller.vo.comment;
 
 
 import jakarta.validation.constraints.NotBlank;

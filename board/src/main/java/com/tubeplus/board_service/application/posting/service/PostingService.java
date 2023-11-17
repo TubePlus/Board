@@ -1,10 +1,13 @@
 package com.tubeplus.board_service.application.posting.service;
 
+import com.tubeplus.board_service.adapter.rdb.persistence.posting.PostingEntity;
 import com.tubeplus.board_service.adapter.web.error.BusinessException;
 import com.tubeplus.board_service.adapter.web.error.ErrorCode;
 import com.tubeplus.board_service.application.posting.domain.posting.Posting;
 import com.tubeplus.board_service.application.posting.domain.posting.PostingView;
+import com.tubeplus.board_service.application.posting.port.in.PostingCommentUseCase;
 import com.tubeplus.board_service.application.posting.port.in.PostingUseCase;
+import com.tubeplus.board_service.application.posting.port.in.PostingVoteUseCase;
 import com.tubeplus.board_service.application.posting.port.out.CommentPersistable;
 import com.tubeplus.board_service.application.posting.port.out.PostingPersistable;
 import com.tubeplus.board_service.application.posting.port.out.VotePersistable;
@@ -30,8 +33,8 @@ import static com.tubeplus.board_service.application.posting.port.out.PostingPer
 public class PostingService implements PostingUseCase {
 
     private final PostingPersistable postingPersistence;
-    private final VotePersistable votePersistence;
-    private final CommentPersistable commentPersistence;
+    private final PostingVoteUseCase voteService;
+    private final PostingCommentUseCase commentService;
 
 
     @Override
@@ -43,7 +46,10 @@ public class PostingService implements PostingUseCase {
         //todo 읽음 집계처리 - 카프카(log) - foundPosting.getBoardId()
 
         return PostingView.madeFrom(
-                foundPosting, userUuid, votePersistence, commentPersistence
+                foundPosting,
+                userUuid,
+                voteService,
+                commentService
         );
     }
 
@@ -103,14 +109,19 @@ public class PostingService implements PostingUseCase {
                 .collect(Collectors.toList());
 
         /**/
-        Long lastCursoredId
-                = foundPostingsForFeed.get(foundPostingsForFeed.size() - 1).getId();
+        Long lastCursoredId;
+
+        Posting lastFoundPosting
+                = foundPostingsForFeed.get(foundPostingsForFeed.size() - 1);
+
+        lastCursoredId = lastFoundPosting.getId();
 
 
         /**/
         boolean hasNextFeed;
 
-        findDto.getFindConditionByFields().setCursorId(lastCursoredId);
+        findDto.getFindConditionByFields()
+                .setCursorId(lastCursoredId);
 
         hasNextFeed = Exceptionable.act(postingPersistence::existNextPosting, findDto)
                 .ifExceptioned.thenThrow(new BusinessException(
@@ -118,7 +129,11 @@ public class PostingService implements PostingUseCase {
 
 
         /**/
-        return Feed.of(postingDataToFeed, lastCursoredId, hasNextFeed);
+        return Feed.of(
+                postingDataToFeed,
+                lastCursoredId,
+                hasNextFeed
+        );
     }
 
 

@@ -1,11 +1,11 @@
-package com.tubeplus.board_service.adapter.web.controller.posting;
+package com.tubeplus.board_service.adapter.web.controller;
 
 
 import com.tubeplus.board_service.adapter.web.common.ApiResponse;
 import com.tubeplus.board_service.adapter.web.common.ApiTag;
-import com.tubeplus.board_service.adapter.web.controller.posting.vo.vote.VoPostingVote;
+import com.tubeplus.board_service.adapter.web.controller.vo.vote.VoPostingVote;
 import com.tubeplus.board_service.application.posting.domain.vote.Vote;
-import com.tubeplus.board_service.application.posting.port.in.VoteUseCase;
+import com.tubeplus.board_service.application.posting.port.in.WebVoteUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @ApiTag(path = "/api/v1/board-service/votes", name = "Posting vote API")
 public class VoteController {
 
-    private final VoteUseCase voteService;
+    private final WebVoteUseCase voteService;
 
     @GetMapping("/test")
     public ApiResponse<String> test() {

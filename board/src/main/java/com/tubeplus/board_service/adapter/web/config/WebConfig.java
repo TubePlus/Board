@@ -1,8 +1,8 @@
 package com.tubeplus.board_service.adapter.web.config;
 
-import com.tubeplus.board_service.adapter.web.controller.board.vo.BoardSearchType;
-import com.tubeplus.board_service.adapter.web.controller.posting.vo.posting.PostingsSearchTypeReq;
-import com.tubeplus.board_service.adapter.web.controller.posting.vo.posting.PostingsViewTypeReq;
+import com.tubeplus.board_service.adapter.web.controller.vo.board.BoardSearchType;
+import com.tubeplus.board_service.adapter.web.controller.vo.posting.PostingsSearchTypeReq;
+import com.tubeplus.board_service.adapter.web.controller.vo.posting.PostingsViewTypeReq;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;

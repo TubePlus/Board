@@ -1,10 +1,10 @@
-package com.tubeplus.board_service.adapter.web.controller.posting;
+package com.tubeplus.board_service.adapter.web.controller;
 
 
 import com.tubeplus.board_service.adapter.web.common.ApiResponse;
 import com.tubeplus.board_service.adapter.web.common.ApiTag;
-import com.tubeplus.board_service.adapter.web.controller.posting.vo.comment.ReqModifyCommentBody;
-import com.tubeplus.board_service.adapter.web.controller.posting.vo.comment.ReqPostCommentBody;
+import com.tubeplus.board_service.adapter.web.controller.vo.comment.ReqModifyCommentBody;
+import com.tubeplus.board_service.adapter.web.controller.vo.comment.ReqPostCommentBody;
 import com.tubeplus.board_service.application.posting.domain.comment.Comment;
 import com.tubeplus.board_service.application.posting.domain.comment.Comment.CommentViewInfo;
 import com.tubeplus.board_service.application.posting.port.in.CommentUseCase;

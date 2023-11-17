@@ -1,6 +1,5 @@
 package com.tubeplus.board_service.adapter.rdb.persistence.board;
 
-import com.tubeplus.board_service.adapter.rdb.persistence.board.BoardEntity.BoardEntityBuilder;
 import com.tubeplus.board_service.adapter.rdb.persistence.board.dao.BoardJpaDataRepository;
 import com.tubeplus.board_service.adapter.rdb.persistence.board.dao.BoardQDslRepositoryCustom;
 import com.tubeplus.board_service.application.board.domain.Board;

@@ -1,4 +1,4 @@
-package com.tubeplus.board_service.adapter.web.controller.posting.vo.posting;
+package com.tubeplus.board_service.adapter.web.controller.vo.posting;
 
 
 import com.fasterxml.jackson.annotation.JsonCreator;

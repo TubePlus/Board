@@ -13,8 +13,7 @@ import java.util.Optional;
 public class VotePersistence implements VotePersistable {
 
     @Override
-    public Exceptionable
-            <Optional<Vote>, FindVoteDto> findVote(FindVoteDto dto) {
+    public Exceptionable <Optional<Vote>, FindVoteDto> findVote(FindVoteDto dto) {
 
         return new Exceptionable<>(this::findUserVoteOfPosting, dto);
     }

@@ -6,7 +6,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 
-
 @Entity
 @Table(name = "comment")
 
@@ -20,47 +19,35 @@ public class CommentEntity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "posting_id", nullable = false)
-    private long postingId;
-
-    @Setter
-    @Column(name = "content", nullable = false, columnDefinition = "TEXT")
-    private String content;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "posting_id", referencedColumnName = "id", nullable = true)
+    private PostingEntity posting;
+//    @Column(name = "posting_id", nullable = false)
+//    private long postingId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id", referencedColumnName = "id", nullable = true)
     private CommentEntity parentComment;
 
+    @Setter
+    @Column(name = "content", nullable = false, columnDefinition = "TEXT")
+    private String content;
+
     @Column(name = "commenter_uuid", nullable = false, length = 50)
     private String commenterUuid;
 
 
-    public static CommentEntity builtFrom(SaveCommentDto dto, CommentEntity parentComment) {
+    public static CommentEntity builtFrom(SaveCommentDto dto,
+                                          PostingEntity postingEntity,
+                                          CommentEntity parentComment) {
 
-        CommentEntityBuilder builder
-                = CommentEntity.builder()
-                .postingId(dto.getPostingId())
+        return CommentEntity.builder()
+                .posting(postingEntity)
                 .content(dto.getContents())
                 .parentComment(parentComment)
-                .commenterUuid(dto.getCommenterUuid());
-
-        return builder.build();
+                .commenterUuid(dto.getCommenterUuid())
+                .build();
 
     }
-
-//    public Comment toDomain(CommentJpaDataRepository jpaDataRepo) {
-
-//        return Comment.of(
-//                id,
-//                CommentViewInfo.builder()
-//                        .postingId(postingId)
-//                        .parentId(parentComment == null ? null : parentComment.id)
-//                        .hasChild(parentComment != null && )
-//                        .contents(contents)
-//                        .commenterUuid(commenterUuid)
-//                        .build()
-//        );
-//    }
-
 
 }

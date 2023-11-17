@@ -1,4 +1,4 @@
-package com.tubeplus.board_service.adapter.web.controller.posting.vo.comment;
+package com.tubeplus.board_service.adapter.web.controller.vo.comment;
 
 
 import com.tubeplus.board_service.application.posting.port.in.CommentUseCase.PostCommentForm;

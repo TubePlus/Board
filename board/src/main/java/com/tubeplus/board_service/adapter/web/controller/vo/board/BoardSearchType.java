@@ -1,10 +1,9 @@
-package com.tubeplus.board_service.adapter.web.controller.board.vo;
+package com.tubeplus.board_service.adapter.web.controller.vo.board;
 
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.lang.NonNullApi;
 
 
 @AllArgsConstructor

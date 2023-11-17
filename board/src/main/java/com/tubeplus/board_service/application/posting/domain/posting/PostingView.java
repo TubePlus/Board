@@ -2,8 +2,8 @@ package com.tubeplus.board_service.application.posting.domain.posting;
 
 
 import com.tubeplus.board_service.adapter.web.error.ErrorCode;
-import com.tubeplus.board_service.application.posting.port.out.CommentPersistable;
-import com.tubeplus.board_service.application.posting.port.out.VotePersistable;
+import com.tubeplus.board_service.application.posting.port.in.PostingCommentUseCase;
+import com.tubeplus.board_service.application.posting.port.in.PostingVoteUseCase;
 import com.tubeplus.board_service.application.posting.port.out.VotePersistable.FindVoteDto;
 import com.tubeplus.board_service.application.posting.domain.vote.Vote;
 import lombok.Builder;
@@ -33,18 +33,14 @@ public class PostingView {
 
     public static PostingView madeFrom(Posting posting,
                                        String userUuid,
-                                       VotePersistable votePersistence,
-                                       CommentPersistable commentPersistence) {
+                                       PostingVoteUseCase voteService,
+                                       PostingCommentUseCase commentService) {
 
         FindVoteDto dto = FindVoteDto.of(posting.getId(), userUuid);
 
-        Optional<Vote> optionalUserVote
-                = votePersistence.findVote(dto)
-                .ifExceptioned.thenThrow(ErrorCode.FIND_ENTITY_FAILED);
-
         Long userVoteId
-                = optionalUserVote.map(Vote::getId)
-                .orElse(null);
+                = voteService.findUserVote(posting.getId(), userUuid)
+                .map(Vote::getId).orElse(null);
 
         return PostingView.builder()
                 .authorUuid(posting.getAuthorUuid())

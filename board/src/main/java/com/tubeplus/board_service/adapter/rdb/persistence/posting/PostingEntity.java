@@ -9,8 +9,8 @@ import lombok.*;
 
 @Entity
 @Table(name = "posting")
+
 @Builder
-@Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor

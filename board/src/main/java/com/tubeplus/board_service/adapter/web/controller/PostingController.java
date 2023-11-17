@@ -1,10 +1,8 @@
-package com.tubeplus.board_service.adapter.web.controller.posting;
+package com.tubeplus.board_service.adapter.web.controller;
 
 import com.tubeplus.board_service.adapter.web.common.ApiResponse;
 import com.tubeplus.board_service.adapter.web.common.ApiTag;
-import com.tubeplus.board_service.adapter.web.controller.posting.vo.VoReadPostingSimpleData;
-import com.tubeplus.board_service.adapter.web.controller.posting.vo.posting.ReqUpdatePinStateBody;
-import com.tubeplus.board_service.adapter.web.controller.posting.vo.posting.*;
+import com.tubeplus.board_service.adapter.web.controller.vo.posting.*;
 import com.tubeplus.board_service.adapter.web.error.BusinessException;
 import com.tubeplus.board_service.adapter.web.error.ErrorCode;
 import com.tubeplus.board_service.application.posting.domain.posting.Posting;
@@ -99,7 +97,7 @@ public class PostingController {
     @Operation(summary = "작성자가 게시물 수정",
             description = "게시물 작성자가 게시물을 수정할때 사용, 요청자가 작성자인지 권한 점검")
     @PutMapping("/{id}/article")
-    public ApiResponse<PostingVo> modifyPostingArticle
+    public ApiResponse<VoPosting> modifyPostingArticle
             (
                     @PathVariable("id") @Min(1) long id,
                     @RequestBody @Valid ReqModifyPostingBody reqBody
@@ -112,7 +110,7 @@ public class PostingController {
                 = postingService.modifyPostingArticle(id, form);
 
         return ApiResponse.ofSuccess
-                (PostingVo.builtFrom(modifiedPosting));
+                (VoPosting.builtFrom(modifiedPosting));
     }
 
 

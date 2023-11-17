@@ -1,6 +1,5 @@
-package com.tubeplus.board_service.adapter.web.controller.posting.vo.posting;
+package com.tubeplus.board_service.adapter.web.controller.vo.posting;
 
-import com.tubeplus.board_service.adapter.web.controller.posting.vo.VoReadPostingSimpleData;
 import com.tubeplus.board_service.application.posting.port.in.PostingUseCase;
 import com.tubeplus.board_service.application.posting.port.in.PostingUseCase.Feed;
 import com.tubeplus.board_service.application.posting.port.in.PostingUseCase.PostingSimpleData;
