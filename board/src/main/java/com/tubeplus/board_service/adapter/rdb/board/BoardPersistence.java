@@ -1,7 +1,7 @@
-package com.tubeplus.board_service.adapter.rdb.persistence.board;
+package com.tubeplus.board_service.adapter.rdb.board;
 
-import com.tubeplus.board_service.adapter.rdb.persistence.board.dao.BoardJpaDataRepository;
-import com.tubeplus.board_service.adapter.rdb.persistence.board.dao.BoardQDslRepositoryCustom;
+import com.tubeplus.board_service.adapter.rdb.board.dao.BoardJpaDataRepository;
+import com.tubeplus.board_service.adapter.rdb.board.dao.BoardQDslRepositoryCustom;
 import com.tubeplus.board_service.application.board.domain.Board;
 import com.tubeplus.board_service.application.board.port.in.BoardUseCase.BoardProperty.TimeLimitBoardProperty;
 import com.tubeplus.board_service.application.board.port.out.BoardPersistable;

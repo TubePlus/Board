@@ -1,8 +1,12 @@
-package com.tubeplus.board_service.adapter.rdb.persistence.posting;
+package com.tubeplus.board_service.adapter.rdb.posting;
 
-import com.tubeplus.board_service.adapter.rdb.persistence.posting.dao.CommentJpaDataRepository;
+import com.tubeplus.board_service.adapter.rdb.posting.dao.CommentJpaDataRepository;
+import com.tubeplus.board_service.adapter.rdb.posting.dao.PostingJpaDataRepository;
+import com.tubeplus.board_service.adapter.rdb.posting.entity.CommentEntity;
+import com.tubeplus.board_service.adapter.rdb.posting.entity.PostingEntity;
 import com.tubeplus.board_service.application.posting.domain.comment.Comment;
 import com.tubeplus.board_service.application.posting.domain.comment.Comment.CommentViewInfo;
+import com.tubeplus.board_service.application.posting.domain.posting.Posting;
 import com.tubeplus.board_service.application.posting.port.out.CommentPersistable;
 import com.tubeplus.board_service.global.Exceptionable;
 import lombok.RequiredArgsConstructor;
@@ -18,16 +22,17 @@ import java.util.List;
 @Component("commentPersistence")
 public class CommentPersistence implements CommentPersistable {
 
-    private final CommentJpaDataRepository jpaDataRepo;
+    private final CommentJpaDataRepository commentJpaDataRepo;
+    private final PostingJpaDataRepository postingJpaDataRepo;
 
     @Override
     public Exceptionable<Boolean, Long> deleteComment(Long idToDelete) {
 
         return Exceptionable.act(id -> {
 
-            jpaDataRepo.deleteById(id);
+            commentJpaDataRepo.deleteById(id);
 
-            return jpaDataRepo.findById(id).isEmpty();
+            return commentJpaDataRepo.findById(id).isEmpty();
 
         }, idToDelete);
 
@@ -38,15 +43,26 @@ public class CommentPersistence implements CommentPersistable {
 
         return Exceptionable.act(dto -> {
 
-            CommentEntity parentComment = null;
-            if (dto.getParentId() != null)
-                parentComment = getValidParent(dto.getParentId(), dto.getPostingId());
+            /**/
+            CommentEntity entityToSave;
 
-            CommentEntity entityToSave
-                    = CommentEntity.builtFrom(dto, parentComment);
+            CommentEntity parentComment
+                    =
+                    dto.getParentId() == null
+                            ? parentComment = null
+                            : getValidParent(dto.getParentId(), dto.getPostingId());
 
+            PostingEntity commentedPosting
+                    = postingJpaDataRepo.findById(dto.getPostingId())
+                    .orElseThrow(() -> new RuntimeException("posting is not found."));
+
+            entityToSave
+                    = CommentEntity.builtFrom(dto, commentedPosting, parentComment);
+
+
+            /**/
             CommentEntity savedEntity
-                    = jpaDataRepo.save(entityToSave);
+                    = commentJpaDataRepo.save(entityToSave);
 
             return entityToDomain(savedEntity);
 
@@ -57,10 +73,10 @@ public class CommentPersistence implements CommentPersistable {
     protected final CommentEntity getValidParent(Long parentId, long postingId) {
 
         CommentEntity parentComment
-                = jpaDataRepo.findById(parentId)
+                = commentJpaDataRepo.findById(parentId)
                 .orElseThrow(() -> new RuntimeException("parent comment is not found."));
 
-        if (parentComment.getPostingId() != postingId) {
+        if (parentComment.getPosting().getId() != postingId) {
             throw new RuntimeException("postingId between parent and child is not matched.");
         }
         return parentComment;
@@ -79,7 +95,7 @@ public class CommentPersistence implements CommentPersistable {
                             : null;
 
             List<CommentEntity> foundEntities
-                    = jpaDataRepo.findByPostingIdAndParentComment(
+                    = commentJpaDataRepo.findByPostingIdAndParentComment(
                     dto.getPostingId(), parentComment);
 
             List<Comment> foundComments
@@ -99,13 +115,13 @@ public class CommentPersistence implements CommentPersistable {
         return Exceptionable.act(dto -> {
 
             CommentEntity entityToUpdate
-                    = jpaDataRepo.findById(dto.getIdToModify())
+                    = commentJpaDataRepo.findById(dto.getIdToModify())
                     .orElseThrow(() -> new RuntimeException("comment is not found."));
 
             entityToUpdate.setContent(dto.getContent());
 
             CommentEntity updatedEntity
-                    = jpaDataRepo.save(entityToUpdate);
+                    = commentJpaDataRepo.save(entityToUpdate);
 
             return entityToDomain(updatedEntity);
 
@@ -115,19 +131,23 @@ public class CommentPersistence implements CommentPersistable {
 
     protected Comment entityToDomain(CommentEntity entity) {
 
+        Long parentId =
+                entity.getParentComment() == null
+                        ? null
+                        : entity.getParentComment().getId();
+
+
+        boolean hasChild
+                = entity.getParentComment() == null
+                && commentJpaDataRepo.findFirstByParentComment(entity).isPresent();
+
+
         return Comment.of(
                 entity.getId(),
-                entity.getPostingId(),
+                entity.getPosting().getId(),
                 CommentViewInfo.builder()
-                        .parentId(
-                                entity.getParentComment() == null
-                                        ? null
-                                        : entity.getParentComment().getId()
-                        )
-                        .hasChild(
-                                entity.getParentComment() == null
-                                        && jpaDataRepo.findFirstByParentComment(entity).isPresent()
-                        )
+                        .parentId(parentId)
+                        .hasChild(hasChild)
                         .content(entity.getContent())
                         .commenterUuid(entity.getCommenterUuid())
                         .build()

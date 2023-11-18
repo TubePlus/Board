@@ -1,4 +1,4 @@
-package com.tubeplus.board_service.adapter.rdb.persistence.posting;
+package com.tubeplus.board_service.adapter.rdb.posting.entity;
 
 import com.tubeplus.board_service.adapter.rdb.common.BaseEntity;
 import com.tubeplus.board_service.application.posting.port.out.CommentPersistable.SaveCommentDto;
@@ -6,13 +6,14 @@ import jakarta.persistence.*;
 import lombok.*;
 
 
-@Entity
-@Table(name = "comment")
 
 @Getter
 @Builder(toBuilder = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
+
+@Entity
+@Table(name = "comment")
 public class CommentEntity extends BaseEntity {
 
     @Id
@@ -20,10 +21,8 @@ public class CommentEntity extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "posting_id", referencedColumnName = "id", nullable = true)
+    @JoinColumn(name = "posting_id", referencedColumnName = "id", nullable = false)
     private PostingEntity posting;
-//    @Column(name = "posting_id", nullable = false)
-//    private long postingId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id", referencedColumnName = "id", nullable = true)

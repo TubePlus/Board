@@ -1,7 +1,9 @@
-package com.tubeplus.board_service.adapter.rdb.persistence.posting;
+package com.tubeplus.board_service.adapter.rdb.posting;
 
-import com.tubeplus.board_service.adapter.rdb.persistence.posting.dao.PostingJpaDataRepository;
-import com.tubeplus.board_service.adapter.rdb.persistence.posting.dao.PostingQDslRepositoryCustom;
+import com.tubeplus.board_service.adapter.rdb.posting.dao.PostingJpaDataRepository;
+import com.tubeplus.board_service.adapter.rdb.posting.dao.PostingQDslRepositoryCustom;
+import com.tubeplus.board_service.adapter.rdb.posting.entity.PostingEntity;
+import com.tubeplus.board_service.application.posting.port.out.PostingPersistable.FindPostingsDto.FieldsFindCondition;
 import com.tubeplus.board_service.global.Exceptionable;
 import com.tubeplus.board_service.application.posting.domain.posting.Posting;
 import com.tubeplus.board_service.application.posting.port.out.PostingPersistable;
@@ -80,9 +82,9 @@ public class PostingPersistence implements PostingPersistable {
 
     @Override
     @Transactional(readOnly = true)
-    public Exceptionable<Long, FindPostingsDto.FindConditionByFields> countPostings(FindPostingsDto.FindConditionByFields findConditionByFields) {
+    public Exceptionable<Long, FieldsFindCondition> countPostings(FieldsFindCondition condition) {
 
-        return Exceptionable.act(queryDslRepo::countPostingEntities, findConditionByFields);
+        return Exceptionable.act(queryDslRepo::countPostingEntities, condition);
     }
 
     @Override

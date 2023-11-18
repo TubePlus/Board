@@ -20,6 +20,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
+@Validated
 
 @ApiTag(path = "/api/v1/board-service/boards", name = "Board API")
 public class BoardController {
@@ -104,7 +106,7 @@ public class BoardController {
 
 
     @Operation(summary = "게시판 공통 속성 변경")
-    @PutMapping("/{boardId}/common-property")
+    @PutMapping("/{id}/common-property")
     public ApiResponse updateBoardCommonProperty
             (
                     @PathVariable("boardId") Long boardId,
@@ -160,14 +162,12 @@ public class BoardController {
 
 
     @Operation(summary = "게시판 삭제", description = "특정 id의 게시판을 soft delete 처리")
-    @DeleteMapping("/{boardId}")
+    @DeleteMapping("/{id}")
     public ApiResponse deleteBoard
             (
-                    @Valid @PathVariable("boardId")
+                    @PathVariable("boardId")
                     @NotNull @Min(1) Long boardId
             ) {
-        if (boardId == null || boardId < 1)
-            throw new BusinessException(ErrorCode.BAD_REQUEST);
 
 
         boardService.softlyDeleteBoard(boardId);

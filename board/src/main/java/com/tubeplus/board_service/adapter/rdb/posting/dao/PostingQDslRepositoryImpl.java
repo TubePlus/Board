@@ -1,4 +1,4 @@
-package com.tubeplus.board_service.adapter.rdb.persistence.posting.dao;
+package com.tubeplus.board_service.adapter.rdb.posting.dao;
 
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -6,8 +6,8 @@ import com.querydsl.core.types.dsl.ComparableExpressionBase;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.tubeplus.board_service.adapter.rdb.persistence.posting.PostingEntity;
-import com.tubeplus.board_service.adapter.rdb.persistence.posting.QPostingEntity;
+import com.tubeplus.board_service.adapter.rdb.posting.entity.PostingEntity;
+import com.tubeplus.board_service.adapter.rdb.posting.entity.QPostingEntity;
 import com.tubeplus.board_service.application.posting.port.out.PostingPersistable.FindPostingsDto.SortedFindRange;
 import com.tubeplus.board_service.global.Exceptionable;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,7 @@ public class PostingQDslRepositoryImpl implements PostingQDslRepositoryCustom {
 
     @Override
     @Transactional(readOnly = true)
-    public Long countPostingEntities(FindPostingsDto.FindConditionByFields condition) {
+    public Long countPostingEntities(FindPostingsDto.FieldsFindCondition condition) {
 
         QPostingEntity posting = QPostingEntity.postingEntity;
 
@@ -59,7 +59,7 @@ public class PostingQDslRepositoryImpl implements PostingQDslRepositoryCustom {
                 = queryFactory.select(posting.id)
                 .from(posting)
                 .where(equalsToConditionByFields(
-                        posting, dto.getFindConditionByFields()));
+                        posting, dto.getFieldsFindCondition()));
 
         writeSortScopeToQuery(dto, posting, queryToCheckNext);
 
@@ -78,7 +78,7 @@ public class PostingQDslRepositoryImpl implements PostingQDslRepositoryCustom {
 
         QPostingEntity posting = QPostingEntity.postingEntity;
 
-        FindPostingsDto.FindConditionByFields condition = dto.getFindConditionByFields();
+        FindPostingsDto.FieldsFindCondition condition = dto.getFieldsFindCondition();
 
         // query 생성
         JPAQuery<PostingEntity> query
@@ -132,7 +132,7 @@ public class PostingQDslRepositoryImpl implements PostingQDslRepositoryCustom {
 
     // BooleanExpression 생성 메소드들
     private BooleanExpression equalsToConditionByFields(QPostingEntity posting,
-                                                        FindPostingsDto.FindConditionByFields condition) {
+                                                        FindPostingsDto.FieldsFindCondition condition) {
 
         BooleanExpression findConditionEqual
                 = Expressions.TRUE // cursorId가 null일때(= boardId로 검색X) NullPointException 방지
@@ -148,7 +148,7 @@ public class PostingQDslRepositoryImpl implements PostingQDslRepositoryCustom {
     }
 
     private BooleanExpression idLessThanCursor(QPostingEntity posting,
-                                               FindPostingsDto.FindConditionByFields condition) {
+                                               FindPostingsDto.FieldsFindCondition condition) {
 
         if (condition.getCursorId() == null) return null;
 
@@ -157,7 +157,7 @@ public class PostingQDslRepositoryImpl implements PostingQDslRepositoryCustom {
 
 
     private BooleanExpression contentContains(QPostingEntity posting,
-                                              FindPostingsDto.FindConditionByFields condition) {
+                                              FindPostingsDto.FieldsFindCondition condition) {
 
         if (condition.getContentsContaining() == null) return null;
 
@@ -165,7 +165,7 @@ public class PostingQDslRepositoryImpl implements PostingQDslRepositoryCustom {
     }
 
     private BooleanExpression titleContains(QPostingEntity posting,
-                                            FindPostingsDto.FindConditionByFields condition) {
+                                            FindPostingsDto.FieldsFindCondition condition) {
 
         if (condition.getTitleContaining() == null) return null;
 
@@ -173,7 +173,7 @@ public class PostingQDslRepositoryImpl implements PostingQDslRepositoryCustom {
     }
 
     private BooleanExpression pinEq(QPostingEntity posting,
-                                    FindPostingsDto.FindConditionByFields condition) {
+                                    FindPostingsDto.FieldsFindCondition condition) {
 
         if (condition.getPin() == null) return null;
 
@@ -181,7 +181,7 @@ public class PostingQDslRepositoryImpl implements PostingQDslRepositoryCustom {
     }
 
     private BooleanExpression boardIdEq(QPostingEntity posting,
-                                        FindPostingsDto.FindConditionByFields condition) {
+                                        FindPostingsDto.FieldsFindCondition condition) {
 
         if (condition.getBoardId() == null) return null;
 
@@ -189,7 +189,7 @@ public class PostingQDslRepositoryImpl implements PostingQDslRepositoryCustom {
     }
 
     private BooleanExpression authorUuidEq(QPostingEntity posting,
-                                           FindPostingsDto.FindConditionByFields condition) {
+                                           FindPostingsDto.FieldsFindCondition condition) {
 
         if (condition.getAuthorUuid() == null) return null;
 
@@ -197,7 +197,7 @@ public class PostingQDslRepositoryImpl implements PostingQDslRepositoryCustom {
     }
 
     private BooleanExpression softDeleteEq(QPostingEntity posting,
-                                           FindPostingsDto.FindConditionByFields condition) {
+                                           FindPostingsDto.FieldsFindCondition condition) {
 
         if (condition.getSoftDelete() == null) return null;
 

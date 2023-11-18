@@ -1,4 +1,4 @@
-package com.tubeplus.board_service.adapter.rdb.persistence.board;
+package com.tubeplus.board_service.adapter.rdb.board;
 
 
 import com.tubeplus.board_service.adapter.rdb.common.BaseEntity;

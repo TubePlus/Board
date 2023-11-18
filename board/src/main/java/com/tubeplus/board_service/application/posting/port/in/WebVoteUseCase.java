@@ -4,9 +4,9 @@ import com.tubeplus.board_service.application.posting.domain.vote.Vote;
 
 public interface WebVoteUseCase {
     //vote
-    long votePosting(Vote vote);
+    Long votePosting(Vote vote);
 
-    long modifyPostingVote(Vote vote);
+    long updateVote(Vote updateInfo);
 
-    long cancelVote();
+    long deleteVote(Long voteId);
 }

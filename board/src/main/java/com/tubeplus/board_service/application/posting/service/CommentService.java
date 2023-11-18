@@ -4,7 +4,8 @@ import com.tubeplus.board_service.adapter.web.error.BusinessException;
 import com.tubeplus.board_service.adapter.web.error.ErrorCode;
 import com.tubeplus.board_service.application.posting.domain.comment.Comment;
 import com.tubeplus.board_service.application.posting.domain.comment.Comment.CommentViewInfo;
-import com.tubeplus.board_service.application.posting.port.in.CommentUseCase;
+import com.tubeplus.board_service.application.posting.port.in.PostingCommentUseCase;
+import com.tubeplus.board_service.application.posting.port.in.WebCommentUseCase;
 import com.tubeplus.board_service.application.posting.port.out.CommentPersistable;
 import com.tubeplus.board_service.application.posting.port.out.CommentPersistable.FindCommentDto;
 import com.tubeplus.board_service.application.posting.port.out.CommentPersistable.SaveCommentDto;
@@ -18,7 +19,7 @@ import java.util.List;
 @Slf4j
 @Service("commentService")
 @RequiredArgsConstructor
-public class CommentService implements CommentUseCase {
+public class CommentService implements WebCommentUseCase, PostingCommentUseCase {
 
     private final CommentPersistable commentPersistence;
 
@@ -32,7 +33,7 @@ public class CommentService implements CommentUseCase {
                 = commentPersistence.saveComment(dto)
                 .ifExceptioned.thenThrow(ErrorCode.SAVE_ENTITY_FAILED);
 
-        // todo : 내 댓글에 대댓글 짜이면 알람 보내기 -> etc parentdId 의 commetUuid를 확인해서 알람 commentAlarm
+        // todo : 내 댓글에 대댓글 짜이면 알람 보내기 -> etc paentdId 의 commetUuid를 확인해서 알람 commentAlarm
         // todo : postingId를 통해서 boardId를 알아내고 -> boardId로 communityId를 알아내서 creatorRanking 토픽
 
         return savedComment;

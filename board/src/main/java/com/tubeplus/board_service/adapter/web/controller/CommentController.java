@@ -7,9 +7,9 @@ import com.tubeplus.board_service.adapter.web.controller.vo.comment.ReqModifyCom
 import com.tubeplus.board_service.adapter.web.controller.vo.comment.ReqPostCommentBody;
 import com.tubeplus.board_service.application.posting.domain.comment.Comment;
 import com.tubeplus.board_service.application.posting.domain.comment.Comment.CommentViewInfo;
-import com.tubeplus.board_service.application.posting.port.in.CommentUseCase;
-import com.tubeplus.board_service.application.posting.port.in.CommentUseCase.PostCommentForm;
-import com.tubeplus.board_service.application.posting.port.in.CommentUseCase.ReadCommentsInfo;
+import com.tubeplus.board_service.application.posting.port.in.WebCommentUseCase;
+import com.tubeplus.board_service.application.posting.port.in.WebCommentUseCase.PostCommentForm;
+import com.tubeplus.board_service.application.posting.port.in.WebCommentUseCase.ReadCommentsInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -28,7 +28,7 @@ import java.util.List;
 @ApiTag(path = "/api/v1/board-service/comments", name = "Posting Comment API")
 public class CommentController {
 
-    private final CommentUseCase commentService;
+    private final WebCommentUseCase commentService;
 
 
     @GetMapping("/test")

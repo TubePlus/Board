@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Value
-public class VoPostingVote {
+public class VoPostingVoteProperty {
 
     @NotNull
     @Min(1)
@@ -25,10 +25,21 @@ public class VoPostingVote {
     private final VoteType voteType;
 
 
-    public Vote buildVote() {
+    public Vote buildNoneIdVote() {
 
         return Vote
                 .builder()
+                .postingId(postingId)
+                .voterUuid(voterUuid)
+                .voteType(voteType)
+                .build();
+    }
+
+    public Vote buildVote(Long voteId) {
+
+        return Vote
+                .builder()
+                .id(voteId)
                 .postingId(postingId)
                 .voterUuid(voterUuid)
                 .voteType(voteType)

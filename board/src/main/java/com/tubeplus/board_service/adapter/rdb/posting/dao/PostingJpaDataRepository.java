@@ -1,6 +1,6 @@
-package com.tubeplus.board_service.adapter.rdb.persistence.posting.dao;
+package com.tubeplus.board_service.adapter.rdb.posting.dao;
 
-import com.tubeplus.board_service.adapter.rdb.persistence.posting.PostingEntity;
+import com.tubeplus.board_service.adapter.rdb.posting.entity.PostingEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

@@ -3,11 +3,12 @@ package com.tubeplus.board_service.adapter.web.controller;
 
 import com.tubeplus.board_service.adapter.web.common.ApiResponse;
 import com.tubeplus.board_service.adapter.web.common.ApiTag;
-import com.tubeplus.board_service.adapter.web.controller.vo.vote.VoPostingVote;
+import com.tubeplus.board_service.adapter.web.controller.vo.vote.VoPostingVoteProperty;
 import com.tubeplus.board_service.application.posting.domain.vote.Vote;
 import com.tubeplus.board_service.application.posting.port.in.WebVoteUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -31,18 +32,17 @@ public class VoteController {
 
     @Operation(summary = "게시물 투표 api")
     @PostMapping()
-    public ApiResponse<Long> votePosting
+    public ApiResponse<Long> postVote
             (
-                    @Valid @RequestBody VoPostingVote voteVo
+                    @Valid @RequestBody VoPostingVoteProperty voVoteProperty
             ) {
 
-        Vote vote
-                = voteVo.buildVote();
+        Vote vote = voVoteProperty.buildNoneIdVote();
 
-        long voteCount
+        Long postedVoteId
                 = voteService.votePosting(vote);
 
-        return ApiResponse.ofSuccess(voteCount);
+        return ApiResponse.ofSuccess(postedVoteId);
     }
 
 
@@ -50,25 +50,29 @@ public class VoteController {
     @PutMapping("/{vote-id}")
     public ApiResponse<Long> modifyVote
             (
-                    @Valid @RequestBody VoPostingVote voVote
+                    @Min(0) @PathVariable("vote-id") Long voteId,
+                    @Valid @RequestBody VoPostingVoteProperty voUpdateInfo
             ) {
 
-        Vote vote
-                = voVote.buildVote();
+        Vote updateInfo
+                = voUpdateInfo.buildVote(voteId);
 
         final long voteCount
-                = voteService.modifyPostingVote(vote);
+                = voteService.updateVote(updateInfo);
 
         return ApiResponse.ofSuccess(voteCount);
     }
 
 
     @Operation(summary = "게시물 투표 취소 api")
-    @DeleteMapping("/{vote-id}")
-    public ApiResponse<Long> cancelVote() {
+    @DeleteMapping("/{id}")
+    public ApiResponse<Long> cancelVote
+            (
+                    @PathVariable("id") Long voteId
+            ) {
 
-        long voteCount
-                = voteService.cancelVote();
+        final long voteCount
+                = voteService.deleteVote(voteId);
 
         return ApiResponse.ofSuccess(voteCount);
     }

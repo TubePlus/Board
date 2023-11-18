@@ -1,11 +1,11 @@
-package com.tubeplus.board_service.adapter.rdb.persistence.board.dao;
+package com.tubeplus.board_service.adapter.rdb.board.dao;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.impl.JPAUpdateClause;
-import com.tubeplus.board_service.adapter.rdb.persistence.board.BoardEntity;
-import com.tubeplus.board_service.adapter.rdb.persistence.board.QBoardEntity;
+import com.tubeplus.board_service.adapter.rdb.board.BoardEntity;
+import com.tubeplus.board_service.adapter.rdb.board.QBoardEntity;
 import com.tubeplus.board_service.application.board.port.out.BoardPersistable.FindBoardListDto;
 import com.tubeplus.board_service.application.board.port.out.BoardPersistable.UpdateCommonPropertyDto;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.tubeplus.board_service.adapter.rdb.converter;
+package com.tubeplus.board_service.adapter.rdb.common;
 
 import com.tubeplus.board_service.global.base.BaseEnum;
 import jakarta.persistence.AttributeConverter;

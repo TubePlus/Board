@@ -1,4 +1,4 @@
-package com.tubeplus.board_service.adapter.rdb.persistence.posting;
+package com.tubeplus.board_service.adapter.rdb.posting.entity;
 
 import com.tubeplus.board_service.adapter.rdb.common.BaseEntity;
 import com.tubeplus.board_service.application.posting.domain.posting.Posting;
@@ -7,17 +7,17 @@ import jakarta.persistence.*;
 import lombok.*;
 
 
+
+@Getter
+@ToString
+@Builder(toBuilder = true)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
+
 @Entity
 @Table(name = "posting")
-
-@Builder
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
 public class PostingEntity extends BaseEntity {
 
-    //todo vote, comment와 one to many 관계로 매핑하기
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -61,6 +61,21 @@ public class PostingEntity extends BaseEntity {
                 .build();
     }
 
+    public static PostingEntity builtFrom(Posting posting) {
+
+        return PostingEntity.builder()
+                .id(posting.getId())
+                .authorUuid(posting.getAuthorUuid())
+                .voteCount(posting.getVoteCount())
+                .boardId(posting.getBoardId())
+                .pin(posting.isPin())
+                .contents(posting.getContents())
+                .title(posting.getTitle())
+                .softDelete(posting.isSoftDelete())
+                .withImage(posting.isWithImage())
+                .build();
+    }
+
 
     public Posting buildDomain() {
 
@@ -76,5 +91,6 @@ public class PostingEntity extends BaseEntity {
                 .withImage(withImage)
                 .build();
     }
+
 
 }

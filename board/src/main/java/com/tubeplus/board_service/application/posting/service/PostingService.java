@@ -1,6 +1,5 @@
 package com.tubeplus.board_service.application.posting.service;
 
-import com.tubeplus.board_service.adapter.rdb.persistence.posting.PostingEntity;
 import com.tubeplus.board_service.adapter.web.error.BusinessException;
 import com.tubeplus.board_service.adapter.web.error.ErrorCode;
 import com.tubeplus.board_service.application.posting.domain.posting.Posting;
@@ -8,9 +7,7 @@ import com.tubeplus.board_service.application.posting.domain.posting.PostingView
 import com.tubeplus.board_service.application.posting.port.in.PostingCommentUseCase;
 import com.tubeplus.board_service.application.posting.port.in.PostingUseCase;
 import com.tubeplus.board_service.application.posting.port.in.PostingVoteUseCase;
-import com.tubeplus.board_service.application.posting.port.out.CommentPersistable;
 import com.tubeplus.board_service.application.posting.port.out.PostingPersistable;
-import com.tubeplus.board_service.application.posting.port.out.VotePersistable;
 import com.tubeplus.board_service.global.Exceptionable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -60,25 +57,26 @@ public class PostingService implements PostingUseCase {
         //Page 생성 위한 db 조회
         FindPostingsDto dto = FindPostingsDto.of(infoToPage);
 
-        List<Posting> foundPostingsToPage
+        List<Posting> foundPagePostings
                 = postingPersistence.findPostings(dto)
                 .ifExceptioned.thenThrow(ErrorCode.FIND_ENTITY_FAILED);
 
-        if (foundPostingsToPage.isEmpty())
+        if (foundPagePostings.isEmpty())
             throw new BusinessException(
                     ErrorCode.NOT_FOUND_RESOURCE, "No postings to page found."
             );
 
+
         //count 쿼리 최적화 위한 함수형 변수
         LongSupplier countPostingsFunction
-                = () -> postingPersistence.countPostings(dto.getFindConditionByFields())
+                = () -> postingPersistence.countPostings(dto.getFieldsFindCondition())
                 .ifExceptioned.thenThrow(ErrorCode.COUNT_ENTITY_FAILED);
 
 
         //Page 생성
         Page<Posting> pagedPostings //todo 첫페이지랑 마지막 언저리페이지들만 count 쿼리 날리도록 최적화 수정
                 = PageableExecutionUtils.getPage // PageableExecutionUtils.getPage: count 쿼리 최적화 위해 사용
-                (foundPostingsToPage, infoToPage.getPageReq(), countPostingsFunction);
+                (foundPagePostings, infoToPage.getPageReq(), countPostingsFunction);
 
         Page<PostingSimpleData> pagedPostingData
                 = pagedPostings.map(PostingSimpleData::builtFrom);
@@ -94,25 +92,25 @@ public class PostingService implements PostingUseCase {
                 = FindPostingsDto.of(infoToFeed);
 
         /**/
-        List<PostingSimpleData> postingDataToFeed;
+        List<PostingSimpleData> postingFeedData;
 
-        List<Posting> foundPostingsForFeed
+        List<Posting> foundFeedPostings
                 = postingPersistence.findPostings(findDto)
                 .ifExceptioned.thenThrow(ErrorCode.FIND_ENTITY_FAILED);
 
-        if (foundPostingsForFeed.isEmpty())
+        if (foundFeedPostings.isEmpty())
             throw new BusinessException(ErrorCode.NOT_FOUND_RESOURCE, "No postings to feed condition found.");
 
-        postingDataToFeed
-                = foundPostingsForFeed
-                .stream().map(PostingSimpleData::builtFrom)
+        postingFeedData
+                = foundFeedPostings.stream()
+                .map(PostingSimpleData::builtFrom)
                 .collect(Collectors.toList());
 
         /**/
         Long lastCursoredId;
 
         Posting lastFoundPosting
-                = foundPostingsForFeed.get(foundPostingsForFeed.size() - 1);
+                = foundFeedPostings.get(foundFeedPostings.size() - 1);
 
         lastCursoredId = lastFoundPosting.getId();
 
@@ -120,7 +118,7 @@ public class PostingService implements PostingUseCase {
         /**/
         boolean hasNextFeed;
 
-        findDto.getFindConditionByFields()
+        findDto.getFieldsFindCondition()
                 .setCursorId(lastCursoredId);
 
         hasNextFeed = Exceptionable.act(postingPersistence::existNextPosting, findDto)
@@ -130,7 +128,7 @@ public class PostingService implements PostingUseCase {
 
         /**/
         return Feed.of(
-                postingDataToFeed,
+                postingFeedData,
                 lastCursoredId,
                 hasNextFeed
         );

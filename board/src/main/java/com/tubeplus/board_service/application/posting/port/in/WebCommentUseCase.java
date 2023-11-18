@@ -7,7 +7,7 @@ import lombok.Data;
 
 import java.util.List;
 
-public interface CommentUseCase {
+public interface WebCommentUseCase {
 
     Comment writeComment(PostCommentForm form);
 

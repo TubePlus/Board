@@ -1,7 +1,7 @@
-package com.tubeplus.board_service.adapter.rdb.persistence.posting.dao;
+package com.tubeplus.board_service.adapter.rdb.posting.dao;
 
 
-import com.tubeplus.board_service.adapter.rdb.persistence.posting.PostingEntity;
+import com.tubeplus.board_service.adapter.rdb.posting.entity.PostingEntity;
 import com.tubeplus.board_service.application.posting.port.out.PostingPersistable.FindPostingsDto;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,7 +12,7 @@ public interface PostingQDslRepositoryCustom {
 
 
     @Transactional(readOnly = true)
-    Long countPostingEntities(FindPostingsDto.FindConditionByFields whereCondition);
+    Long countPostingEntities(FindPostingsDto.FieldsFindCondition whereCondition);
 
 
     @Transactional(readOnly = true)

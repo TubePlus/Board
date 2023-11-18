@@ -1,7 +1,7 @@
 package com.tubeplus.board_service.adapter.web.controller.vo.comment;
 
 
-import com.tubeplus.board_service.application.posting.port.in.CommentUseCase.PostCommentForm;
+import com.tubeplus.board_service.application.posting.port.in.WebCommentUseCase.PostCommentForm;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
