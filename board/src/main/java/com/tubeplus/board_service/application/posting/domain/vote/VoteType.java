@@ -5,18 +5,18 @@ import lombok.AllArgsConstructor;
 
 
 @AllArgsConstructor
-public enum VoteType implements BaseEnum<Character, String> {
+public enum VoteType implements BaseEnum<Integer, String> {
 
 
-    LIKE('+'),
-    HATE('-');
+    LIKE(1),
+    HATE(-1);
 
 
-    private final char code;
+    private final Integer code;
 
 
     @Override
-    public Character getCode() {
+    public Integer getCode() {
         return this.code;
     }
 

@@ -48,24 +48,24 @@ public interface PostingPersistable {
 
     Exceptionable<List<Posting>, FindPostingsDto> findPostings(FindPostingsDto dto);
 
-    Exceptionable<Long, FindPostingsDto.FindConditionByFields> countPostings(FindPostingsDto.FindConditionByFields findConditionByFields);
+    Exceptionable<Long, FindPostingsDto.FieldsFindCondition> countPostings(FindPostingsDto.FieldsFindCondition fieldsFindCondition);
 
     @Data(staticConstructor = "of")
     class FindPostingsDto {
 
-        private final FindConditionByFields findConditionByFields;
+        private final FieldsFindCondition fieldsFindCondition;
         private final SortedFindRange sortedRange;
 
         public static FindPostingsDto of(InfoToPagePostingData infoToPage) {
             return FindPostingsDto.of(
-                    FindConditionByFields.builtFrom(infoToPage),
+                    FieldsFindCondition.builtFrom(infoToPage),
                     SortedFindRange.of(infoToPage)
             );
         }
 
         public static FindPostingsDto of(InfoToFeedPostingData infoToFeed) {
             return FindPostingsDto.of(
-                    FindConditionByFields.builtFrom(infoToFeed),
+                    FieldsFindCondition.builtFrom(infoToFeed),
                     SortedFindRange.of(infoToFeed)
             );
         }
@@ -73,7 +73,7 @@ public interface PostingPersistable {
 
         @Data
         @Builder
-        public static class FindConditionByFields {
+        public static class FieldsFindCondition {
             private Long cursorId;
             private final Long boardId;
             private final String authorUuid;
@@ -82,11 +82,11 @@ public interface PostingPersistable {
             private final String contentsContaining;
             private final Boolean softDelete;
 
-            public static FindConditionByFields builtFrom(InfoToPagePostingData infoToPage) {
+            public static FieldsFindCondition builtFrom(InfoToPagePostingData infoToPage) {
 
                 SearchPostingsInfo searchInfo = infoToPage.getSearchInfo();
 
-                return FindConditionByFields.builder()
+                return FieldsFindCondition.builder()
                         .boardId(searchInfo.getBoardId())
                         .authorUuid(searchInfo.getAuthorUuid())
                         .pin(searchInfo.getPin())
@@ -96,11 +96,11 @@ public interface PostingPersistable {
                         .build();
             }
 
-            public static FindConditionByFields builtFrom(InfoToFeedPostingData infoToFeed) {
+            public static FieldsFindCondition builtFrom(InfoToFeedPostingData infoToFeed) {
 
                 SearchPostingsInfo searchInfo = infoToFeed.getSearchInfo();
 
-                return FindConditionByFields.builder()
+                return FieldsFindCondition.builder()
                         .cursorId(infoToFeed.getFeedReq().getCursorId())
                         .boardId(searchInfo.getBoardId())
                         .authorUuid(searchInfo.getAuthorUuid())

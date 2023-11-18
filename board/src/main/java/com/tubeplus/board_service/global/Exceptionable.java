@@ -45,15 +45,18 @@ public class Exceptionable<RETURN, PARAM> {
             return thenThrow(new BusinessException(errorCode));
         }
 
-        public RETURN thenThrow(RuntimeException runtimeException) {
+        public RETURN thenThrow(RuntimeException runtimeException) {//todo static 메서드로 바꾸기
 
             try {
                 RETURN result = exceptionableTask.apply(parameter);
                 return result;
 
             } catch (Exception e) {
-                e.printStackTrace();
-                log.info(e.getMessage());
+
+                log.info("\n-----------------\n"
+                        + "Exceptionable.act caught: "
+                        + e.getMessage()
+                        + "\n-----------------\n");
                 throw runtimeException;
             }
         }

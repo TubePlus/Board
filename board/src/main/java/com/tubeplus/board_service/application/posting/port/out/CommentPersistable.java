@@ -2,8 +2,8 @@ package com.tubeplus.board_service.application.posting.port.out;
 
 
 import com.tubeplus.board_service.application.posting.domain.comment.Comment;
-import com.tubeplus.board_service.application.posting.port.in.CommentUseCase.PostCommentForm;
-import com.tubeplus.board_service.application.posting.port.in.CommentUseCase.ReadCommentsInfo;
+import com.tubeplus.board_service.application.posting.port.in.WebCommentUseCase.PostCommentForm;
+import com.tubeplus.board_service.application.posting.port.in.WebCommentUseCase.ReadCommentsInfo;
 import com.tubeplus.board_service.global.Exceptionable;
 import lombok.Builder;
 import lombok.Data;

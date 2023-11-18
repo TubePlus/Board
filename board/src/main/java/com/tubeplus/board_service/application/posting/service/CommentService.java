@@ -4,7 +4,8 @@ import com.tubeplus.board_service.adapter.web.error.BusinessException;
 import com.tubeplus.board_service.adapter.web.error.ErrorCode;
 import com.tubeplus.board_service.application.posting.domain.comment.Comment;
 import com.tubeplus.board_service.application.posting.domain.comment.Comment.CommentViewInfo;
-import com.tubeplus.board_service.application.posting.port.in.CommentUseCase;
+import com.tubeplus.board_service.application.posting.port.in.PostingCommentUseCase;
+import com.tubeplus.board_service.application.posting.port.in.WebCommentUseCase;
 import com.tubeplus.board_service.application.posting.port.out.CommentPersistable;
 import com.tubeplus.board_service.application.posting.port.out.CommentPersistable.FindCommentDto;
 import com.tubeplus.board_service.application.posting.port.out.CommentPersistable.SaveCommentDto;
@@ -18,7 +19,7 @@ import java.util.List;
 @Slf4j
 @Service("commentService")
 @RequiredArgsConstructor
-public class CommentService implements CommentUseCase {
+public class CommentService implements WebCommentUseCase, PostingCommentUseCase {
 
     private final CommentPersistable commentPersistence;
 
