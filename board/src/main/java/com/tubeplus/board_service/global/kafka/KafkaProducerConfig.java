@@ -29,8 +29,6 @@ public class KafkaProducerConfig {
     private String topic2;
     @Value(" ${spring.kafka.topic3.name}")
     private String topic3;
-    @Value(" ${spring.kafka.topic4.name}")
-    private String topic4;
 
     @Bean
     public KafkaAdmin kafkaAdmin() {
