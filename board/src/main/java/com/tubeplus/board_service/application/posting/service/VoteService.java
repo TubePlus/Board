@@ -6,6 +6,7 @@ import com.tubeplus.board_service.application.posting.domain.posting.Posting;
 import com.tubeplus.board_service.application.posting.domain.vote.Vote;
 import com.tubeplus.board_service.application.posting.port.in.PostingVoteUseCase;
 import com.tubeplus.board_service.application.posting.port.in.WebVoteUseCase;
+import com.tubeplus.board_service.application.posting.port.out.PostingPersistable;
 import com.tubeplus.board_service.application.posting.port.out.VotePersistable;
 import com.tubeplus.board_service.application.posting.port.out.VotePersistable.FindVoteDto;
 import com.tubeplus.board_service.application.posting.port.out.VotePersistable.SaveVoteDto;
@@ -22,6 +23,8 @@ public class VoteService
 
 
     private final VotePersistable votePersistence;
+    private final PostingPersistable postingPersistence;
+
 
     /**/
     //web use case
@@ -38,6 +41,8 @@ public class VoteService
             throw new BusinessException(ErrorCode.SAVE_ENTITY_FAILED);
 
         //todo 카프카로 posting에 vote가 추가되었다는 이벤트를 보내야함
+        postingPersistence.getPostingCommuId(vote.getPostingId())
+                .ifExceptioned.thenThrow(ErrorCode.FIND_ENTITY_FAILED);
 
         return savedVote.getId();
     }

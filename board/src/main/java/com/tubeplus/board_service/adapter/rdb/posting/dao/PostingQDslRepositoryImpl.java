@@ -8,6 +8,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tubeplus.board_service.adapter.rdb.posting.entity.PostingEntity;
 import com.tubeplus.board_service.adapter.rdb.posting.entity.QPostingEntity;
+import com.tubeplus.board_service.application.posting.port.out.PostingPersistable.FindPostingsDto.FieldsFindCondition;
 import com.tubeplus.board_service.application.posting.port.out.PostingPersistable.FindPostingsDto.SortedFindRange;
 import com.tubeplus.board_service.global.Exceptionable;
 import lombok.RequiredArgsConstructor;
@@ -55,17 +56,17 @@ public class PostingQDslRepositoryImpl implements PostingQDslRepositoryCustom {
         QPostingEntity posting = new QPostingEntity("posting");
 
 
-        JPAQuery<Long> queryToCheckNext
+        JPAQuery<Long> nextCheckQuery
                 = queryFactory.select(posting.id)
                 .from(posting)
                 .where(equalsToConditionByFields(
                         posting, dto.getFieldsFindCondition()));
 
-        writeSortScopeToQuery(dto, posting, queryToCheckNext);
+        writeSortScopeToQuery(dto, posting, nextCheckQuery);
 
 
         Long nextPostingId
-                = Exceptionable.act(queryToCheckNext::fetchFirst)
+                = Exceptionable.act(nextCheckQuery::fetchFirst)
                 .ifExceptioned.thenThrow(new RuntimeException("exist next posting query failed"));
 
         return nextPostingId != null;
@@ -78,7 +79,7 @@ public class PostingQDslRepositoryImpl implements PostingQDslRepositoryCustom {
 
         QPostingEntity posting = QPostingEntity.postingEntity;
 
-        FindPostingsDto.FieldsFindCondition condition = dto.getFieldsFindCondition();
+        FieldsFindCondition condition = dto.getFieldsFindCondition();
 
         // query 생성
         JPAQuery<PostingEntity> query
