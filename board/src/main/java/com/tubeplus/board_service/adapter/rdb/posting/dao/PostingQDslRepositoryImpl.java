@@ -185,7 +185,7 @@ public class PostingQDslRepositoryImpl implements PostingQDslRepositoryCustom {
 
         if (condition.getBoardId() == null) return null;
 
-        return posting.boardId.eq(condition.getBoardId());
+        return posting.board.id.eq(condition.getBoardId());
     }
 
     private BooleanExpression authorUuidEq(QPostingEntity posting,

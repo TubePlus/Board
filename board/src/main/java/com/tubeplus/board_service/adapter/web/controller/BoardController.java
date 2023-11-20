@@ -87,7 +87,7 @@ public class BoardController {
     }
 
 
-    @Operation(summary = "게시판 속성 조회", description = "특정 게시판 속성을 id로 조회, 게시판 설정페이지 표시에 사용")
+    @Operation(summary = "게시판 속성 조회", description = "특정 게시판 속성을 id로 조회, 게시판 설정 페이지 표시에 사용")
     @GetMapping("/{id}")
     public ApiResponse<BoardProperty> readBoardProperty
             (

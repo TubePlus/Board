@@ -86,6 +86,21 @@ public class VotePersistence
         }, saveDto);
     }
 
+    @Override
+    public Exceptionable<Long, Long> getCommuIdOfPosting(Long votedPostingId) {
+
+        return Exceptionable.act(postingId -> {
+
+            PostingEntity postingEntity
+                    = postingJpaDataRepo.findById(postingId)
+                    .orElseThrow(() -> new RuntimeException("Voted posting is not found."));
+
+            return postingEntity.getBoard().getCommunityId();
+
+        }, votedPostingId);
+
+    }
+
 
     @Override
     public Exceptionable<Boolean, Long> deleteVote(Long voteId) {
