@@ -46,7 +46,7 @@ public class KafkaProducerConfig {
         config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
 //        kafka security
-//        config.put("sasl.jaas.config","org.apache.kafka.common.security.plain.PlainLoginModule required username=\"tubeplus\" password=\"tube12!\";");
+//        config.put("sasl.jaas.config","org.apache.kafka.common.security.plain.PlainLoginModule required username=\"tubeplus\" password=\"2tube2!\";");
         config.put(ProducerConfig.ACKS_CONFIG, "all");
         return new DefaultKafkaProducerFactory<>(config);
     }
@@ -60,13 +60,8 @@ public class KafkaProducerConfig {
     }
     @Bean
     public NewTopic Topic3() {
-        return new NewTopic(topic3, 1, (short) 1);
+        return new NewTopic(topic3, 3, (short) 3);
     }
-    @Bean
-    public NewTopic Topic4() {
-        return new NewTopic(topic4, 1, (short) 1);
-    }
-
     @Bean
     public KafkaTemplate<String, String> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());

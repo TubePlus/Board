@@ -15,9 +15,9 @@ public interface VotePersistable {
 
     Exceptionable<Boolean, Long> deleteVote(Long voteId);
 
-    Exceptionable<Optional<Vote>, FindVoteDto> findVote(FindVoteDto dto);
+    Exceptionable<Optional<Vote>, Long> findVote(Long voteId);
 
-    Exceptionable<Boolean, Vote> updateVote(Vote updateInfo);
+    Exceptionable<Optional<Vote>, FindVoteDto> findVote(FindVoteDto dto);
 
     @Data(staticConstructor = "of")
     class FindVoteDto {
@@ -25,6 +25,9 @@ public interface VotePersistable {
         final Long postingId;
         final String voterUuid;
     }
+
+
+    Exceptionable<Boolean, Vote> updateVote(Vote updateInfo);
 
 
     Exceptionable<Posting, Long> getVotedPosting(Long voteId);
