@@ -51,6 +51,5 @@ public interface VotePersistable {
     }
 
 
-    Exceptionable<Long, Long> getCommuIdOfPosting(Long postingId);
 
 }

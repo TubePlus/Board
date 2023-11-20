@@ -144,6 +144,20 @@ public class PostingPersistence implements PostingPersistable {
         return new Exceptionable<>(updatePosting, updateDto);
     }
 
+    @Override
+    public Exceptionable<Long, Long> getCommuIdOfPosting(Long postingId) {
+
+        return Exceptionable.act(id -> {
+
+            PostingEntity postingEntity
+                    = jpaDataRepo.findById(id)
+                    .orElseThrow(() -> new RuntimeException("posting is not found."));
+
+            return postingEntity.getBoard().getCommunityId();
+
+        }, postingId);
+
+    }
 
 }
 

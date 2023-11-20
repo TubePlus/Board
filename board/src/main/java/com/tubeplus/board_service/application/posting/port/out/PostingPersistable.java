@@ -18,10 +18,13 @@ import static com.tubeplus.board_service.application.posting.port.in.PostingUseC
 
 public interface PostingPersistable {
 
+    Exceptionable<Long, Long> getCommuIdOfPosting(Long votedPostingId);
+
     Exceptionable<Optional<Posting>, Long> findPosting(long postingId);
 
 
     Exceptionable<Long, SavePostingDto> savePosting(SavePostingDto dto);
+
 
     @Data
     @Builder
