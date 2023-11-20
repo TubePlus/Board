@@ -22,7 +22,7 @@ public class VoteEntity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "posting_id", referencedColumnName = "id", nullable = false)
     private PostingEntity posting;
 

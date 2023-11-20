@@ -6,7 +6,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 
-
 @Getter
 @Builder(toBuilder = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -20,11 +19,11 @@ public class CommentEntity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "posting_id", referencedColumnName = "id", nullable = false)
     private PostingEntity posting;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "parent_id", referencedColumnName = "id", nullable = true)
     private CommentEntity parentComment;
 

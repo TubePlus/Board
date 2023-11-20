@@ -88,11 +88,11 @@ public class VoteService
 
 
         /**/
-        Long deletedTotalVote
+        Long updatedTotalVote
                 = votePersistence.getTotalVote(votedPostingId)
                 .ifExceptioned.thenThrow(ErrorCode.FIND_ENTITY_FAILED);
 
-        return deletedTotalVote;
+        return updatedTotalVote;
     }
 
 
