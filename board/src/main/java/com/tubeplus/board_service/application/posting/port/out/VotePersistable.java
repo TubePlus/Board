@@ -49,4 +49,8 @@ public interface VotePersistable {
                     .build();
         }
     }
+
+
+    Exceptionable<Long, Long> getCommuIdOfPosting(Long postingId);
+
 }

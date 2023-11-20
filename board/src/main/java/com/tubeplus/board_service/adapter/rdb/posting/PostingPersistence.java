@@ -1,5 +1,6 @@
 package com.tubeplus.board_service.adapter.rdb.posting;
 
+import com.tubeplus.board_service.adapter.rdb.board.BoardEntity;
 import com.tubeplus.board_service.adapter.rdb.posting.dao.PostingJpaDataRepository;
 import com.tubeplus.board_service.adapter.rdb.posting.dao.PostingQDslRepositoryCustom;
 import com.tubeplus.board_service.adapter.rdb.posting.entity.PostingEntity;
@@ -57,8 +58,12 @@ public class PostingPersistence implements PostingPersistable {
 
         return Exceptionable.act(dto -> {
 
+            BoardEntity postingBoard
+                    = em.find(BoardEntity.class, dto.getBoardId());
+
             PostingEntity postingEntity
-                    = PostingEntity.builtFrom(dto);
+                    = PostingEntity.builtFrom(dto, postingBoard);
+
 
             PostingEntity savedEntity
                     = jpaDataRepo.save(postingEntity);

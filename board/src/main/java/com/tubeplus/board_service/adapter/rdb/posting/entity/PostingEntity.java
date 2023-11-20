@@ -1,11 +1,11 @@
 package com.tubeplus.board_service.adapter.rdb.posting.entity;
 
+import com.tubeplus.board_service.adapter.rdb.board.BoardEntity;
 import com.tubeplus.board_service.adapter.rdb.common.BaseEntity;
 import com.tubeplus.board_service.application.posting.domain.posting.Posting;
 import com.tubeplus.board_service.application.posting.port.out.PostingPersistable.SavePostingDto;
 import jakarta.persistence.*;
 import lombok.*;
-
 
 
 @Getter
@@ -29,8 +29,12 @@ public class PostingEntity extends BaseEntity {
     @Builder.Default
     private long voteCount = 0;
 
-    @Column(name = "board_id", nullable = false)
-    private long boardId;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "board_posting_list",
+            joinColumns = @JoinColumn(name = "board_id"),
+            inverseJoinColumns = @JoinColumn(name = "id")
+    )
+    private BoardEntity board;
 
     @Column(name = "pin", nullable = false)
     private boolean pin;
@@ -47,12 +51,13 @@ public class PostingEntity extends BaseEntity {
     @Column(name = "with_image", nullable = false)
     private boolean withImage;
 
-    public static PostingEntity builtFrom(SavePostingDto dto) {
+
+    public static PostingEntity builtFrom(SavePostingDto dto, BoardEntity postingBoard) {
 
         return PostingEntity.builder()
                 .authorUuid(dto.getAuthorUuid())
                 .voteCount(0)
-                .boardId(dto.getBoardId())
+                .board(postingBoard)
                 .pin(false)
                 .contents(dto.getContents())
                 .title(dto.getTitle())
@@ -61,13 +66,13 @@ public class PostingEntity extends BaseEntity {
                 .build();
     }
 
-    public static PostingEntity builtFrom(Posting posting) {
+    public static PostingEntity builtFrom(Posting posting, BoardEntity postingBoard) {
 
         return PostingEntity.builder()
                 .id(posting.getId())
                 .authorUuid(posting.getAuthorUuid())
                 .voteCount(posting.getVoteCount())
-                .boardId(posting.getBoardId())
+                .board(postingBoard)
                 .pin(posting.isPin())
                 .contents(posting.getContents())
                 .title(posting.getTitle())
@@ -83,7 +88,7 @@ public class PostingEntity extends BaseEntity {
                 .id(id)
                 .authorUuid(authorUuid)
                 .voteCount(voteCount)
-                .boardId(boardId)
+                .boardId(board.getId())
                 .pin(pin)
                 .contents(contents)
                 .title(title)
