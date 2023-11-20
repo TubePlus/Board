@@ -41,7 +41,7 @@ public class VoteService
             throw new BusinessException(ErrorCode.SAVE_ENTITY_FAILED);
 
         //todo 카프카로 posting에 vote가 추가되었다는 이벤트를 보내야함
-        postingPersistence.getCommuIdOfPosting(vote.getPostingId())
+        postingPersistence.getPostingCommuId(vote.getPostingId())
                 .ifExceptioned.thenThrow(ErrorCode.FIND_ENTITY_FAILED);
 
         return savedVote.getId();

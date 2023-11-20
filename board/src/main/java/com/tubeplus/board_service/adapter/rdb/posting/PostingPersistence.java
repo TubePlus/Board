@@ -145,7 +145,7 @@ public class PostingPersistence implements PostingPersistable {
     }
 
     @Override
-    public Exceptionable<Long, Long> getCommuIdOfPosting(Long postingId) {
+    public Exceptionable<Long, Long> getPostingCommuId(Long postingId) {
 
         return Exceptionable.act(id -> {
 

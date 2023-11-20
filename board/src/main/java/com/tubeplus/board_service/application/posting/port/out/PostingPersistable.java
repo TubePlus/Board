@@ -18,7 +18,7 @@ import static com.tubeplus.board_service.application.posting.port.in.PostingUseC
 
 public interface PostingPersistable {
 
-    Exceptionable<Long, Long> getCommuIdOfPosting(Long votedPostingId);
+    Exceptionable<Long, Long> getPostingCommuId(Long postingId);
 
     Exceptionable<Optional<Posting>, Long> findPosting(long postingId);
 
