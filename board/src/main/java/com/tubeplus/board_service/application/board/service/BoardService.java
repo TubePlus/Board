@@ -45,10 +45,10 @@ public class BoardService implements BoardUseCase {
         String jsonInString = "";
         try {
             jsonInString = objectMapper.writeValueAsString(madeBoard);
+            kafkaProducer.sendMessage(boardCreateTopic, jsonInString);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        kafkaProducer.sendMessage(boardCreateTopic, jsonInString);
         return madeBoard;
     }
 

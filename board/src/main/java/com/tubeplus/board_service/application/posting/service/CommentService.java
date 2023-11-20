@@ -11,6 +11,8 @@ import com.tubeplus.board_service.application.posting.port.out.CommentPersistabl
 import com.tubeplus.board_service.application.posting.port.out.CommentPersistable.SaveCommentDto;
 import com.tubeplus.board_service.application.posting.port.out.CommentPersistable.UpdateCommentDto;
 import com.tubeplus.board_service.application.posting.port.out.PostingPersistable;
+import com.tubeplus.board_service.global.Exceptionable;
+import com.tubeplus.board_service.global.kafka.KafkaProducer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,7 +26,7 @@ public class CommentService implements WebCommentUseCase, PostingCommentUseCase 
 
     private final CommentPersistable commentPersistence;
     private final PostingPersistable postingPersistence;
-
+    private final KafkaProducer kafkaProducer;
 
     @Override
     public final Comment writeComment(PostCommentForm form) {
@@ -36,11 +38,15 @@ public class CommentService implements WebCommentUseCase, PostingCommentUseCase 
                 = commentPersistence.saveComment(dto)
                 .ifExceptioned.thenThrow(ErrorCode.SAVE_ENTITY_FAILED);
 
-        postingPersistence.getPostingCommuId(savedComment.getPostingId());
+       Long communityId = postingPersistence.getPostingCommuId(savedComment.getPostingId())
+               .ifExceptioned.thenThrow(ErrorCode.FIND_ENTITY_FAILED);
 
         // todo : 내 댓글에 대댓글 짜이면 알람 보내기 -> etc parentdId 의 commetUuid를 확인해서 알람 commentAlarm
-        // todo : postingId를 통해서 boardId를 알아내고 -> boardId로 communityId를 알아내서 addComment 토픽
-
+        try{
+            kafkaProducer.producerPutComment(communityId, 1L);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return savedComment;
     }
 

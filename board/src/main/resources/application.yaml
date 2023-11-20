@@ -27,9 +27,8 @@ spring:
     topic2:
       name: "commentAlarm"
     topic3:
-      name: "creatorRanking"
-    topic4:
-      name: "log"
+      name: "communityInteraction"
+
 
   profiles:
     active: local

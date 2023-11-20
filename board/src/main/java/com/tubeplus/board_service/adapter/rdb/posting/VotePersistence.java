@@ -7,7 +7,6 @@ import com.tubeplus.board_service.adapter.rdb.posting.entity.VoteEntity;
 import com.tubeplus.board_service.application.posting.domain.posting.Posting;
 import com.tubeplus.board_service.global.Exceptionable;
 import com.tubeplus.board_service.application.posting.domain.vote.Vote;
-import com.tubeplus.board_service.application.posting.domain.vote.VoteType;
 import com.tubeplus.board_service.application.posting.port.out.VotePersistable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -97,6 +96,13 @@ public class VotePersistence
 
             return voteJpaDataRepo.findById(dto).isEmpty();
 
+        }, voteId);
+    }
+
+    @Override
+    public Exceptionable<Optional<Vote>, Long> findVote(Long voteId) {
+        return Exceptionable.act(id -> {
+            return voteJpaDataRepo.findById(id).map(VoteEntity::buildDomain);
         }, voteId);
     }
 

@@ -10,6 +10,7 @@ import com.tubeplus.board_service.application.posting.port.out.PostingPersistabl
 import com.tubeplus.board_service.application.posting.port.out.VotePersistable;
 import com.tubeplus.board_service.application.posting.port.out.VotePersistable.FindVoteDto;
 import com.tubeplus.board_service.application.posting.port.out.VotePersistable.SaveVoteDto;
+import com.tubeplus.board_service.global.kafka.KafkaProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +25,7 @@ public class VoteService
 
     private final VotePersistable votePersistence;
     private final PostingPersistable postingPersistence;
-
+    private final KafkaProducer kafkaProducer;
 
     /**/
     //web use case
@@ -40,10 +41,13 @@ public class VoteService
         if (savedVote == null)
             throw new BusinessException(ErrorCode.SAVE_ENTITY_FAILED);
 
-        //todo 카프카로 posting에 vote가 추가되었다는 이벤트를 보내야함
-        postingPersistence.getPostingCommuId(vote.getPostingId())
-                .ifExceptioned.thenThrow(ErrorCode.FIND_ENTITY_FAILED);
-
+        try {
+            Long communityId = postingPersistence.getPostingCommuId(vote.getPostingId())
+                    .ifExceptioned.thenThrow(ErrorCode.FIND_ENTITY_FAILED);
+            kafkaProducer.producerLikePosting(communityId, Long.valueOf(savedVote.getVoteType().getCode()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return savedVote.getId();
     }
 
@@ -59,13 +63,17 @@ public class VoteService
         if (!updated)
             throw new BusinessException(ErrorCode.UPDATE_ENTITY_FAILED);
 
-        //todo 카프카로 posting에 vote가 업데이트 되었다는 이벤트를 보내야함
-
         /**/
         Long updatedTotalVote
                 = votePersistence.getTotalVote(updateInfo.getPostingId())
                 .ifExceptioned.thenThrow(ErrorCode.FIND_ENTITY_FAILED);
-
+        try {
+            Long communityId = postingPersistence.getPostingCommuId(updateInfo.getPostingId())
+                    .ifExceptioned.thenThrow(ErrorCode.FIND_ENTITY_FAILED);
+            kafkaProducer.producerLikePosting(communityId, 2*Long.valueOf(updateInfo.getVoteType().getCode()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return updatedTotalVote;
     }
 
@@ -84,13 +92,22 @@ public class VoteService
 
         votedPostingId = votedPosting.getId();
 
+        Vote vote = votePersistence.findVote(voteId)
+                        .ifExceptioned.thenThrow(ErrorCode.FIND_ENTITY_FAILED)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.FIND_ENTITY_FAILED, "Can't find voted Posting"
+                ));
 
         /**/
         votePersistence.deleteVote(voteId)
                 .ifExceptioned.thenThrow(ErrorCode.DELETE_ENTITY_FAILED);
-
-        //todo 카프카로 posting에 vote가 삭제되었다는 이벤트를 보내야함
-
+        try {
+            Long communityId = postingPersistence.getPostingCommuId(votedPostingId)
+                    .ifExceptioned.thenThrow(ErrorCode.FIND_ENTITY_FAILED);
+            kafkaProducer.producerLikePosting(communityId, (-1)*Long.valueOf(vote.getVoteType().getCode()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         /**/
         Long updatedTotalVote
