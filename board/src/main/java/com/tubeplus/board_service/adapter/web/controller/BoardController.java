@@ -165,7 +165,7 @@ public class BoardController {
     @DeleteMapping("/{id}")
     public ApiResponse deleteBoard
             (
-                    @PathVariable("boardId")
+                    @PathVariable("id")
                     @NotNull @Min(1) Long boardId
             ) {
 
