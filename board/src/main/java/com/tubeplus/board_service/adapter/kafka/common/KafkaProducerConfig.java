@@ -1,4 +1,4 @@
-package com.tubeplus.board_service.global.kafka;
+package com.tubeplus.board_service.adapter.kafka.common;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

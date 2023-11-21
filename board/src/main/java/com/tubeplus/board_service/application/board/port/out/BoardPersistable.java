@@ -3,7 +3,6 @@ package com.tubeplus.board_service.application.board.port.out;
 import com.tubeplus.board_service.application.board.domain.Board;
 import com.tubeplus.board_service.application.board.domain.BoardType;
 import com.tubeplus.board_service.application.board.port.in.BoardUseCase;
-import com.tubeplus.board_service.application.board.port.in.BoardUseCase.BoardProperty;
 import com.tubeplus.board_service.application.board.port.in.BoardUseCase.BoardProperty.BoardCommonProperty;
 import com.tubeplus.board_service.application.board.port.in.BoardUseCase.BoardProperty.TimeLimitBoardProperty;
 import com.tubeplus.board_service.global.Exceptionable;
@@ -32,7 +31,7 @@ public interface BoardPersistable {
         private final boolean visible;
         private final LocalDateTime limitDateTime;
 
-        public static SaveBoardDto of(BoardUseCase.MakeBoardForm form) {
+        public static SaveBoardDto of(BoardUseCase.CreateBoardForm form) {
             log.info(form.toString());
 
             SaveBoardDto saveDto = new SaveBoardDto(

@@ -13,7 +13,7 @@ public interface BoardUseCase {
     // Creator only
     @Data
     @Builder
-    class MakeBoardForm {
+    class CreateBoardForm {
 
         private final Long communityId;
         private final String boardName;
@@ -22,7 +22,7 @@ public interface BoardUseCase {
         private final LocalDateTime limitDateTime;
     }
 
-    Board makeBoard(MakeBoardForm form);
+    Board createBoard(CreateBoardForm form);
 
 
     // Member only

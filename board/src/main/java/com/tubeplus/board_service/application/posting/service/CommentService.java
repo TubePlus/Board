@@ -6,13 +6,12 @@ import com.tubeplus.board_service.application.posting.domain.comment.Comment;
 import com.tubeplus.board_service.application.posting.domain.comment.Comment.CommentViewInfo;
 import com.tubeplus.board_service.application.posting.port.in.PostingCommentUseCase;
 import com.tubeplus.board_service.application.posting.port.in.WebCommentUseCase;
+import com.tubeplus.board_service.application.posting.port.out.CommentEventPublishable;
 import com.tubeplus.board_service.application.posting.port.out.CommentPersistable;
 import com.tubeplus.board_service.application.posting.port.out.CommentPersistable.FindCommentDto;
 import com.tubeplus.board_service.application.posting.port.out.CommentPersistable.SaveCommentDto;
 import com.tubeplus.board_service.application.posting.port.out.CommentPersistable.UpdateCommentDto;
 import com.tubeplus.board_service.application.posting.port.out.PostingPersistable;
-import com.tubeplus.board_service.global.Exceptionable;
-import com.tubeplus.board_service.global.kafka.KafkaProducer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,33 +19,39 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Slf4j
-@Service("commentService")
+@Service
 @RequiredArgsConstructor
-public class CommentService implements WebCommentUseCase, PostingCommentUseCase {
+public class CommentService
+        implements WebCommentUseCase, PostingCommentUseCase {
 
     private final CommentPersistable commentPersistence;
     private final PostingPersistable postingPersistence;
-    private final KafkaProducer kafkaProducer;
+
+    private final CommentEventPublishable eventPublisher;
+
 
     @Override
     public final Comment writeComment(PostCommentForm form) {
 
-        SaveCommentDto dto
-                = SaveCommentDto.builtFrom(form);
+        // db 저장
+        SaveCommentDto dto = SaveCommentDto.builtFrom(form);
 
         Comment savedComment
                 = commentPersistence.saveComment(dto)
                 .ifExceptioned.thenThrow(ErrorCode.SAVE_ENTITY_FAILED);
 
-       Long communityId = postingPersistence.getPostingCommuId(savedComment.getPostingId())
-               .ifExceptioned.thenThrow(ErrorCode.FIND_ENTITY_FAILED);
+
+        //이벤트 publish
+        Long commentedPostingId
+                = savedComment.getPostingId();
+
+        Long communityId
+                = postingPersistence.getPostingCommuId(commentedPostingId)
+                .ifExceptioned.thenThrow(ErrorCode.FIND_ENTITY_FAILED);
 
         // todo : 내 댓글에 대댓글 짜이면 알람 보내기 -> etc parentdId 의 commetUuid를 확인해서 알람 commentAlarm
-        try{
-            kafkaProducer.producerPutComment(communityId, 1L);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        eventPublisher.publishCommented(communityId);
+
         return savedComment;
     }
 
