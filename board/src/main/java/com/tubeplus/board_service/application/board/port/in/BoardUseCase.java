@@ -26,11 +26,11 @@ public interface BoardUseCase {
 
 
     // Member only
-    List<Board> listCommuBoards(BoardListInfo boardListInfo);
+    List<Board> findCommuBoards(FindBoardsInfo boardListInfo);
 
     @Data
     @Builder
-    class BoardListInfo {
+    class FindBoardsInfo {
 
         private final Long communityId;
         private final Boolean visible;

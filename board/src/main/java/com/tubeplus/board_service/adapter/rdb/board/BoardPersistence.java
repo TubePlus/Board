@@ -17,6 +17,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 
+@SuppressWarnings("UnnecessaryLocalVariable")
 @Slf4j
 @RequiredArgsConstructor
 @Component("boardPersistence")
@@ -61,15 +62,20 @@ public class BoardPersistence implements BoardPersistable {
     @Override
     public Exceptionable<List<Board>, FindBoardListDto> findBoardList(FindBoardListDto findDto) {
 
-        Function<FindBoardListDto, List<Board>> findBoardList = dto -> {
-            List<BoardEntity> foundBoardEntities = queryDslRepo.findBoards(dto);
+        return Exceptionable.act(dto ->
+        {
+            List<BoardEntity> foundBoardEntities
+                    = queryDslRepo.findBoards(dto);
 
-            List<Board> foundBoards = foundBoardEntities.stream().map(BoardEntity::buildDomain).collect(Collectors.toList());
+            List<Board> foundBoards
+                    = foundBoardEntities.stream()
+                    .map(BoardEntity::buildDomain)
+                    .collect(Collectors.toList());
 
             return foundBoards;
-        };
 
-        return new Exceptionable<>(findBoardList, findDto);
+        }, findDto);
+
     }
 
 

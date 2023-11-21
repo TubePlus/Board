@@ -160,23 +160,3 @@ public class PostingPersistence implements PostingPersistable {
     }
 
 }
-
-
-//    @Override
-//    @Transactional(readOnly = true)
-//    public Exceptionable<Page<Posting>, PagePostingsDto> pagePostings(PagePostingsDto pagePostingsDto) {
-//
-//        Function<PagePostingsDto, Page<Posting>> pagePostings
-//                = (dto) -> {
-//
-//            Page<PostingEntity> pagedEntities
-//                    = queryDslRepo.pagePostingEntities(dto);
-//
-//            Page<Posting> pagedPostings
-//                    = pagedEntities.map(PostingEntity::buildDomain);
-//
-//            return pagedPostings;
-//        };
-//
-//        return new Exceptionable<>(pagePostings, pagePostingsDto);
-//    }

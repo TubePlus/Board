@@ -5,7 +5,9 @@ import com.tubeplus.board_service.application.board.domain.BoardType;
 import com.tubeplus.board_service.application.board.port.in.BoardUseCase;
 import com.tubeplus.board_service.application.board.port.in.BoardUseCase.BoardProperty.BoardCommonProperty;
 import com.tubeplus.board_service.application.board.port.in.BoardUseCase.BoardProperty.TimeLimitBoardProperty;
+import com.tubeplus.board_service.application.board.port.in.BoardUseCase.FindBoardsInfo;
 import com.tubeplus.board_service.global.Exceptionable;
+import jakarta.transaction.Transactional;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -60,20 +62,24 @@ public interface BoardPersistable {
         private final Boolean softDelete;
         private final String nameToSearch;
 
-        public static FindBoardListDto of(BoardUseCase.BoardListInfo findInfo) {
+        public static FindBoardListDto of(FindBoardsInfo findInfo) {
             log.info(findInfo.toString());
 
-            FindBoardListDto findListDto = new FindBoardListDto(
-                    findInfo.getCommunityId(),
-                    findInfo.getVisible(),
-                    findInfo.getSoftDelete(),
-                    findInfo.getNameToSearch()
-            );
+            FindBoardListDto findListDto
+                    = new FindBoardListDto
+                    (
+                            findInfo.getCommunityId(),
+                            findInfo.getVisible(),
+                            findInfo.getSoftDelete(),
+                            findInfo.getNameToSearch()
+                    );
             log.info(findInfo.toString());
 
             return findListDto;
         }
     }
+
+
 
 
     Exceptionable<Board, Long> findBoard(Long boardId);
