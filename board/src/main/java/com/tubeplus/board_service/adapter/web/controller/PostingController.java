@@ -138,7 +138,7 @@ public class PostingController {
                     @PathVariable("id") @Min(1) long id
             ) {
 
-        postingService.modifyDeletePosting(ModifySoftDeleteInfo.of(id, true));
+        postingService.modifyPostingDelete(ModifySoftDeleteInfo.of(id, true));
 
         return ApiResponse.ofSuccess(null);
     }

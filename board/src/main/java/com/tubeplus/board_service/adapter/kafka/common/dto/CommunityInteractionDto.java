@@ -1,4 +1,4 @@
-package com.tubeplus.board_service.global.kafka.dto;
+package com.tubeplus.board_service.adapter.kafka.common.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

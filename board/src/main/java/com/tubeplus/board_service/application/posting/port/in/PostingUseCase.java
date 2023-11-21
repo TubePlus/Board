@@ -123,7 +123,7 @@ public interface PostingUseCase {
     }
 
 
-    void modifyDeletePosting(ModifySoftDeleteInfo info);
+    void modifyPostingDelete(ModifySoftDeleteInfo info);
 
     @Data(staticConstructor = "of")
     class ModifySoftDeleteInfo {

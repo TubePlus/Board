@@ -6,14 +6,14 @@ import com.tubeplus.board_service.adapter.web.error.BusinessException;
 import com.tubeplus.board_service.adapter.web.error.ErrorCode;
 import com.tubeplus.board_service.application.board.domain.Board;
 import com.tubeplus.board_service.application.board.port.in.BoardUseCase;
-import com.tubeplus.board_service.adapter.web.controller.vo.board.ReqMakeBoardBody;
+import com.tubeplus.board_service.adapter.web.controller.vo.board.ReqCreateBoardBody;
 import com.tubeplus.board_service.adapter.web.common.ApiResponse;
 import com.tubeplus.board_service.adapter.web.controller.vo.board.BoardSearchType;
 
 import com.tubeplus.board_service.application.board.port.in.BoardUseCase.BoardProperty;
 import com.tubeplus.board_service.application.board.port.in.BoardUseCase.BoardProperty.BoardCommonProperty;
 import com.tubeplus.board_service.application.board.port.in.BoardUseCase.BoardProperty.TimeLimitBoardProperty;
-import com.tubeplus.board_service.application.board.port.in.BoardUseCase.MakeBoardForm;
+import com.tubeplus.board_service.application.board.port.in.BoardUseCase.CreateBoardForm;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -43,19 +43,19 @@ public class BoardController {
 
     @Operation(summary = "게시판 생성", description = "게시판 생성, 생성된 게시판 id 반환")
     @PostMapping()
-    public ApiResponse<Long> makeBoard
+    public ApiResponse<Long> createBoard
             (
-                    @Valid @RequestBody ReqMakeBoardBody reqBody
+                    @Valid @RequestBody ReqCreateBoardBody reqBody
             ) {
 
-        MakeBoardForm form = reqBody.buildForm();
+        CreateBoardForm form = reqBody.buildForm();
         log.info(form.toString());
 
-        Board postedBoard = boardService.makeBoard(form);
+        Board createdBoard = boardService.createBoard(form);
 
-        Long postedBoardId = postedBoard.getId();
+        Long createdBoardId = createdBoard.getId();
 
-        return ApiResponse.ofSuccess(postedBoardId);
+        return ApiResponse.ofSuccess(createdBoardId);
     }
 
 

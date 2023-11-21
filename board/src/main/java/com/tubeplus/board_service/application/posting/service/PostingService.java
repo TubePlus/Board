@@ -23,10 +23,10 @@ import java.util.stream.Collectors;
 import static com.tubeplus.board_service.application.posting.port.out.PostingPersistable.*;
 
 
+@SuppressWarnings("UnnecessaryLocalVariable")
 @Slf4j
+@Service
 @RequiredArgsConstructor
-
-@Service("Posting service")
 public class PostingService implements PostingUseCase {
 
     private final PostingPersistable postingPersistence;
@@ -92,17 +92,17 @@ public class PostingService implements PostingUseCase {
                 = FindPostingsDto.of(infoToFeed);
 
         /**/
-        List<PostingSimpleData> postingFeedData;
+        List<PostingSimpleData> postingDataToFeed;
 
-        List<Posting> foundFeedPostings
+        List<Posting> foundPostingsToFeed
                 = postingPersistence.findPostings(findDto)
                 .ifExceptioned.thenThrow(ErrorCode.FIND_ENTITY_FAILED);
 
-        if (foundFeedPostings.isEmpty())
+        if (foundPostingsToFeed.isEmpty())
             throw new BusinessException(ErrorCode.NOT_FOUND_RESOURCE, "No postings to feed condition found.");
 
-        postingFeedData
-                = foundFeedPostings.stream()
+        postingDataToFeed
+                = foundPostingsToFeed.stream()
                 .map(PostingSimpleData::builtFrom)
                 .collect(Collectors.toList());
 
@@ -110,7 +110,7 @@ public class PostingService implements PostingUseCase {
         Long lastCursoredId;
 
         Posting lastFoundPosting
-                = foundFeedPostings.get(foundFeedPostings.size() - 1);
+                = foundPostingsToFeed.get(foundPostingsToFeed.size() - 1);
 
         lastCursoredId = lastFoundPosting.getId();
 
@@ -121,14 +121,16 @@ public class PostingService implements PostingUseCase {
         findDto.getFieldsFindCondition()
                 .setCursorId(lastCursoredId);
 
-        hasNextFeed = Exceptionable.act(postingPersistence::existNextPosting, findDto)
+        hasNextFeed
+                = Exceptionable.act(postingPersistence::existNextPosting, findDto)
                 .ifExceptioned.thenThrow(new BusinessException(
-                        ErrorCode.FIND_ENTITY_FAILED, "Failed to check if there is next posting to feed."));
+                        ErrorCode.FIND_ENTITY_FAILED, "Failed to check if there is next posting to feed."
+                ));
 
 
         /**/
         return Feed.of(
-                postingFeedData,
+                postingDataToFeed,
                 lastCursoredId,
                 hasNextFeed
         );
@@ -166,7 +168,7 @@ public class PostingService implements PostingUseCase {
     @Override
     public Posting modifyPostingArticle(long postingId, ModifyArticleForm form) {
 
-        // User 권한점검: Posting 작성자인지 확인
+        // User 권한 점검
         String authorUuid
                 = this.getPosting(postingId).getAuthorUuid();
 
@@ -185,7 +187,7 @@ public class PostingService implements PostingUseCase {
     }
 
     @Override
-    public void modifyDeletePosting(ModifySoftDeleteInfo info) {
+    public void modifyPostingDelete(ModifySoftDeleteInfo info) {
 
         UpdateSoftDeleteDto dto = UpdateSoftDeleteDto.builtFrom(info);
 
