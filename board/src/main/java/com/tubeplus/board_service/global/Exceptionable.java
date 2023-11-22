@@ -76,6 +76,9 @@ public class Exceptionable<RETURN, PARAM> {
                         + "Exceptionable.act caught: "
                         + e.getMessage()
                         + "\n-----------------\n");
+
+                e.printStackTrace();
+
                 throw runtimeException;
             }
         }
