@@ -174,18 +174,24 @@ public class PostingService implements PostingUseCase {
     @Override
     public Posting modifyPostingArticle(long postingId, ModifyArticleForm form) {
 
-        // User 권한 점검
-        String authorUuid
-                = this.getPosting(postingId).getAuthorUuid();
+        /**/
+        boolean userIsNotAuthor;
 
-        if (!authorUuid.equals(form.getUserUuid()))
+        String authorUuid = this.getPosting(postingId).getAuthorUuid();
+
+        userIsNotAuthor = !authorUuid.equals(form.getUserUuid());
+
+        if (userIsNotAuthor)
             throw new BusinessException(ErrorCode.UNAUTHORIZED);
 
 
-        // 글 내용, 제목 수정
-        UpdateArticleDto dto = UpdateArticleDto.builtFrom(postingId, form);
+        /**/
+        Posting modifiedPosting;
 
-        Posting modifiedPosting
+        UpdateArticleDto dto
+                = UpdateArticleDto.builtFrom(postingId, form);
+
+        modifiedPosting
                 = postingPersistence.updatePosting(dto)
                 .ifExceptioned.thenThrow(ErrorCode.UPDATE_ENTITY_FAILED);
 

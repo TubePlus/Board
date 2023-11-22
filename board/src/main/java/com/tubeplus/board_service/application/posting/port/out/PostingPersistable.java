@@ -190,6 +190,7 @@ public interface PostingPersistable {
     class UpdateArticleDto extends BaseUpdatePostingDto {
         private final String title;
         private final String contents;
+        private final boolean withImage;
 
         public static UpdateArticleDto builtFrom(long postingId,
                                                  ModifyArticleForm form) {
@@ -197,6 +198,7 @@ public interface PostingPersistable {
                     .postingId(postingId)
                     .title(form.getTitle())
                     .contents(form.getContents())
+                    .withImage(form.isWithImage())
                     .build();
         }
 
