@@ -2,6 +2,7 @@ package com.tubeplus.board_service.adapter.web.controller.vo.posting;
 
 
 import lombok.AllArgsConstructor;
+import org.springframework.core.convert.converter.Converter;
 
 import java.util.function.Predicate;
 
@@ -9,7 +10,7 @@ import java.util.function.Predicate;
 @AllArgsConstructor
 public enum PostingsSearchTypeReq {
 
-    ALL_FOR_ADMIN(reqParam -> true),//todo admin 권한 조회관련 프론트와 상의
+    ALL(reqParam -> false),
     BOARD_ID(reqParam
             -> reqParam.getBoardId() == null
             || reqParam.getBoardId() < 1),
@@ -26,7 +27,7 @@ public enum PostingsSearchTypeReq {
     public final Predicate<VoReadPostingSimpleData.Req> checkBadRequest;
 
 
-    public static class Converter implements org.springframework.core.convert.converter.Converter<String, PostingsSearchTypeReq> {
+    public static class PostingsSearchTypeReqConverter implements Converter<String, PostingsSearchTypeReq> {
 
         @Override
         public PostingsSearchTypeReq convert(String name) {
