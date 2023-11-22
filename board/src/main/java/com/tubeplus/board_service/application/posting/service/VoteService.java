@@ -33,6 +33,10 @@ public class VoteService
     @Override
     public Long votePosting(Vote voteInfo) {
 
+        /**/
+        filterAlreadyVoted(voteInfo);
+
+        /**/
         SaveVoteDto dto = SaveVoteDto.builtFrom(voteInfo);
 
         Vote savedVote
@@ -42,9 +46,22 @@ public class VoteService
         if (savedVote == null)
             throw new BusinessException(ErrorCode.SAVE_ENTITY_FAILED);
 
+        /**/
         eventPublisher.publishPostingVoted(postingPersistence, savedVote);
 
+        /**/
         return savedVote.getId();
+    }
+
+    protected void filterAlreadyVoted(Vote voteInfo) {
+
+        long postingId = voteInfo.getPostingId();
+        String voterUuid = voteInfo.getVoterUuid();
+
+        findUserVote(postingId, voterUuid)
+                .ifPresent(vote -> {
+                    throw new BusinessException(ErrorCode.SAVE_ENTITY_FAILED, "User already voted");
+                });
     }
 
 
