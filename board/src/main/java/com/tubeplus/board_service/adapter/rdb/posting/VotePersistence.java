@@ -29,7 +29,8 @@ public class VotePersistence
     @Override
     public Exceptionable<Optional<Vote>, FindVoteDto> findVote(FindVoteDto findVoteDto) {
 
-        return Exceptionable.act(dto -> {
+        return Exceptionable.act(dto ->
+        {
 
             Optional<VoteEntity> foundEntity
                     = voteJpaDataRepo.findByPostingIdAndVoterUuid
@@ -41,6 +42,7 @@ public class VotePersistence
             return foundVote;
 
         }, findVoteDto);
+
     }
 
     @Override
