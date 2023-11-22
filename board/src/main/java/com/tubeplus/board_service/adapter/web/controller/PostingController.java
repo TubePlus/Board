@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -58,15 +59,10 @@ public class PostingController {
     @GetMapping()
     public ApiResponse<VoReadPostingSimpleData.Res> readPostingSimpleData
             (
-                    @RequestParam("search-type-req") @NotBlank String searchTypeReq,
-                    @RequestParam("view-type-req") @NotBlank String viewTypeReq,
+                    @RequestParam("search-type-req") @NotNull PostingsSearchTypeReq searchType, //@NotBlank String searchTypeReq,
+                    @RequestParam("view-type-req") @NotNull PostingsViewTypeReq viewType, //@NotBlank String viewTypeReq,
                     VoReadPostingSimpleData.Req reqParam
             ) {
-        //todo webConfigurer formatter 고장나서 일단 수동 변환, 고치기
-        PostingsSearchTypeReq searchType
-                = PostingsSearchTypeReq.valueOf(searchTypeReq);
-        PostingsViewTypeReq viewType
-                = PostingsViewTypeReq.valueOf(viewTypeReq);
 
         if (searchType.checkBadRequest.test(reqParam)
                 || viewType.checkBadRequest.test(reqParam))
