@@ -123,7 +123,7 @@ public class PostingController {
             ) {
 
         ModifyPinStateInfo updateInfo
-                = reqBody.buildUpdateInfoOf(postingId);
+                = ModifyPinStateInfo.of(postingId, reqBody.isPinned());
 
         postingService.modifyPostingPinState(updateInfo);
 
