@@ -6,25 +6,57 @@ import com.tubeplus.board_service.application.board.port.out.BoardPersistable;
 
 import com.tubeplus.board_service.adapter.web.error.BusinessException;
 import com.tubeplus.board_service.adapter.web.error.ErrorCode;
+import com.tubeplus.board_service.application.board.port.out.BoardPersistable.FindBoardListDto;
 import com.tubeplus.board_service.application.board.port.out.BoardPersistable.SaveBoardDto;
 import com.tubeplus.board_service.application.board.port.out.BoardPersistable.UpdateCommonPropertyDto;
 import com.tubeplus.board_service.application.board.port.out.BoardPersistable.UpdateTimeLimitPropertyDto;
 import com.tubeplus.board_service.application.board.port.out.BoardEventPublishable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
-@Service("Board service")
-@RequiredArgsConstructor
+@EnableScheduling
+
 @Slf4j
+@Service
+@RequiredArgsConstructor
 public class BoardService implements BoardUseCase {
 
     private final BoardPersistable boardPersistence;
 
     private final BoardEventPublishable eventPublisher;
+
+
+    //todo limit time 지나면 삭제하는 스케줄러 달기
+//    @Scheduled(cron = "0 0 3 0/7 * *")
+//    private void deleteBoardsAfterTimeLimit() {
+//
+//        List<Board> timeLimitBoards
+//                = boardPersistence.findTimeLimitBoards()
+//                .ifExceptioned.thenThrow(ErrorCode.FIND_ENTITY_FAILED)
+//                .stream()
+//                .filter(this::isNowValidBoard)
+//                .collect(Collectors.toList());
+//
+//        if (timeLimitBoards.isEmpty()) return;
+//
+//        timeLimitBoards.forEach(board -> {
+//
+//            boardPersistence.softDeleteBoard(board.getId())
+//                    .ifExceptioned.thenThrow(ErrorCode.DELETE_ENTITY_FAILED);
+//
+//            eventPublisher.publishBoardDeleted(board);
+//        });
+//
+//        lastDeletedTimeLimitBoardId = timeLimitBoards.get(timeLimitBoards.size() - 1).getId();
+//    }
 
 
     @Override
@@ -44,20 +76,35 @@ public class BoardService implements BoardUseCase {
 
 
     @Override
-    public List<Board> listCommuBoards(BoardListInfo findInfo) {
+    public List<Board> findCommuBoards(FindBoardsInfo findInfo) {
 
-        BoardPersistable.FindBoardListDto findDto
-                = BoardPersistable.FindBoardListDto.of(findInfo);
+        FindBoardListDto findDto
+                = FindBoardListDto.of(findInfo);
 
         List<Board> foundBoards
                 = boardPersistence.findBoardList(findDto)
-                .ifExceptioned.thenThrow(ErrorCode.FIND_ENTITY_FAILED);
+                .ifExceptioned.thenThrow(ErrorCode.FIND_ENTITY_FAILED)
+                .stream()
+                .filter(this::isNowValidBoard)
+                .collect(Collectors.toList());
+
 
         if (foundBoards.isEmpty())
             throw new BusinessException(ErrorCode.NOT_FOUND_RESOURCE);
 
         return foundBoards;
     }
+
+    private boolean isNowValidBoard(Board board) {
+
+        LocalDateTime boardLimitTime
+                = board.getLimitDateTime();
+
+        if (boardLimitTime == null) return true;
+
+        return LocalDateTime.now().isBefore(boardLimitTime);
+    }
+
 
     @Override
     public Board findBoard(Long boardId) {
@@ -68,6 +115,7 @@ public class BoardService implements BoardUseCase {
 
         return foundBoard;
     }
+
 
     @Override
     public void updateBoardProperty(Long boardId, BoardProperty updateInfo) {

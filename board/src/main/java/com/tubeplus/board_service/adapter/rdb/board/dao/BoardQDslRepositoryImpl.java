@@ -33,7 +33,6 @@ public class BoardQDslRepositoryImpl implements BoardQDslRepositoryCustom {
         QBoardEntity board
                 = QBoardEntity.boardEntity;
 
-
         BooleanExpression commuIdEq
                 = board.communityId.eq(dto.getCommunityId());
 

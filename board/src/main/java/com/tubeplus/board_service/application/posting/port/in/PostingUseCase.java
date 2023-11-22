@@ -104,8 +104,7 @@ public interface PostingUseCase {
 
     void modifyPostingPinState(ModifyPinStateInfo info);
 
-    @Data
-    @Builder
+    @Data(staticConstructor = "of")
     class ModifyPinStateInfo {
         private final long postingId;
         private final boolean pinned;

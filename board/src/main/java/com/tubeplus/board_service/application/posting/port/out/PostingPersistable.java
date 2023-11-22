@@ -173,14 +173,13 @@ public interface PostingPersistable {
     @Data
     @SuperBuilder
     @EqualsAndHashCode(callSuper = true)
-    class UpdatePinStateDto
-            extends BaseUpdatePostingDto {
+    class UpdatePinStateDto extends BaseUpdatePostingDto {
         private final boolean pin;
 
-        public static UpdatePinStateDto builtFrom(ModifyPinStateInfo form) {
+        public static UpdatePinStateDto builtFrom(ModifyPinStateInfo info) {
             return UpdatePinStateDto.builder()
-                    .postingId(form.getPostingId())
-                    .pin(form.isPinned())
+                    .postingId(info.getPostingId())
+                    .pin(info.isPinned())
                     .build();
         }
     }
@@ -188,8 +187,7 @@ public interface PostingPersistable {
     @Data
     @SuperBuilder
     @EqualsAndHashCode(callSuper = true)
-    class UpdateArticleDto
-            extends BaseUpdatePostingDto {
+    class UpdateArticleDto extends BaseUpdatePostingDto {
         private final String title;
         private final String contents;
 
@@ -207,8 +205,7 @@ public interface PostingPersistable {
     @Data
     @SuperBuilder
     @EqualsAndHashCode(callSuper = true)
-    class UpdateSoftDeleteDto
-            extends BaseUpdatePostingDto {
+    class UpdateSoftDeleteDto extends BaseUpdatePostingDto {
 
         private final boolean softDelete;
 

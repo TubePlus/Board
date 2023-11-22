@@ -9,6 +9,7 @@ import lombok.*;
 
 
 @Getter
+@Setter
 @Builder(toBuilder = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)

@@ -7,6 +7,7 @@ import com.tubeplus.board_service.application.posting.domain.posting.PostingView
 import com.tubeplus.board_service.application.posting.port.in.PostingCommentUseCase;
 import com.tubeplus.board_service.application.posting.port.in.PostingUseCase;
 import com.tubeplus.board_service.application.posting.port.in.PostingVoteUseCase;
+import com.tubeplus.board_service.application.posting.port.out.PostingEventPublishable;
 import com.tubeplus.board_service.application.posting.port.out.PostingPersistable;
 import com.tubeplus.board_service.global.Exceptionable;
 import lombok.RequiredArgsConstructor;
@@ -29,9 +30,12 @@ import static com.tubeplus.board_service.application.posting.port.out.PostingPer
 @RequiredArgsConstructor
 public class PostingService implements PostingUseCase {
 
-    private final PostingPersistable postingPersistence;
     private final PostingVoteUseCase voteService;
     private final PostingCommentUseCase commentService;
+
+    private final PostingPersistable postingPersistence;
+
+    private final PostingEventPublishable eventPublisher;
 
 
     @Override
@@ -40,7 +44,8 @@ public class PostingService implements PostingUseCase {
         Posting foundPosting
                 = this.getPosting(postingId);
 
-        //todo 읽음 집계처리 - 카프카(log) - foundPosting.getBoardId()
+        //todo 읽음 집계처리 - 카프카(log) - foundPosting.getBoardId() - 아래 함수에서 구현
+        eventPublisher.publishPostingRead(foundPosting);
 
         return PostingView.madeFrom(
                 foundPosting,
@@ -106,6 +111,7 @@ public class PostingService implements PostingUseCase {
                 .map(PostingSimpleData::builtFrom)
                 .collect(Collectors.toList());
 
+
         /**/
         Long lastCursoredId;
 
@@ -118,8 +124,7 @@ public class PostingService implements PostingUseCase {
         /**/
         boolean hasNextFeed;
 
-        findDto.getFieldsFindCondition()
-                .setCursorId(lastCursoredId);
+        findDto.getFieldsFindCondition().setCursorId(lastCursoredId);
 
         hasNextFeed
                 = Exceptionable.act(postingPersistence::existNextPosting, findDto)
@@ -165,6 +170,7 @@ public class PostingService implements PostingUseCase {
             throw new BusinessException(ErrorCode.UPDATE_ENTITY_FAILED);
     }
 
+
     @Override
     public Posting modifyPostingArticle(long postingId, ModifyArticleForm form) {
 
@@ -185,6 +191,7 @@ public class PostingService implements PostingUseCase {
 
         return modifiedPosting;
     }
+
 
     @Override
     public void modifyPostingDelete(ModifySoftDeleteInfo info) {

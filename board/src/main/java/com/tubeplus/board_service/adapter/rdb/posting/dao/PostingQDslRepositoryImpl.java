@@ -21,6 +21,7 @@ import java.util.List;
 import static com.tubeplus.board_service.application.posting.port.out.PostingPersistable.*;
 
 
+@SuppressWarnings("UnnecessaryLocalVariable")
 @Slf4j
 @Repository
 @RequiredArgsConstructor

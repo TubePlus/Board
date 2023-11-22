@@ -21,12 +21,4 @@ public class ReqUpdatePinStateBody {
         this.pinned = pinned;
     }
 
-
-    public ModifyPinStateInfo buildUpdateInfoOf(long postingId) {
-
-        return ModifyPinStateInfo.builder()
-                .postingId(postingId)
-                .pinned(pinned)
-                .build();
-    }
 }

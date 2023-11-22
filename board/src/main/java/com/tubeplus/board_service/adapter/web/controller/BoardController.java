@@ -70,8 +70,8 @@ public class BoardController {
 
         log.info(communityId.toString());
 
-        BoardUseCase.BoardListInfo findInfo
-                = BoardUseCase.BoardListInfo.builder()
+        BoardUseCase.FindBoardsInfo findInfo
+                = BoardUseCase.FindBoardsInfo.builder()
                 .communityId(communityId)
                 .visible(searchType.getVisible())
                 .softDelete(searchType.getErase())
@@ -80,7 +80,7 @@ public class BoardController {
         log.info(findInfo.toString());
 
 
-        List<Board> foundBoards = boardService.listCommuBoards(findInfo);
+        List<Board> foundBoards = boardService.findCommuBoards(findInfo);
 
 
         return ApiResponse.ofSuccess(foundBoards);

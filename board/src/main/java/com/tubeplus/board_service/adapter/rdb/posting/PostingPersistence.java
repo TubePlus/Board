@@ -21,7 +21,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 
-@SuppressWarnings("ConstantConditions")
+@SuppressWarnings({"ConstantConditions", "UnnecessaryLocalVariable"})
 @Slf4j
 @RequiredArgsConstructor
 @Component("postingPersistence")
@@ -119,16 +119,14 @@ public class PostingPersistence implements PostingPersistable {
     public Exceptionable<Posting, BaseUpdatePostingDto> updatePosting(BaseUpdatePostingDto updateDto) {
         //todo 영속성 컨텍스트 공부해보고, 최적화 가능하다면 queryDsl로 바꾸기 - 하나의 엔티티만 컨텍스트 초기화 되는지 확인
 
-        Function<BaseUpdatePostingDto, Posting> updatePosting
-                = (dto) -> {
+        return Exceptionable.act(dto ->
+        {
 
             // dto로 요청된 필드 수정 엔티티에 반영
             PostingEntity entityToUpdate
                     = em.find(PostingEntity.class, dto.getPostingId());
 
-            Class dtoClazz = dto.getClass();
-            modelMapper.map(dtoClazz.cast(dto), entityToUpdate);
-
+            modelMapper.map(dto, entityToUpdate);
 
             // 엔티티 수정, 수정된 엔티티로 도메인 생성 및 반환
             PostingEntity updatedEntity
@@ -139,15 +137,16 @@ public class PostingPersistence implements PostingPersistable {
 
             return updatedPosting;
 
-        };
+        }, updateDto);
 
-        return new Exceptionable<>(updatePosting, updateDto);
     }
+
 
     @Override
     public Exceptionable<Long, Long> getPostingCommuId(Long postingId) {
 
-        return Exceptionable.act(id -> {
+        return Exceptionable.act(id ->
+        {
 
             PostingEntity postingEntity
                     = jpaDataRepo.findById(id)
@@ -160,23 +159,3 @@ public class PostingPersistence implements PostingPersistable {
     }
 
 }
-
-
-//    @Override
-//    @Transactional(readOnly = true)
-//    public Exceptionable<Page<Posting>, PagePostingsDto> pagePostings(PagePostingsDto pagePostingsDto) {
-//
-//        Function<PagePostingsDto, Page<Posting>> pagePostings
-//                = (dto) -> {
-//
-//            Page<PostingEntity> pagedEntities
-//                    = queryDslRepo.pagePostingEntities(dto);
-//
-//            Page<Posting> pagedPostings
-//                    = pagedEntities.map(PostingEntity::buildDomain);
-//
-//            return pagedPostings;
-//        };
-//
-//        return new Exceptionable<>(pagePostings, pagePostingsDto);
-//    }
