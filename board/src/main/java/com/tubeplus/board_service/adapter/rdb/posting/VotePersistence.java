@@ -29,19 +29,20 @@ public class VotePersistence
     @Override
     public Exceptionable<Optional<Vote>, FindVoteDto> findVote(FindVoteDto findVoteDto) {
 
-        return Exceptionable.act(dto -> {
+        return Exceptionable.act(dto ->
+        {
 
-                    VoteEntity foundEntity
-                            = voteJpaDataRepo.findByPostingIdAndVoterUuid
-                            (dto.getPostingId(), dto.getVoterUuid());
+            Optional<VoteEntity> foundEntity
+                    = voteJpaDataRepo.findByPostingIdAndVoterUuid
+                    (dto.getPostingId(), dto.getVoterUuid());
 
-                    Vote foundVote
-                            = foundEntity.buildDomain();
+            Optional<Vote> foundVote
+                    = foundEntity.map(VoteEntity::buildDomain);
 
-                    return Optional.of(foundVote);
-                }
+            return foundVote;
 
-                , findVoteDto);
+        }, findVoteDto);
+
     }
 
     @Override
@@ -84,7 +85,6 @@ public class VotePersistence
 
         }, saveDto);
     }
-
 
 
     @Override

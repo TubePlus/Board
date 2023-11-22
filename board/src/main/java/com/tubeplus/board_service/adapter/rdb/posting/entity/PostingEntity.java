@@ -30,9 +30,8 @@ public class PostingEntity extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "board_posting_list",
-            joinColumns = @JoinColumn(name = "board_id"),
-            inverseJoinColumns = @JoinColumn(name = "id")
-    )
+            joinColumns = @JoinColumn(name = "posting_id"),
+            inverseJoinColumns = @JoinColumn(name = "board_id"))
     private BoardEntity board;
 
     @Column(name = "pin", nullable = false)
