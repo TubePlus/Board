@@ -119,6 +119,7 @@ public interface PostingUseCase {
         private final String userUuid;
         private final String title;
         private final String contents;
+        private final boolean withImage;
     }
 
 

@@ -19,6 +19,8 @@ public class ReqModifyPostingBody {
     @NotBlank
     private final String contents;
 
+    private final boolean withImage;
+
 
     public ModifyArticleForm buildForm() {
 
@@ -27,6 +29,7 @@ public class ReqModifyPostingBody {
                 .userUuid(userUuid)
                 .title(title)
                 .contents(contents)
+                .withImage(withImage)
                 .build();
     }
 }
