@@ -30,18 +30,24 @@ public class PostingView {
 
     private final boolean withImage;
 
+    private final long commentsCount;
+
 
     public static PostingView madeFrom(Posting posting,
                                        String userUuid,
                                        PostingVoteUseCase voteService,
                                        PostingCommentUseCase commentService) {
 
-        FindVoteDto dto = FindVoteDto.of(posting.getId(), userUuid);
-
+        /**/
         Long userVoteId
                 = voteService.findUserVote(posting.getId(), userUuid)
                 .map(Vote::getId).orElse(null);
 
+        /**/
+        long commentsCount
+                = commentService.countComments(posting.getId());
+
+        /**/
         return PostingView.builder()
                 .authorUuid(posting.getAuthorUuid())
                 .voteCount(posting.getVoteCount())
@@ -49,6 +55,7 @@ public class PostingView {
                 .title(posting.getTitle())
                 .userVoteId(userVoteId)
                 .withImage(posting.isWithImage())
+                .commentsCount(commentsCount)
                 .build();
     }
 

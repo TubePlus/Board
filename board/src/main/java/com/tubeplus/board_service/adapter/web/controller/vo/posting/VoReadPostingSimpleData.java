@@ -2,11 +2,12 @@ package com.tubeplus.board_service.adapter.web.controller.vo.posting;
 
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.tubeplus.board_service.application.posting.domain.posting.PostingFeedData;
 import com.tubeplus.board_service.application.posting.port.in.PostingUseCase.Feed;
 import com.tubeplus.board_service.application.posting.port.in.PostingUseCase.FeedRequest;
 import com.tubeplus.board_service.application.posting.port.in.PostingUseCase.InfoToFeedPostingData;
 import com.tubeplus.board_service.application.posting.port.in.PostingUseCase.InfoToPagePostingData;
-import com.tubeplus.board_service.application.posting.port.in.PostingUseCase.PostingSimpleData;
+import com.tubeplus.board_service.application.posting.domain.posting.PostingPageView;
 import com.tubeplus.board_service.application.posting.port.in.PostingUseCase.SearchPostingsInfo;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
@@ -85,15 +86,15 @@ public class VoReadPostingSimpleData {
     @Slf4j
     public static class Res {
 
-        private final Page<PostingSimpleData> pagedPostingData;
-        private final Feed<PostingSimpleData> fedPostingData;
+        private final Page<PostingPageView> pagedPostingData;
+        private final Feed<PostingFeedData> fedPostingData;
 
-        public static Res of(Page<PostingSimpleData> pagedPostingData) {
+        public static Res of(Page<PostingPageView> pagedPostingData) {
 
             return new Res(pagedPostingData, null);
         }
 
-        public static Res of(Feed<PostingSimpleData> fedPostingData) {
+        public static Res of(Feed<PostingFeedData> fedPostingData) {
 
             return new Res(null, fedPostingData);
         }

@@ -2,6 +2,8 @@ package com.tubeplus.board_service.application.posting.service;
 
 import com.tubeplus.board_service.adapter.web.error.BusinessException;
 import com.tubeplus.board_service.adapter.web.error.ErrorCode;
+import com.tubeplus.board_service.application.posting.domain.posting.PostingFeedData;
+import com.tubeplus.board_service.application.posting.domain.posting.PostingPageView;
 import com.tubeplus.board_service.application.posting.domain.posting.Posting;
 import com.tubeplus.board_service.application.posting.domain.posting.PostingView;
 import com.tubeplus.board_service.application.posting.port.in.PostingCommentUseCase;
@@ -57,19 +59,19 @@ public class PostingService implements PostingUseCase {
 
 
     @Override
-    public Page<PostingSimpleData> pagePostingSimpleData(InfoToPagePostingData infoToPage) {
+    public Page<PostingPageView> pagePostingSimpleData(InfoToPagePostingData infoToPage) {
 
-        //Page 생성 위한 db 조회
+        /**/
+        List<Posting> foundPagePostings;
+
         FindPostingsDto dto = FindPostingsDto.of(infoToPage);
 
-        List<Posting> foundPagePostings
-                = postingPersistence.findPostings(dto)
+        foundPagePostings = postingPersistence.findPostings(dto)
                 .ifExceptioned.thenThrow(ErrorCode.FIND_ENTITY_FAILED);
 
         if (foundPagePostings.isEmpty())
             throw new BusinessException(
-                    ErrorCode.NOT_FOUND_RESOURCE, "No postings to page found."
-            );
+                    ErrorCode.NOT_FOUND_RESOURCE, "No postings to page found.");
 
 
         //count 쿼리 최적화 위한 함수형 변수
@@ -78,45 +80,56 @@ public class PostingService implements PostingUseCase {
                 .ifExceptioned.thenThrow(ErrorCode.COUNT_ENTITY_FAILED);
 
 
-        //Page 생성
+        /**/
+        Page<PostingPageView> pagedPostingData;
+
         Page<Posting> pagedPostings //todo 첫페이지랑 마지막 언저리페이지들만 count 쿼리 날리도록 최적화 수정
                 = PageableExecutionUtils.getPage // PageableExecutionUtils.getPage: count 쿼리 최적화 위해 사용
                 (foundPagePostings, infoToPage.getPageReq(), countPostingsFunction);
 
-        Page<PostingSimpleData> pagedPostingData
-                = pagedPostings.map(PostingSimpleData::builtFrom);
+        pagedPostingData
+                = pagedPostings.map(
+                posting ->
+                        PostingPageView.builtFrom(
+                                posting,
+                                commentService.countComments(posting.getId())
+                        )
+        );
 
         return pagedPostingData;
     }
 
 
     @Override
-    public Feed<PostingSimpleData> feedPostingSimpleData(InfoToFeedPostingData infoToFeed) {
+    public Feed<PostingFeedData> feedPostingSimpleData(InfoToFeedPostingData infoToFeed) {
 
-        FindPostingsDto findDto
-                = FindPostingsDto.of(infoToFeed);
+        FindPostingsDto findDto = FindPostingsDto.of(infoToFeed);
 
         /**/
-        List<PostingSimpleData> postingDataToFeed;
+        List<PostingFeedData> feedDataList;
 
-        List<Posting> foundPostingsToFeed
+        List<Posting> foundFeedPostings
                 = postingPersistence.findPostings(findDto)
                 .ifExceptioned.thenThrow(ErrorCode.FIND_ENTITY_FAILED);
 
-        if (foundPostingsToFeed.isEmpty())
+        if (foundFeedPostings.isEmpty())
             throw new BusinessException(ErrorCode.NOT_FOUND_RESOURCE, "No postings to feed condition found.");
 
-        postingDataToFeed
-                = foundPostingsToFeed.stream()
-                .map(PostingSimpleData::builtFrom)
-                .collect(Collectors.toList());
+        feedDataList
+                = foundFeedPostings.stream().map(
+                posting ->
+                        PostingFeedData.builtFrom(
+                                posting,
+                                commentService.countComments(posting.getId())
+                        )
+        ).collect(Collectors.toList());
 
 
         /**/
         Long lastCursoredId;
 
         Posting lastFoundPosting
-                = foundPostingsToFeed.get(foundPostingsToFeed.size() - 1);
+                = foundFeedPostings.get(foundFeedPostings.size() - 1);
 
         lastCursoredId = lastFoundPosting.getId();
 
@@ -124,10 +137,10 @@ public class PostingService implements PostingUseCase {
         /**/
         boolean hasNextFeed;
 
-        findDto.getFieldsFindCondition().setCursorId(lastCursoredId);
+        findDto.getFieldsFindCondition()
+                .setCursorId(lastCursoredId);
 
-        hasNextFeed
-                = Exceptionable.act(postingPersistence::existNextPosting, findDto)
+        hasNextFeed = Exceptionable.act(postingPersistence::existNextPosting, findDto)
                 .ifExceptioned.thenThrow(new BusinessException(
                         ErrorCode.FIND_ENTITY_FAILED, "Failed to check if there is next posting to feed."
                 ));
@@ -135,12 +148,25 @@ public class PostingService implements PostingUseCase {
 
         /**/
         return Feed.of(
-                postingDataToFeed,
+                feedDataList,
                 lastCursoredId,
                 hasNextFeed
         );
     }
 
+    private Posting getPosting(long postingId) {
+
+        Optional<Posting> optionalFound
+                = postingPersistence.findPosting(postingId)
+                .ifExceptioned
+                .thenThrow(ErrorCode.FIND_ENTITY_FAILED);
+
+        Posting foundPosting
+                = optionalFound.orElseThrow(
+                () -> new BusinessException(ErrorCode.NOT_FOUND_RESOURCE));
+
+        return foundPosting;
+    }
 
     // Create
     @Override
@@ -175,13 +201,13 @@ public class PostingService implements PostingUseCase {
     public Posting modifyPostingArticle(long postingId, ModifyArticleForm form) {
 
         /**/
-        boolean userIsNotAuthor;
+        boolean checkUserNotAuthor;
 
         String authorUuid = this.getPosting(postingId).getAuthorUuid();
 
-        userIsNotAuthor = !authorUuid.equals(form.getUserUuid());
+        checkUserNotAuthor = !authorUuid.equals(form.getUserUuid());
 
-        if (userIsNotAuthor)
+        if (checkUserNotAuthor)
             throw new BusinessException(ErrorCode.UNAUTHORIZED);
 
 
@@ -214,17 +240,4 @@ public class PostingService implements PostingUseCase {
     }
 
 
-    private Posting getPosting(long postingId) {
-
-        Optional<Posting> optionalFound
-                = postingPersistence.findPosting(postingId)
-                .ifExceptioned
-                .thenThrow(ErrorCode.FIND_ENTITY_FAILED);
-
-        Posting foundPosting
-                = optionalFound.orElseThrow(
-                () -> new BusinessException(ErrorCode.NOT_FOUND_RESOURCE));
-
-        return foundPosting;
-    }
 }

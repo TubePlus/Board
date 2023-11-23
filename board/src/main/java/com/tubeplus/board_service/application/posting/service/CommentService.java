@@ -93,4 +93,11 @@ public class CommentService
             throw new BusinessException(ErrorCode.DELETE_ENTITY_FAILED);
     }
 
+    @Override
+    public long countComments(long postingId) {
+
+        return commentPersistence.countComments(postingId)
+                .ifExceptioned.thenThrow(new BusinessException(
+                        ErrorCode.FIND_ENTITY_FAILED, "countComments failed"));
+    }
 }

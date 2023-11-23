@@ -15,11 +15,13 @@ public interface CommentPersistable {
 
     Exceptionable<Boolean, Long> deleteComment(Long idToDelete);
 
-    Exceptionable<Comment, SaveCommentDto> saveComment(SaveCommentDto dto);
+    Exceptionable<Long, Long> countComments(long postingId);
 
+    Exceptionable<Comment, SaveCommentDto> saveComment(SaveCommentDto dto);
     @Data
     @Builder
     class SaveCommentDto {
+
         private final Long postingId;
         private final Long parentId;
         private final String commenterUuid;

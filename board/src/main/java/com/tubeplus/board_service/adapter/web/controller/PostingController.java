@@ -38,34 +38,21 @@ public class PostingController {
         return "test";
     }
 
-
-    @Operation(summary = "게시물 작성", description = "작성된 게시물의 id 반환")
-    @PostMapping()
-    public ApiResponse<Long> makePosting
-            (
-                    @RequestBody @Valid ReqMakePostingBody reqBody
-            ) {
-
-        MakePostingForm form = reqBody.buildForm();
-
-        Long madeBoardId
-                = postingService.makePosting(form);
-
-        return ApiResponse.ofSuccess(madeBoardId);
-    }
-
-
+    // Read
     @Operation(summary = "게시판내 게시물 목록 정보로 조회", description = "제목, 고정글 여부등의 간단한 정보 목록 조회")
     @GetMapping()
     public ApiResponse<VoReadPostingSimpleData.Res> readPostingSimpleData
-            (
-                    @RequestParam("search-type-req") @NotNull PostingsSearchTypeReq searchType, //@NotBlank String searchTypeReq,
-                    @RequestParam("view-type-req") @NotNull PostingsViewTypeReq viewType, //@NotBlank String viewTypeReq,
-                    VoReadPostingSimpleData.Req reqParam
-            ) {
-
-        if (searchType.checkBadRequest.test(reqParam)
-                || viewType.checkBadRequest.test(reqParam))
+    (
+            @RequestParam("search-type-req") @NotNull PostingsSearchTypeReq searchType,
+            @RequestParam("view-type-req") @NotNull PostingsViewTypeReq viewType,
+            VoReadPostingSimpleData.Req reqParam
+    ) {
+        boolean b = searchType.checkBadRequest(reqParam);
+        boolean b1 = viewType.checkBadRequest(reqParam);
+        System.out.println("b = " + b);
+        System.out.println("b1 = " + b1);
+        if (b||b1)
+//        if (searchType.checkBadRequest(reqParam) || viewType.checkBadRequest(reqParam))
             throw new BusinessException(ErrorCode.BAD_REQUEST);
 
         VoReadPostingSimpleData.Res responseVo
@@ -87,6 +74,23 @@ public class PostingController {
                 = postingService.readPostingView(id, userUuid);
 
         return ApiResponse.ofSuccess(postingView);
+    }
+
+
+    // C, U, D
+    @Operation(summary = "게시물 작성", description = "작성된 게시물의 id 반환")
+    @PostMapping()
+    public ApiResponse<Long> makePosting
+    (
+            @RequestBody @Valid ReqMakePostingBody reqBody
+    ) {
+
+        MakePostingForm form = reqBody.buildForm();
+
+        Long madeBoardId
+                = postingService.makePosting(form);
+
+        return ApiResponse.ofSuccess(madeBoardId);
     }
 
 

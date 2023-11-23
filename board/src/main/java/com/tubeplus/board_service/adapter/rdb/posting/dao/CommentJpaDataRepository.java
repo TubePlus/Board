@@ -2,6 +2,7 @@ package com.tubeplus.board_service.adapter.rdb.posting.dao;
 
 
 import com.tubeplus.board_service.adapter.rdb.posting.entity.CommentEntity;
+import com.tubeplus.board_service.global.Exceptionable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -12,4 +13,6 @@ public interface CommentJpaDataRepository extends JpaRepository<CommentEntity, L
     List<CommentEntity> findByPostingIdAndParentComment(long postingId, CommentEntity parentComment);
 
     Optional<CommentEntity> findFirstByParentComment(CommentEntity entity);
+
+    long countByPostingId(long postingId);
 }

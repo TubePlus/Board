@@ -1,8 +1,10 @@
 package com.tubeplus.board_service.adapter.web.controller.vo.posting;
 
+import com.tubeplus.board_service.application.posting.domain.posting.PostingFeedData;
 import com.tubeplus.board_service.application.posting.port.in.PostingUseCase;
 import com.tubeplus.board_service.application.posting.port.in.PostingUseCase.Feed;
-import com.tubeplus.board_service.application.posting.port.in.PostingUseCase.PostingSimpleData;
+import com.tubeplus.board_service.application.posting.domain.posting.PostingPageView;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.domain.Page;
@@ -12,33 +14,40 @@ import java.util.function.Predicate;
 @RequiredArgsConstructor
 public enum PostingsViewTypeReq {
 
-    FEED(reqParam -> reqParam.getFeedSize() == null) {
-        public final VoReadPostingSimpleData.Res driveService(PostingUseCase postingService,
-                                                              VoReadPostingSimpleData.Req reqParam) {
+    FEED {
+        public boolean checkBadRequest(VoReadPostingSimpleData.Req reqParam) {
+            return reqParam.getFeedSize() == null || reqParam.getFeedSize() <= 0;
+        }
 
-            Feed<PostingSimpleData> postingDataFeed
+        public VoReadPostingSimpleData.Res driveService(PostingUseCase postingService,
+                                                        VoReadPostingSimpleData.Req reqParam) {
+
+            Feed<PostingFeedData> feedDataList
                     = postingService.feedPostingSimpleData(reqParam.newInfoToFeed());
 
-            return VoReadPostingSimpleData.Res.of(postingDataFeed);
+            return VoReadPostingSimpleData.Res.of(feedDataList);
         }
     },
 
-    PAGE(reqParam
-            -> reqParam.getPageIndex() == null || reqParam.getPageIndex() < 0
-            || reqParam.getPageSize() == null || reqParam.getPageSize() <= 0
-    ) {
-        public final VoReadPostingSimpleData.Res driveService(PostingUseCase postingService,
-                                                              VoReadPostingSimpleData.Req reqParam) {
+    PAGE {
+        public boolean checkBadRequest(VoReadPostingSimpleData.Req reqParam) {
 
-            Page<PostingSimpleData> postingDataPage
+            return reqParam.getPageIndex() == null || reqParam.getPageIndex() < 0
+                    || reqParam.getPageSize() == null || reqParam.getPageSize() <= 0;
+        }
+
+        public VoReadPostingSimpleData.Res driveService(PostingUseCase postingService,
+                                                        VoReadPostingSimpleData.Req reqParam) {
+
+            Page<PostingPageView> pagedPosting
                     = postingService.pagePostingSimpleData(reqParam.newInfoToPage());
 
-            return VoReadPostingSimpleData.Res.of(postingDataPage);
+            return VoReadPostingSimpleData.Res.of(pagedPosting);
         }
     };
 
 
-    public final Predicate<VoReadPostingSimpleData.Req> checkBadRequest;
+    public abstract boolean checkBadRequest(VoReadPostingSimpleData.Req reqParam);
 
     public abstract VoReadPostingSimpleData.Res driveService(PostingUseCase postingService,
                                                              VoReadPostingSimpleData.Req reqParam);
