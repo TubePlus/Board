@@ -1,5 +1,7 @@
 package com.tubeplus.board_service.application.posting.port.in;
 
+import com.tubeplus.board_service.application.posting.domain.posting.PostingFeedData;
+import com.tubeplus.board_service.application.posting.domain.posting.PostingPageView;
 import com.tubeplus.board_service.application.posting.domain.posting.Posting;
 import com.tubeplus.board_service.application.posting.domain.posting.PostingView;
 import lombok.Builder;
@@ -20,29 +22,6 @@ public interface PostingUseCase {
 
     @Data
     @Builder
-    class PostingSimpleData {
-        private final Long id;
-        private final String authorUuid;
-        private final long voteCount;
-        private final boolean pinned;
-        private final String title;
-        private final boolean withImage;
-
-        public static PostingSimpleData builtFrom(Posting posting) {
-            return PostingSimpleData.builder()
-                    .id(posting.getId())
-                    .authorUuid(posting.getAuthorUuid())
-                    .voteCount(posting.getVoteCount())
-                    .pinned(posting.isPin())
-                    .title(posting.getTitle())
-                    .withImage(posting.isWithImage())
-                    .build();
-        }
-    }
-
-
-    @Data
-    @Builder
     class SearchPostingsInfo {
         private final Long boardId;
         private final String authorUuid;
@@ -52,7 +31,7 @@ public interface PostingUseCase {
         private final Boolean softDelete;
     }
 
-    Page<PostingSimpleData> pagePostingSimpleData(InfoToPagePostingData info);
+    Page<PostingPageView> pagePostingSimpleData(InfoToPagePostingData info);
 
     @Data(staticConstructor = "of")
     class InfoToPagePostingData {
@@ -60,7 +39,7 @@ public interface PostingUseCase {
         private final PageRequest pageReq;
     }
 
-    Feed<PostingSimpleData> feedPostingSimpleData(InfoToFeedPostingData info);
+    Feed<PostingFeedData> feedPostingSimpleData(InfoToFeedPostingData info);
 
     @Data(staticConstructor = "of")
     class Feed<T> {

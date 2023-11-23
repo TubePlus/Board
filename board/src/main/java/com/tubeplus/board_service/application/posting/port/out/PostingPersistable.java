@@ -1,6 +1,7 @@
 package com.tubeplus.board_service.application.posting.port.out;
 
 
+import com.tubeplus.board_service.application.posting.port.out.PostingPersistable.FindPostingsDto.FieldsFindCondition;
 import com.tubeplus.board_service.application.posting.port.out.PostingPersistable.FindPostingsDto.SortedFindRange.SortBy.PivotField;
 import com.tubeplus.board_service.global.Exceptionable;
 import com.tubeplus.board_service.application.posting.domain.posting.Posting;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.tubeplus.board_service.application.posting.port.in.PostingUseCase.*;
+
 
 public interface PostingPersistable {
 
@@ -51,7 +53,7 @@ public interface PostingPersistable {
 
     Exceptionable<List<Posting>, FindPostingsDto> findPostings(FindPostingsDto dto);
 
-    Exceptionable<Long, FindPostingsDto.FieldsFindCondition> countPostings(FindPostingsDto.FieldsFindCondition fieldsFindCondition);
+    Exceptionable<Long, FieldsFindCondition> countPostings(FieldsFindCondition condition);
 
     @Data(staticConstructor = "of")
     class FindPostingsDto {

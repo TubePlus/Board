@@ -39,6 +39,13 @@ public class CommentPersistence implements CommentPersistable {
     }
 
     @Override
+    public Exceptionable<Long, Long> countComments(long postingId) {
+
+        return Exceptionable.act(commentJpaDataRepo::countByPostingId, postingId);
+    }
+
+
+    @Override
     public Exceptionable<Comment, SaveCommentDto> saveComment(SaveCommentDto saveCommentDto) {
 
         return Exceptionable.act(dto -> {
