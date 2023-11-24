@@ -1,5 +1,6 @@
 package com.tubeplus.board_service.application.posting.domain.posting;
 
+import com.tubeplus.board_service.application.posting.port.in.PostingCommentUseCase;
 import lombok.Builder;
 import lombok.Data;
 
@@ -16,7 +17,7 @@ public class PostingPageView {
     private final long commentsCount;
 
 
-    public static PostingPageView builtFrom(Posting posting, long commentsCount) {
+    public static PostingPageView madeFrom(Posting posting, PostingCommentUseCase commentService) {
         return PostingPageView.builder()
                 .id(posting.getId())
                 .authorUuid(posting.getAuthorUuid())
@@ -24,7 +25,7 @@ public class PostingPageView {
                 .pinned(posting.isPin())
                 .title(posting.getTitle())
                 .withImage(posting.isWithImage())
-                .commentsCount(commentsCount)
+                .commentsCount(commentService.countComments(posting.getId()))
                 .build();
     }
 

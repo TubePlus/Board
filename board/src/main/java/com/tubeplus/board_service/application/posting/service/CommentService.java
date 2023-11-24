@@ -25,36 +25,10 @@ public class CommentService
         implements WebCommentUseCase, PostingCommentUseCase {
 
     private final CommentPersistable commentPersistence;
-    private final PostingPersistable postingPersistence;
-
     private final CommentEventPublishable eventPublisher;
 
 
-    @Override
-    public final Comment writeComment(PostCommentForm form) {
-
-        // db 저장
-        SaveCommentDto dto = SaveCommentDto.builtFrom(form);
-
-        Comment savedComment
-                = commentPersistence.saveComment(dto)
-                .ifExceptioned.thenThrow(ErrorCode.SAVE_ENTITY_FAILED);
-
-
-        //이벤트 publish
-        Long commentedPostingId
-                = savedComment.getPostingId();
-
-        Long communityId
-                = postingPersistence.getPostingCommuId(commentedPostingId)
-                .ifExceptioned.thenThrow(ErrorCode.FIND_ENTITY_FAILED);
-
-        // todo : 내 댓글에 대댓글 짜이면 알람 보내기 -> etc parentdId 의 commetUuid를 확인해서 알람 commentAlarm
-        eventPublisher.publishCommented(communityId);
-
-        return savedComment;
-    }
-
+    //queries
     @Override
     public List<Comment> readComments(ReadCommentsInfo readInfo) {
 
@@ -68,6 +42,34 @@ public class CommentService
             throw new BusinessException(ErrorCode.NOT_FOUND_RESOURCE);
 
         return comments;
+    }
+
+    @Override
+    public long countComments(long postingId) {
+
+        return commentPersistence.countComments(postingId)
+                .ifExceptioned.thenThrow(new BusinessException(
+                        ErrorCode.FIND_ENTITY_FAILED, "countComments failed"));
+    }
+
+
+    //commands
+    @Override
+    public Comment writeComment(PostCommentForm form) {
+
+        // db 저장
+        SaveCommentDto dto = SaveCommentDto.builtFrom(form);
+
+        Comment savedComment
+                = commentPersistence.saveComment(dto)
+                .ifExceptioned.thenThrow(ErrorCode.SAVE_ENTITY_FAILED);
+
+
+        // 이벤트 publish
+        eventPublisher.publishCommented(savedComment);
+
+
+        return savedComment;
     }
 
     @Override
@@ -91,13 +93,5 @@ public class CommentService
 
         if (!deleted)
             throw new BusinessException(ErrorCode.DELETE_ENTITY_FAILED);
-    }
-
-    @Override
-    public long countComments(long postingId) {
-
-        return commentPersistence.countComments(postingId)
-                .ifExceptioned.thenThrow(new BusinessException(
-                        ErrorCode.FIND_ENTITY_FAILED, "countComments failed"));
     }
 }

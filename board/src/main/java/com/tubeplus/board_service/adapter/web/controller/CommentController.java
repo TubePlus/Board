@@ -36,26 +36,7 @@ public class CommentController {
         return "test";
     }
 
-
-    @Operation(summary = "댓글/대댓글 작성"
-            , description = "대댓글일경우 parentId를 입력, 원 댓글일 경우 parentId에 null")
-    @PostMapping()
-    public ApiResponse<Comment> postComment
-            (
-                    @Valid @RequestBody
-                    ReqPostCommentBody reqBody
-            ) {
-
-        PostCommentForm form
-                = reqBody.buildCommentForm();
-
-        Comment postedComment
-                = commentService.writeComment(form);
-
-        return ApiResponse.ofSuccess(postedComment);
-    }
-
-
+    // queries
     @Operation(summary = "댓글/대댓글 조회",
             description = "대댓글일 경우 parentId를 입력, 원 댓글일 경우 parentId에 null")
     @GetMapping()
@@ -74,6 +55,26 @@ public class CommentController {
                 = commentService.readComments(readInfo);
 
         return ApiResponse.ofSuccess(comments);
+    }
+
+
+    // commands
+    @Operation(summary = "댓글/대댓글 작성"
+            , description = "대댓글일경우 parentId를 입력, 원 댓글일 경우 parentId에 null")
+    @PostMapping()
+    public ApiResponse<Comment> postComment
+            (
+                    @Valid @RequestBody
+                    ReqPostCommentBody reqBody
+            ) {
+
+        PostCommentForm form
+                = reqBody.buildCommentForm();
+
+        Comment postedComment
+                = commentService.writeComment(form);
+
+        return ApiResponse.ofSuccess(postedComment);
     }
 
 

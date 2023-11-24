@@ -6,8 +6,7 @@ import jakarta.persistence.Converter;
 
 
 @Converter(autoApply = true)
-public class BoardTypeConverter
-        extends AbstractBaseEnumConverter<BoardType, String, String> {
+public class BoardTypeConverter extends AbstractBaseEnumConverter<BoardType, String, String> {
     public BoardTypeConverter() {
         super(BoardType.class);
     }

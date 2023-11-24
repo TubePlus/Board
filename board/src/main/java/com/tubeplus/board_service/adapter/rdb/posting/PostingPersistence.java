@@ -34,6 +34,7 @@ public class PostingPersistence implements PostingPersistable {
     private final ModelMapper modelMapper;
 
 
+    // both used in query and command
     @Override
     @Transactional(readOnly = true)
     public Exceptionable<Optional<Posting>, Long> findPosting(final long postingId) {
@@ -53,29 +54,8 @@ public class PostingPersistence implements PostingPersistable {
         return new Exceptionable<>(findPostingById, postingId);
     }
 
-    @Override
-    public Exceptionable<Long, SavePostingDto> savePosting(SavePostingDto savePostingDto) {
 
-        return Exceptionable.act(dto -> {
-
-            BoardEntity postingBoard
-                    = em.find(BoardEntity.class, dto.getBoardId());
-
-            PostingEntity postingEntity
-                    = PostingEntity.builtFrom(dto, postingBoard);
-
-
-            PostingEntity savedEntity
-                    = jpaDataRepo.save(postingEntity);
-
-            return savedEntity.getId();
-
-
-        }, savePostingDto);
-
-    }
-
-
+    // queries
     @Override
     @Transactional(readOnly = true)
     public boolean existNextPosting(FindPostingsDto findDto) {
@@ -83,7 +63,6 @@ public class PostingPersistence implements PostingPersistable {
         return queryDslRepo.existNextPosting(findDto);
 
     }
-
 
     @Override
     @Transactional(readOnly = true)
@@ -113,6 +92,28 @@ public class PostingPersistence implements PostingPersistable {
         return new Exceptionable<>(findPostings, findDto);
     }
 
+
+    // commands
+    @Override
+    public Exceptionable<Long, SavePostingDto> savePosting(SavePostingDto savePostingDto) {
+
+        return Exceptionable.act(dto -> {
+
+            BoardEntity postingBoard
+                    = em.find(BoardEntity.class, dto.getBoardId());
+
+            PostingEntity postingEntity
+                    = PostingEntity.builtFrom(dto, postingBoard);
+
+
+            PostingEntity savedEntity
+                    = jpaDataRepo.save(postingEntity);
+
+            return savedEntity.getId();
+
+        }, savePostingDto);
+
+    }
 
     @Override
     @Transactional

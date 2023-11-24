@@ -28,7 +28,22 @@ public class VoteService
 
     private final VoteEventPublishable eventPublisher;
 
-    /**/
+
+    /**///command query both
+    //posting use case
+    public Optional<Vote> findUserVote(Long postingId, String userUuid) {
+
+        FindVoteDto dto = FindVoteDto.of(postingId, userUuid);
+
+        Optional<Vote> optionalUserVote
+                = votePersistence.findVote(dto)
+                .ifExceptioned.thenThrow(ErrorCode.FIND_ENTITY_FAILED);
+
+        return optionalUserVote;
+    }
+
+
+    /**///command
     //web use case
     @Override
     public Long votePosting(Vote voteInfo) {
@@ -122,18 +137,5 @@ public class VoteService
         return updatedTotalVote;
     }
 
-
-    /**/
-    //posting use case
-    public Optional<Vote> findUserVote(Long postingId, String userUuid) {
-
-        FindVoteDto dto = FindVoteDto.of(postingId, userUuid);
-
-        Optional<Vote> optionalUserVote
-                = votePersistence.findVote(dto)
-                .ifExceptioned.thenThrow(ErrorCode.FIND_ENTITY_FAILED);
-
-        return optionalUserVote;
-    }
 
 }

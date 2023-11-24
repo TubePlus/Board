@@ -31,7 +31,7 @@ public interface PostingUseCase {
         private final Boolean softDelete;
     }
 
-    Page<PostingPageView> pagePostingSimpleData(InfoToPagePostingData info);
+    Page<PostingPageView> pagePostings(InfoToPagePostingData info);
 
     @Data(staticConstructor = "of")
     class InfoToPagePostingData {
@@ -39,7 +39,7 @@ public interface PostingUseCase {
         private final PageRequest pageReq;
     }
 
-    Feed<PostingFeedData> feedPostingSimpleData(InfoToFeedPostingData info);
+    Feed<PostingFeedData> feedPostingData(InfoToFeedPostingData info);
 
     @Data(staticConstructor = "of")
     class Feed<T> {

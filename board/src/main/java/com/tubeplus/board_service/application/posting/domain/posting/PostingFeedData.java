@@ -1,5 +1,6 @@
 package com.tubeplus.board_service.application.posting.domain.posting;
 
+import com.tubeplus.board_service.application.posting.port.in.PostingCommentUseCase;
 import lombok.Builder;
 import lombok.Data;
 
@@ -16,7 +17,7 @@ public class PostingFeedData {
     private final long commentsCount;
 
 
-    public static PostingFeedData builtFrom(Posting posting, long commentsCount) {
+    public static PostingFeedData madeFrom(Posting posting, PostingCommentUseCase commentService) {
 
         return PostingFeedData.builder()
                 .id(posting.getId())
@@ -24,7 +25,7 @@ public class PostingFeedData {
                 .voteCount(posting.getVoteCount())
                 .title(posting.getTitle())
                 .withImage(posting.isWithImage())
-                .commentsCount(commentsCount)
+                .commentsCount(commentService.countComments(posting.getId()))
                 .build();
     }
 

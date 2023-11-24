@@ -31,15 +31,33 @@ import static com.tubeplus.board_service.application.posting.port.out.PostingPer
 @Service
 @RequiredArgsConstructor
 public class PostingService implements PostingUseCase {
+    // driving service
 
     private final PostingVoteUseCase voteService;
     private final PostingCommentUseCase commentService;
 
+    // service driven
     private final PostingPersistable postingPersistence;
-
     private final PostingEventPublishable eventPublisher;
 
 
+    // both used in query and command
+    private Posting getPosting(long postingId) {
+
+        Optional<Posting> optionalFound
+                = postingPersistence.findPosting(postingId)
+                .ifExceptioned
+                .thenThrow(ErrorCode.FIND_ENTITY_FAILED);
+
+        Posting foundPosting
+                = optionalFound.orElseThrow(
+                () -> new BusinessException(ErrorCode.NOT_FOUND_RESOURCE));
+
+        return foundPosting;
+    }
+
+
+    // Queries
     @Override
     public PostingView readPostingView(long postingId, String userUuid) {
 
@@ -59,7 +77,7 @@ public class PostingService implements PostingUseCase {
 
 
     @Override
-    public Page<PostingPageView> pagePostingSimpleData(InfoToPagePostingData infoToPage) {
+    public Page<PostingPageView> pagePostings(InfoToPagePostingData infoToPage) {
 
         /**/
         List<Posting> foundPagePostings;
@@ -81,27 +99,23 @@ public class PostingService implements PostingUseCase {
 
 
         /**/
-        Page<PostingPageView> pagedPostingData;
+        Page<PostingPageView> pagedPostingView;
 
         Page<Posting> pagedPostings //todo 첫페이지랑 마지막 언저리페이지들만 count 쿼리 날리도록 최적화 수정
                 = PageableExecutionUtils.getPage // PageableExecutionUtils.getPage: count 쿼리 최적화 위해 사용
                 (foundPagePostings, infoToPage.getPageReq(), countPostingsFunction);
 
-        pagedPostingData
+        pagedPostingView
                 = pagedPostings.map(
-                posting ->
-                        PostingPageView.builtFrom(
-                                posting,
-                                commentService.countComments(posting.getId())
-                        )
+                posting -> PostingPageView.madeFrom(posting, commentService)
         );
 
-        return pagedPostingData;
+        return pagedPostingView;
     }
 
 
     @Override
-    public Feed<PostingFeedData> feedPostingSimpleData(InfoToFeedPostingData infoToFeed) {
+    public Feed<PostingFeedData> feedPostingData(InfoToFeedPostingData infoToFeed) {
 
         FindPostingsDto findDto = FindPostingsDto.of(infoToFeed);
 
@@ -116,13 +130,9 @@ public class PostingService implements PostingUseCase {
             throw new BusinessException(ErrorCode.NOT_FOUND_RESOURCE, "No postings to feed condition found.");
 
         feedDataList
-                = foundFeedPostings.stream().map(
-                posting ->
-                        PostingFeedData.builtFrom(
-                                posting,
-                                commentService.countComments(posting.getId())
-                        )
-        ).collect(Collectors.toList());
+                = foundFeedPostings.stream()
+                .map(posting -> PostingFeedData.madeFrom(posting, commentService))
+                .collect(Collectors.toList());
 
 
         /**/
@@ -154,21 +164,8 @@ public class PostingService implements PostingUseCase {
         );
     }
 
-    private Posting getPosting(long postingId) {
 
-        Optional<Posting> optionalFound
-                = postingPersistence.findPosting(postingId)
-                .ifExceptioned
-                .thenThrow(ErrorCode.FIND_ENTITY_FAILED);
-
-        Posting foundPosting
-                = optionalFound.orElseThrow(
-                () -> new BusinessException(ErrorCode.NOT_FOUND_RESOURCE));
-
-        return foundPosting;
-    }
-
-    // Create
+    // Commands
     @Override
     public Long makePosting(MakePostingForm form) {
 
@@ -182,7 +179,6 @@ public class PostingService implements PostingUseCase {
     }
 
 
-    // Update
     @Override
     public void modifyPostingPinState(ModifyPinStateInfo modifyInfo) {
 

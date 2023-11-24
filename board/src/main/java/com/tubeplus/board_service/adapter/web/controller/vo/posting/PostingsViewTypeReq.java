@@ -4,12 +4,9 @@ import com.tubeplus.board_service.application.posting.domain.posting.PostingFeed
 import com.tubeplus.board_service.application.posting.port.in.PostingUseCase;
 import com.tubeplus.board_service.application.posting.port.in.PostingUseCase.Feed;
 import com.tubeplus.board_service.application.posting.domain.posting.PostingPageView;
-import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.domain.Page;
-
-import java.util.function.Predicate;
 
 @RequiredArgsConstructor
 public enum PostingsViewTypeReq {
@@ -23,7 +20,7 @@ public enum PostingsViewTypeReq {
                                                         VoReadPostingSimpleData.Req reqParam) {
 
             Feed<PostingFeedData> feedDataList
-                    = postingService.feedPostingSimpleData(reqParam.newInfoToFeed());
+                    = postingService.feedPostingData(reqParam.newInfoToFeed());
 
             return VoReadPostingSimpleData.Res.of(feedDataList);
         }
@@ -40,7 +37,7 @@ public enum PostingsViewTypeReq {
                                                         VoReadPostingSimpleData.Req reqParam) {
 
             Page<PostingPageView> pagedPosting
-                    = postingService.pagePostingSimpleData(reqParam.newInfoToPage());
+                    = postingService.pagePostings(reqParam.newInfoToPage());
 
             return VoReadPostingSimpleData.Res.of(pagedPosting);
         }
