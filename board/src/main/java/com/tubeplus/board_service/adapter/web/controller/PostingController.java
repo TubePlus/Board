@@ -19,6 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.annotation.Inherited;
+
 import static com.tubeplus.board_service.application.posting.port.in.PostingUseCase.*;
 
 
@@ -38,6 +40,7 @@ public class PostingController {
         return "test";
     }
 
+
     // Read
     @Operation(summary = "게시판내 게시물 목록 정보로 조회", description = "제목, 고정글 여부등의 간단한 정보 목록 조회")
     @GetMapping()
@@ -47,12 +50,8 @@ public class PostingController {
             @RequestParam("view-type-req") @NotNull PostingsViewTypeReq viewType,
             VoReadPostingSimpleData.Req reqParam
     ) {
-        boolean b = searchType.checkBadRequest(reqParam);
-        boolean b1 = viewType.checkBadRequest(reqParam);
-        System.out.println("b = " + b);
-        System.out.println("b1 = " + b1);
-        if (b||b1)
-//        if (searchType.checkBadRequest(reqParam) || viewType.checkBadRequest(reqParam))
+
+        if (searchType.checkBadRequest(reqParam) || viewType.checkBadRequest(reqParam))
             throw new BusinessException(ErrorCode.BAD_REQUEST);
 
         VoReadPostingSimpleData.Res responseVo

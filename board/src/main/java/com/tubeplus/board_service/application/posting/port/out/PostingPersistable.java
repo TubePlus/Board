@@ -20,40 +20,17 @@ import static com.tubeplus.board_service.application.posting.port.in.PostingUseC
 
 public interface PostingPersistable {
 
-    Exceptionable<Long, Long> getPostingCommuId(Long postingId);
-
+    // Both used in query and command
     Exceptionable<Optional<Posting>, Long> findPosting(long postingId);
 
-
-    Exceptionable<Long, SavePostingDto> savePosting(SavePostingDto dto);
-
-
-    @Data
-    @Builder
-    class SavePostingDto {
-        private final Long boardId;
-        private final String authorUuid;
-        private final String title;
-        private final String contents;
-        public final boolean withImage;
-
-        public static SavePostingDto builtFrom(MakePostingForm form) {
-            return SavePostingDto.builder()
-                    .boardId(form.getBoardId())
-                    .authorUuid(form.getAuthorUuid())
-                    .title(form.getTitle())
-                    .contents(form.getContents())
-                    .withImage(form.isWithImage())
-                    .build();
-        }
-    }
-
+    // Queries
+    Exceptionable<Long, Long> getPostingCommuId(Long postingId);
 
     boolean existNextPosting(FindPostingsDto dto);
 
-    Exceptionable<List<Posting>, FindPostingsDto> findPostings(FindPostingsDto dto);
-
     Exceptionable<Long, FieldsFindCondition> countPostings(FieldsFindCondition condition);
+
+    Exceptionable<List<Posting>, FindPostingsDto> findPostings(FindPostingsDto dto);
 
     @Data(staticConstructor = "of")
     class FindPostingsDto {
@@ -160,6 +137,30 @@ public interface PostingPersistable {
                 return SortedFindRange.of(0, 0L, null);
             }
 
+        }
+    }
+
+
+    // Commands
+    Exceptionable<Long, SavePostingDto> savePosting(SavePostingDto dto);
+
+    @Data
+    @Builder
+    class SavePostingDto {
+        private final Long boardId;
+        private final String authorUuid;
+        private final String title;
+        private final String contents;
+        public final boolean withImage;
+
+        public static SavePostingDto builtFrom(MakePostingForm form) {
+            return SavePostingDto.builder()
+                    .boardId(form.getBoardId())
+                    .authorUuid(form.getAuthorUuid())
+                    .title(form.getTitle())
+                    .contents(form.getContents())
+                    .withImage(form.isWithImage())
+                    .build();
         }
     }
 

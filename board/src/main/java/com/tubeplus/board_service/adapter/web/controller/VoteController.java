@@ -25,6 +25,7 @@ public class VoteController {
 
     private final WebVoteUseCase voteService;
 
+    // all commands
     @GetMapping("/test")
     public ApiResponse<String> test() {
         return ApiResponse.ofSuccess("test");
