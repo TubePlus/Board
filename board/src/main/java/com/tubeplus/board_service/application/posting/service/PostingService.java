@@ -64,9 +64,6 @@ public class PostingService implements PostingUseCase {
         Posting foundPosting
                 = this.getPosting(postingId);
 
-        //todo 읽음 집계처리 - 카프카(log) - foundPosting.getBoardId() - 아래 함수에서 구현
-        eventPublisher.publishPostingRead(foundPosting);
-
         return PostingView.madeFrom(
                 foundPosting,
                 userUuid,
@@ -155,7 +152,6 @@ public class PostingService implements PostingUseCase {
                         ErrorCode.FIND_ENTITY_FAILED, "Failed to check if there is next posting to feed."
                 ));
 
-
         /**/
         return Feed.of(
                 feedDataList,
@@ -170,9 +166,6 @@ public class PostingService implements PostingUseCase {
     public Long makePosting(MakePostingForm form) {
 
         SavePostingDto dto = SavePostingDto.builtFrom(form);
-
-        //todo test
-        Optional<Posting> posting = postingPersistence.findPosting(3).ifExceptioned.thenThrow(ErrorCode.FIND_ENTITY_FAILED);
 
         Long madePostingId
                 = postingPersistence.savePosting(dto)
