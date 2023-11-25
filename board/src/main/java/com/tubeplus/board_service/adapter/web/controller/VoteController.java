@@ -48,10 +48,10 @@ public class VoteController {
 
 
     @Operation(summary = "게시물 투표 수정 api")
-    @PutMapping("/{vote-id}")
+    @PutMapping("/{id}")
     public ApiResponse<Long> modifyVote
             (
-                    @Min(0) @PathVariable("vote-id") Long voteId,
+                    @Min(0) @PathVariable("id") Long voteId,
                     @Valid @RequestBody VoPostingVoteProperty voUpdateInfo
             ) {
 

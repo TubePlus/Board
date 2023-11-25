@@ -12,6 +12,7 @@ import com.tubeplus.board_service.global.Exceptionable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 
-@Component("commentPersistence")
+@Component
 public class CommentPersistence implements CommentPersistable {
 
     private final CommentJpaDataRepository commentJpaDataRepo;
@@ -48,13 +49,13 @@ public class CommentPersistence implements CommentPersistable {
     @Override
     public Exceptionable<Comment, SaveCommentDto> saveComment(SaveCommentDto saveCommentDto) {
 
-        return Exceptionable.act(dto -> {
+        return Exceptionable.act(dto ->
+        {
 
             /**/
             CommentEntity entityToSave;
 
-            CommentEntity parentComment
-                    =
+            CommentEntity parentComment =
                     dto.getParentId() == null
                             ? parentComment = null
                             : getValidParent(dto.getParentId(), dto.getPostingId());
@@ -66,7 +67,6 @@ public class CommentPersistence implements CommentPersistable {
             entityToSave
                     = CommentEntity.builtFrom(dto, commentedPosting, parentComment);
 
-
             /**/
             CommentEntity savedEntity
                     = commentJpaDataRepo.save(entityToSave);
@@ -77,6 +77,7 @@ public class CommentPersistence implements CommentPersistable {
 
     }
 
+    @Transactional(readOnly = true)
     protected final CommentEntity getValidParent(Long parentId, long postingId) {
 
         CommentEntity parentComment

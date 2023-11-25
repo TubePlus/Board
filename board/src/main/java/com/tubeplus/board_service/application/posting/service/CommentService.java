@@ -22,6 +22,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CommentService
         implements WebCommentUseCase, PostingCommentUseCase {
 
