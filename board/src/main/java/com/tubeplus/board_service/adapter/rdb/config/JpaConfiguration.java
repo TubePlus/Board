@@ -26,7 +26,7 @@ public class JpaConfiguration {
 
         entityManagerFactory.setPackagesToScan(
                 "com.tubeplus.board_service.adapter.rdb.board",
-                "com.tubeplus.board_service.adapter.rdb.posting"
+                "com.tubeplus.board_service.adapter.rdb.posting.entity"
         );
 
         entityManagerFactory.setJpaVendorAdapter(jpaVendorAdapter());
