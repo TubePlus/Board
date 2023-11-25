@@ -171,6 +171,9 @@ public class PostingService implements PostingUseCase {
 
         SavePostingDto dto = SavePostingDto.builtFrom(form);
 
+        //todo test
+        Optional<Posting> posting = postingPersistence.findPosting(3).ifExceptioned.thenThrow(ErrorCode.FIND_ENTITY_FAILED);
+
         Long madePostingId
                 = postingPersistence.savePosting(dto)
                 .ifExceptioned.thenThrow(ErrorCode.SAVE_ENTITY_FAILED);
