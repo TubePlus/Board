@@ -16,17 +16,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 
+@SuppressWarnings("UnnecessaryLocalVariable")
 @EnableScheduling
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class BoardService implements BoardUseCase {
 
     private final BoardPersistable boardPersistence;
@@ -76,6 +79,7 @@ public class BoardService implements BoardUseCase {
 
 
     @Override
+    @Transactional(readOnly = true)
     public List<Board> findCommuBoards(FindBoardsInfo findInfo) {
 
         FindBoardListDto findDto
@@ -107,6 +111,7 @@ public class BoardService implements BoardUseCase {
 
 
     @Override
+    @Transactional(readOnly = true)
     public Board findBoard(Long boardId) {
 
         Board foundBoard

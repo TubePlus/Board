@@ -79,10 +79,10 @@ public class CommentController {
 
 
     @Operation(summary = "댓글/대댓글 수정")
-    @PutMapping("/{commentId}")
+    @PutMapping("/{id}")
     public ApiResponse<CommentViewInfo> modifyComment
             (
-                    @PathVariable("commentId") @Min(1)
+                    @PathVariable("id") @Min(1)
                     long commentId,
                     @Valid @RequestBody
                     ReqModifyCommentBody reqBody
@@ -96,10 +96,10 @@ public class CommentController {
 
 
     @Operation(summary = "댓글/대댓글 삭제", description = "대댓글 있을 경우 cascade 삭제")
-    @DeleteMapping("/{commentId}")
+    @DeleteMapping("/{id}")
     public ApiResponse deleteComment
             (
-                    @PathVariable("commentId") @Min(1)
+                    @PathVariable("id") @Min(1)
                     long idToDelete
             ) {
 

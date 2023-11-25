@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 
+@SuppressWarnings("UnnecessaryLocalVariable")
 @Slf4j
 @RequiredArgsConstructor
 @Component("votePersistence")
@@ -78,6 +79,7 @@ public class VotePersistence
             VoteEntity entityToSave
                     = VoteEntity.builtFrom(dto, votedPosting);
 
+            log.info("entityToSave: {}", entityToSave);
             VoteEntity savedEntity
                     = voteJpaDataRepo.save(entityToSave);
 

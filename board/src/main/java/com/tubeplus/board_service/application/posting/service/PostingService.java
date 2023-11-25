@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +31,7 @@ import static com.tubeplus.board_service.application.posting.port.out.PostingPer
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class PostingService implements PostingUseCase {
     // driving service
 
@@ -42,6 +44,7 @@ public class PostingService implements PostingUseCase {
 
 
     // both used in query and command
+    @Transactional(readOnly = true)
     private Posting getPosting(long postingId) {
 
         Optional<Posting> optionalFound
@@ -59,6 +62,7 @@ public class PostingService implements PostingUseCase {
 
     // Queries
     @Override
+    @Transactional(readOnly = true)
     public PostingView readPostingView(long postingId, String userUuid) {
 
         Posting foundPosting

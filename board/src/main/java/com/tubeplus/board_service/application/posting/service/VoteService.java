@@ -11,7 +11,9 @@ import com.tubeplus.board_service.application.posting.port.out.VotePersistable;
 import com.tubeplus.board_service.application.posting.port.out.VotePersistable.FindVoteDto;
 import com.tubeplus.board_service.application.posting.port.out.VotePersistable.SaveVoteDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -19,8 +21,9 @@ import java.util.Optional;
 @SuppressWarnings("UnnecessaryLocalVariable")
 @Service
 @RequiredArgsConstructor
-public class VoteService
-        implements WebVoteUseCase, PostingVoteUseCase {
+@Slf4j
+@Transactional
+public class VoteService implements WebVoteUseCase, PostingVoteUseCase {
 
 
     private final VotePersistable votePersistence;
@@ -31,6 +34,7 @@ public class VoteService
 
     /**///command query both
     //posting use case
+    @Transactional(readOnly = true)
     public Optional<Vote> findUserVote(Long postingId, String userUuid) {
 
         FindVoteDto dto = FindVoteDto.of(postingId, userUuid);
