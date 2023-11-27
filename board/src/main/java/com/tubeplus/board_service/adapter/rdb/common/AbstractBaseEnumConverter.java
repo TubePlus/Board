@@ -2,11 +2,13 @@ package com.tubeplus.board_service.adapter.rdb.common;
 
 import com.tubeplus.board_service.global.base.BaseEnum;
 import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 
 import java.util.Arrays;
 import java.util.Objects;
 
 
+@Converter(autoApply = true)
 public abstract class AbstractBaseEnumConverter<E extends Enum<E> & BaseEnum<T, K>, T, K> implements AttributeConverter<E, T> {
 
 	private final Class<E> clazz;

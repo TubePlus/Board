@@ -55,10 +55,10 @@ public class VoteKafkaAdapter implements VoteEventPublishable {
 
         long postingId
                 = deletedVote.getPostingId();
-        log.info(deletedVote.toString());
+
         Long communityId
                 = postingPersistence.getPostingCommuId(postingId)
-                .ifExceptioned.thenThrow(new RuntimeException("vote deleted community id not found"));
+                .ifExceptioned.thenThrow(new RuntimeException("find vote-deleted-community id failed"));
 
         Long deletedVotePoint
                 = Long.valueOf(deletedVote.getVoteType().getCode());

@@ -4,6 +4,7 @@ import com.tubeplus.board_service.adapter.web.error.BusinessException;
 import com.tubeplus.board_service.adapter.web.error.ErrorCode;
 import com.tubeplus.board_service.application.posting.domain.vote.Vote;
 import com.tubeplus.board_service.application.posting.port.in.PostingVoteUseCase;
+import com.tubeplus.board_service.application.posting.port.in.VoteEventDto;
 import com.tubeplus.board_service.application.posting.port.in.WebVoteUseCase;
 import com.tubeplus.board_service.application.posting.port.out.PostingPersistable;
 import com.tubeplus.board_service.application.posting.port.out.VoteEventPublishable;
@@ -12,6 +13,7 @@ import com.tubeplus.board_service.application.posting.port.out.VotePersistable.F
 import com.tubeplus.board_service.application.posting.port.out.VotePersistable.SaveVoteDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +31,8 @@ public class VoteService implements WebVoteUseCase, PostingVoteUseCase {
     private final VotePersistable votePersistence;
     private final PostingPersistable postingPersistence;
 
-    private final VoteEventPublishable eventPublisher;
+    private final VoteEventPublishable externalEventPublisher;
+    private final ApplicationEventPublisher internalEventPublisher;
 
 
     /**///command query both
@@ -66,7 +69,12 @@ public class VoteService implements WebVoteUseCase, PostingVoteUseCase {
             throw new BusinessException(ErrorCode.SAVE_ENTITY_FAILED);
 
         /**/
-        eventPublisher.publishPostingVoted(postingPersistence, savedVote);
+        VoteEventDto internalEventDto = VoteEventDto.of(
+                savedVote.getPostingId(),
+                savedVote.getVoteType().getCode()
+        );
+        internalEventPublisher.publishEvent(internalEventDto);
+        externalEventPublisher.publishPostingVoted(postingPersistence, savedVote);
 
         /**/
         return savedVote.getId();
@@ -97,8 +105,12 @@ public class VoteService implements WebVoteUseCase, PostingVoteUseCase {
 
 
         /**/
-        eventPublisher.publishVoteUpdated(postingPersistence, updateInfo);
-
+        VoteEventDto internalEventDto = VoteEventDto.of(
+                updateInfo.getPostingId(),
+                2 * updateInfo.getVoteType().getCode()
+        );
+        internalEventPublisher.publishEvent(internalEventDto);
+        externalEventPublisher.publishVoteUpdated(postingPersistence, updateInfo);
 
         /**/
         Long updatedTotalVote
@@ -126,7 +138,12 @@ public class VoteService implements WebVoteUseCase, PostingVoteUseCase {
                 .ifExceptioned.thenThrow(ErrorCode.DELETE_ENTITY_FAILED);
 
         /**/
-        eventPublisher.publishVoteDeleted(postingPersistence, deletedVote);
+        VoteEventDto internalEventDto = VoteEventDto.of(
+                deletedVote.getPostingId(),
+                -deletedVote.getVoteType().getCode()
+        );
+        internalEventPublisher.publishEvent(internalEventDto);
+        externalEventPublisher.publishVoteDeleted(postingPersistence, deletedVote);
 
         /**/
         Long updatedTotalVote;
