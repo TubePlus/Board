@@ -1,4 +1,4 @@
-package com.tubeplus.board_service.adapter.web.common;
+package com.tubeplus.board_service.adapter.web.config;
 
 import com.tubeplus.board_service.adapter.web.controller.vo.board.BoardSearchType;
 import com.tubeplus.board_service.adapter.web.controller.vo.posting.PostingsSearchTypeReq;
