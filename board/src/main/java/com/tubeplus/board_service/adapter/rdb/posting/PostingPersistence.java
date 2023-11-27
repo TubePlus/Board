@@ -24,7 +24,8 @@ import java.util.stream.Collectors;
 @SuppressWarnings({"ConstantConditions", "UnnecessaryLocalVariable"})
 @Slf4j
 @RequiredArgsConstructor
-@Component("postingPersistence")
+@Component
+@Transactional
 public class PostingPersistence implements PostingPersistable {
 
     private final PostingJpaDataRepository jpaDataRepo;
@@ -92,6 +93,24 @@ public class PostingPersistence implements PostingPersistable {
         return new Exceptionable<>(findPostings, findDto);
     }
 
+    @Override
+    public Exceptionable<Boolean, Object> updateVoteCount(Long postingId, Integer voteDiff) {
+
+        return Exceptionable.act(() ->
+        {
+            PostingEntity postingEntity
+                    = em.find(PostingEntity.class, postingId);
+
+            postingEntity.setVoteCount(postingEntity.getVoteCount() + voteDiff);
+
+            log.info("postingEntity.getVoteCount() : " + postingEntity.getVoteCount());
+
+            jpaDataRepo.save(postingEntity);
+
+            return true;
+        });
+    }
+
 
     // commands
     @Override
@@ -115,14 +134,12 @@ public class PostingPersistence implements PostingPersistable {
 
     }
 
+
     @Override
-    @Transactional
     public Exceptionable<Posting, BaseUpdatePostingDto> updatePosting(BaseUpdatePostingDto updateDto) {
-        //todo 영속성 컨텍스트 공부해보고, 최적화 가능하다면 queryDsl로 바꾸기 - 하나의 엔티티만 컨텍스트 초기화 되는지 확인
 
         return Exceptionable.act(dto ->
         {
-
             // dto로 요청된 필드 수정 엔티티에 반영
             PostingEntity entityToUpdate
                     = em.find(PostingEntity.class, dto.getPostingId());
@@ -148,7 +165,7 @@ public class PostingPersistence implements PostingPersistable {
 
         return Exceptionable.act(id ->
         {
-
+            log.info(String.valueOf(id));
             PostingEntity postingEntity
                     = jpaDataRepo.findById(id)
                     .orElseThrow(() -> new RuntimeException("posting is not found."));

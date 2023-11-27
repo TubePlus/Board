@@ -28,7 +28,7 @@ public class Exceptionable<RETURN, PARAM> {
 
     // static methods for create Exceptionable instance
     public static <RETURN>
-    Exceptionable<RETURN, ?> act(Supplier<RETURN> supplyFunction) {
+    Exceptionable<RETURN, Object> act(Supplier<RETURN> supplyFunction) {
 
         return new Exceptionable<>(o -> supplyFunction.get(), null);
     }

@@ -9,13 +9,17 @@ import com.tubeplus.board_service.application.posting.domain.posting.PostingView
 import com.tubeplus.board_service.application.posting.port.in.PostingCommentUseCase;
 import com.tubeplus.board_service.application.posting.port.in.PostingUseCase;
 import com.tubeplus.board_service.application.posting.port.in.PostingVoteUseCase;
+import com.tubeplus.board_service.application.posting.port.in.VoteEventDto;
 import com.tubeplus.board_service.application.posting.port.out.PostingEventPublishable;
 import com.tubeplus.board_service.application.posting.port.out.PostingPersistable;
 import com.tubeplus.board_service.global.Exceptionable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.support.PageableExecutionUtils;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,8 +37,8 @@ import static com.tubeplus.board_service.application.posting.port.out.PostingPer
 @RequiredArgsConstructor
 @Transactional
 public class PostingService implements PostingUseCase {
-    // driving service
 
+    // driving service
     private final PostingVoteUseCase voteService;
     private final PostingCommentUseCase commentService;
 
@@ -199,9 +203,8 @@ public class PostingService implements PostingUseCase {
         /**/
         boolean checkUserNotAuthor;
 
-        String authorUuid = this.getPosting(postingId).getAuthorUuid();
-
-        checkUserNotAuthor = !authorUuid.equals(form.getUserUuid());
+        checkUserNotAuthor
+                = !form.getUserUuid().equals(this.getPosting(postingId).getAuthorUuid());
 
         if (checkUserNotAuthor)
             throw new BusinessException(ErrorCode.UNAUTHORIZED);
@@ -236,4 +239,16 @@ public class PostingService implements PostingUseCase {
     }
 
 
+    @EventListener
+    public void handleVoteEvent(VoteEventDto dto) {
+
+        log.info("PostingService.handleVoteEvent() called");
+
+        if (dto == null)
+            throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, "vote event dto is null");
+
+        postingPersistence.updateVoteCount(dto.getPostingId(), dto.getVoteDiff())
+                .ifExceptioned.thenThrow(ErrorCode.UPDATE_ENTITY_FAILED);
+
+    }
 }

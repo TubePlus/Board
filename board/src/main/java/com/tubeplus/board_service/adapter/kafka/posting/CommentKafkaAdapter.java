@@ -13,8 +13,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class CommentKafkaAdapter
-        implements CommentEventPublishable {
+public class CommentKafkaAdapter implements CommentEventPublishable {
 
     private final KafkaProducer kafkaProducer;
     private final PostingPersistable postingPersistence;

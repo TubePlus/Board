@@ -21,9 +21,10 @@ import static com.tubeplus.board_service.application.posting.port.in.PostingUseC
 public interface PostingPersistable {
 
     // Both used in query and command
-    Exceptionable<Optional<Posting>, Long> findPosting(long postingId);
 
+    Exceptionable<Optional<Posting>, Long> findPosting(long postingId);
     // Queries
+
     Exceptionable<Long, Long> getPostingCommuId(Long postingId);
 
     boolean existNextPosting(FindPostingsDto dto);
@@ -142,6 +143,11 @@ public interface PostingPersistable {
 
 
     // Commands
+
+//    Exceptionable<Boolean, Object> updateVoteCount(Long postingId, Integer voteDiff);
+
+    Exceptionable<Boolean, Object> updateVoteCount(Long postingId, Integer voteDiff);
+
     Exceptionable<Long, SavePostingDto> savePosting(SavePostingDto dto);
 
     @Data

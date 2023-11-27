@@ -69,7 +69,8 @@ public class VotePersistence
     @Override
     public Exceptionable<Vote, SaveVoteDto> saveVote(SaveVoteDto saveDto) {
 
-        return Exceptionable.act(dto -> {
+        return Exceptionable.act(dto ->
+        {
 
 
             PostingEntity votedPosting
@@ -79,7 +80,6 @@ public class VotePersistence
             VoteEntity entityToSave
                     = VoteEntity.builtFrom(dto, votedPosting);
 
-            log.info("entityToSave: {}", entityToSave);
             VoteEntity savedEntity
                     = voteJpaDataRepo.save(entityToSave);
 
@@ -92,7 +92,8 @@ public class VotePersistence
     @Override
     public Exceptionable<Boolean, Long> deleteVote(Long voteId) {
 
-        return Exceptionable.act(dto -> {
+        return Exceptionable.act(dto ->
+        {
 
             voteJpaDataRepo.deleteById(dto);
 
@@ -103,16 +104,19 @@ public class VotePersistence
 
     @Override
     public Exceptionable<Optional<Vote>, Long> findVote(Long voteId) {
-        return Exceptionable.act(id -> {
-            return voteJpaDataRepo.findById(id).map(VoteEntity::buildDomain);
+        return Exceptionable.act(id ->
+        {
+            return voteJpaDataRepo.findById(id)
+                    .map(VoteEntity::buildDomain);
+
         }, voteId);
     }
 
     @Override
     public Exceptionable<Posting, Long> getVotedPosting(Long voteId) {
 
-        return Exceptionable.act(dto -> {
-
+        return Exceptionable.act(dto ->
+        {
             VoteEntity voteEntity
                     = voteJpaDataRepo.findById(dto)
                     .orElseThrow(() -> new RuntimeException("vote is not found."));
@@ -130,8 +134,8 @@ public class VotePersistence
     @Override
     public Exceptionable<Long, Long> getTotalVote(Long postingId) {
 
-        return Exceptionable.act(id -> {
-
+        return Exceptionable.act(id ->
+        {
             PostingEntity posting
                     = postingJpaDataRepo.findById(id)
                     .orElseThrow(() -> new RuntimeException("posting is not found."));

@@ -56,7 +56,6 @@ public class CommentService
 
 
     //commands
-    @Transactional
     @Override
     public Comment writeComment(PostCommentForm form) {
 

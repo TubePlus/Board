@@ -2,6 +2,7 @@ package com.tubeplus.board_service.adapter.rdb.posting.entity;
 
 
 import com.tubeplus.board_service.adapter.rdb.common.BaseEntity;
+import com.tubeplus.board_service.adapter.rdb.posting.VoteTypeConverter;
 import com.tubeplus.board_service.application.posting.domain.vote.Vote;
 import com.tubeplus.board_service.application.posting.domain.vote.VoteType;
 import com.tubeplus.board_service.application.posting.port.out.VotePersistable.SaveVoteDto;
@@ -30,6 +31,7 @@ public class VoteEntity extends BaseEntity {
     private String voterUuid;
 
     @Setter
+    @Convert(converter = VoteTypeConverter.class)
     @Column(name = "vote_type", nullable = false)
     private VoteType voteType;
 
