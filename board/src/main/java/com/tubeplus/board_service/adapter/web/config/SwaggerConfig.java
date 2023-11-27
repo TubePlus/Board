@@ -1,4 +1,4 @@
-package com.tubeplus.board_service.adapter.web.common.swagger;
+package com.tubeplus.board_service.adapter.web.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import lombok.RequiredArgsConstructor;
